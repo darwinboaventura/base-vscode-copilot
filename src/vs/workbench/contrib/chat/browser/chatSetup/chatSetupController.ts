@@ -257,6 +257,9 @@ export class ChatSetupController extends Disposable {
 	}
 
 	private async doInstall(): Promise<void> {
+		// StackCode: The built-in stackcode-chat extension (GitHub.copilot-chat) is bundled
+		// with this fork. The extensionsWorkbenchService.install() will detect it as a
+		// built-in extension and skip the marketplace download, only enabling it.
 		await this.extensionsWorkbenchService.install(defaultChat.chatExtensionId, {
 			enable: true,
 			isApplicationScoped: true, 	// install into all profiles

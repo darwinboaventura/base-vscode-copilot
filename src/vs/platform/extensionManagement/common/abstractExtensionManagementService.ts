@@ -73,6 +73,13 @@ export abstract class CommontExtensionManagementService extends Disposable imple
 	}
 
 	async canInstall(extension: IGalleryExtension): Promise<true | IMarkdownString> {
+		// Block GitHub Copilot extensions from being installed from the marketplace.
+		// The built-in stackcode-chat extension (GitHub.copilot-chat) should be used instead.
+		const blockedCopilotExtensions = ['github.copilot', 'github.copilot-chat'];
+		if (blockedCopilotExtensions.includes(extension.identifier.id.toLowerCase())) {
+			return new MarkdownString(nls.localize('copilot blocked', "The '{0}' extension cannot be installed from the marketplace. Use the built-in chat extension instead.", extension.identifier.id));
+		}
+
 		const allowedToInstall = this.allowedExtensionsService.isAllowed({ id: extension.identifier.id, publisherDisplayName: extension.publisherDisplayName });
 		if (allowedToInstall !== true) {
 			return new MarkdownString(nls.localize('not allowed to install', "This extension cannot be installed because {0}", allowedToInstall.value));
@@ -662,6 +669,13 @@ export abstract class AbstractExtensionManagementService extends CommontExtensio
 
 		const deprecationInfo = extensionsControlManifest.deprecated[extension.identifier.id.toLowerCase()];
 		if (deprecationInfo?.extension?.autoMigrate) {
+			// StackCode: Block auto-migration for GitHub Copilot extensions.
+			// The built-in stackcode-chat extension handles this functionality.
+			const blockedCopilotExtensions = ['github.copilot', 'github.copilot-chat'];
+			if (blockedCopilotExtensions.includes(extension.identifier.id.toLowerCase()) || blockedCopilotExtensions.includes(deprecationInfo.extension.id.toLowerCase())) {
+				throw new ExtensionManagementError(nls.localize('copilot blocked migration', "The '{0}' extension cannot be installed from the marketplace. Use the built-in chat extension instead.", extension.identifier.id), ExtensionManagementErrorCode.NotAllowed);
+			}
+
 			this.logService.info(`The '${extension.identifier.id}' extension is deprecated, fetching the compatible '${deprecationInfo.extension.id}' extension instead.`);
 			compatibleExtension = (await this.galleryService.getExtensions([{ id: deprecationInfo.extension.id, preRelease: deprecationInfo.extension.preRelease }], { targetPlatform: await this.getTargetPlatform(), compatible: true, productVersion }, CancellationToken.None))[0];
 			if (!compatibleExtension) {

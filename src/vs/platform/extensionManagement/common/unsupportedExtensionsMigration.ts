@@ -30,6 +30,14 @@ export async function migrateUnsupportedExtensions(profile: IUserDataProfile | u
 			if (!deprecated?.extension) {
 				continue;
 			}
+
+			// StackCode: Skip migration for GitHub Copilot extensions.
+			// The built-in stackcode-chat extension handles this functionality.
+			const blockedCopilotExtensions = ['github.copilot', 'github.copilot-chat'];
+			if (blockedCopilotExtensions.includes(unsupportedExtensionId.toLowerCase())) {
+				logService.info(`Skipping migration of '${unsupportedExtensionId}' - blocked Copilot extension in StackCode.`);
+				continue;
+			}
 			const { id: preReleaseExtensionId, autoMigrate, preRelease } = deprecated.extension;
 			if (!autoMigrate) {
 				continue;

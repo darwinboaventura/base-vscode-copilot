@@ -2424,6 +2424,13 @@ export class ExtensionsWorkbenchService extends Disposable implements IExtension
 			return new MarkdownString().appendText(nls.localize('not an extension', "The provided object is not an extension."));
 		}
 
+		// Block GitHub Copilot extensions from being installed from the marketplace.
+		// The built-in stackcode-chat extension (GitHub.copilot-chat) should be used instead.
+		const blockedCopilotExtensions = ['github.copilot', 'github.copilot-chat'];
+		if (extension.gallery && blockedCopilotExtensions.includes(extension.identifier.id.toLowerCase())) {
+			return new MarkdownString().appendText(nls.localize('copilot blocked ui', "The '{0}' extension cannot be installed from the marketplace. Use the built-in chat extension instead.", extension.identifier.id));
+		}
+
 		if (extension.isMalicious) {
 			return new MarkdownString().appendText(nls.localize('malicious', "This extension is reported to be problematic."));
 		}
@@ -2475,6 +2482,10 @@ export class ExtensionsWorkbenchService extends Disposable implements IExtension
 
 			// Install by id
 			if (isString(arg)) {
+				// StackCode: Ensure local extensions are loaded before looking up by ID.
+				// Without this, a race condition can cause built-in extensions to not
+				// be found in this.local, triggering a spurious gallery lookup.
+				await this.whenInitialized;
 				extension = this.local.find(e => areSameExtensions(e.identifier, { id: arg }));
 				if (!extension?.isBuiltin) {
 					installableInfo = { id: arg, version: installOptions.version, preRelease: installOptions.installPreReleaseVersion ?? this.extensionManagementService.preferPreReleases };
@@ -2482,10 +2493,21 @@ export class ExtensionsWorkbenchService extends Disposable implements IExtension
 			}
 			// Install by gallery
 			else if (arg.gallery) {
-				extension = arg;
-				gallery = arg.gallery;
-				if (installOptions.version && installOptions.version !== gallery?.version) {
-					installableInfo = { id: extension.identifier.id, version: installOptions.version };
+				// Block GitHub Copilot extensions from being installed from the marketplace.
+				const blockedCopilotExtensions = ['github.copilot', 'github.copilot-chat'];
+				if (blockedCopilotExtensions.includes(arg.identifier.id.toLowerCase())) {
+					extension = this.local.find(e => areSameExtensions(e.identifier, { id: arg.identifier.id }));
+					if (extension?.isBuiltin) {
+						// Extension already exists as built-in, skip marketplace install
+					} else {
+						throw new Error(nls.localize('copilot blocked install', "The '{0}' extension cannot be installed from the marketplace.", arg.identifier.id));
+					}
+				} else {
+					extension = arg;
+					gallery = arg.gallery;
+					if (installOptions.version && installOptions.version !== gallery?.version) {
+						installableInfo = { id: extension.identifier.id, version: installOptions.version };
+					}
 				}
 			}
 			// Install by resource
@@ -2535,7 +2557,11 @@ export class ExtensionsWorkbenchService extends Disposable implements IExtension
 			}
 
 			if (!servers || servers.length) {
-				if (!installable) {
+				// StackCode: If the extension is already installed as a built-in, skip the
+				// gallery install entirely. The extension just needs to be enabled (handled below).
+				if (extension?.isBuiltin && !installable && !gallery) {
+					// Nothing to install — built-in extension is already present on disk.
+				} else if (!installable) {
 					if (!gallery) {
 						const id = isString(arg) ? arg : (<IExtension>arg).identifier.id;
 						const manifest = await this.extensionGalleryManifestService.getExtensionGalleryManifest();

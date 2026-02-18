@@ -5,46 +5,24 @@
 
 import path from 'path';
 import fs from 'fs';
-import { retry } from './retry.ts';
 import { type IExtensionManifest, parseApiProposalsFromSource, checkExtensionCompatibility, areAllowlistedApiProposalsMatching } from './versionCompatibility.ts';
 
 const root = path.dirname(path.dirname(path.dirname(import.meta.dirname)));
 
-async function fetchLatestExtensionManifest(extensionId: string): Promise<IExtensionManifest> {
-	// Use the vscode-unpkg service to get the latest extension package.json
-	const [publisher, name] = extensionId.split('.');
-
-	// First, get the latest version from the gallery endpoint
-	const galleryUrl = `https://main.vscode-unpkg.net/_gallery/${publisher}/${name}/latest`;
-	const galleryResponse = await fetch(galleryUrl, {
-		headers: { 'User-Agent': 'VSCode Build' }
-	});
-
-	if (!galleryResponse.ok) {
-		throw new Error(`Failed to fetch latest version for ${extensionId}: ${galleryResponse.status} ${galleryResponse.statusText}`);
+function loadLocalExtensionManifest(): IExtensionManifest {
+	// StackCode: Load the manifest from the bundled stackcode-chat extension
+	// instead of fetching from the marketplace.
+	const manifestPath = path.join(root, 'extensions/stackcode-chat/package.json');
+	if (!fs.existsSync(manifestPath)) {
+		throw new Error(`Built-in extension manifest not found at ${manifestPath}`);
 	}
-
-	const galleryData = await galleryResponse.json() as { versions: { version: string }[] };
-	const version = galleryData.versions[0].version;
-
-	// Now fetch the package.json using the actual version
-	const url = `https://${publisher}.vscode-unpkg.net/${publisher}/${name}/${version}/extension/package.json`;
-
-	const response = await fetch(url, {
-		headers: { 'User-Agent': 'VSCode Build' }
-	});
-
-	if (!response.ok) {
-		throw new Error(`Failed to fetch extension ${extensionId} from unpkg: ${response.status} ${response.statusText}`);
-	}
-
-	return await response.json() as IExtensionManifest;
+	return JSON.parse(fs.readFileSync(manifestPath, 'utf8')) as IExtensionManifest;
 }
 
 export async function checkCopilotChatCompatibility(): Promise<void> {
 	const extensionId = 'github.copilot-chat';
 
-	console.log(`Checking compatibility of ${extensionId}...`);
+	console.log(`Checking compatibility of ${extensionId} (using local stackcode-chat extension)...`);
 
 	// Get product version from package.json
 	const packageJson = JSON.parse(fs.readFileSync(path.join(root, 'package.json'), 'utf8'));
@@ -85,10 +63,10 @@ export async function checkCopilotChatCompatibility(): Promise<void> {
 		console.log(`Product.json allowlisted proposals for ${extensionId}: none`);
 	}
 
-	// Fetch the latest extension manifest
-	const manifest = await retry(() => fetchLatestExtensionManifest(extensionId));
+	// Load the local stackcode-chat extension manifest instead of fetching from marketplace
+	const manifest = loadLocalExtensionManifest();
 
-	console.log(`Extension ${extensionId}@${manifest.version}:`);
+	console.log(`Extension ${extensionId}@${manifest.version} (local):`);
 	console.log(`  engines.vscode: ${manifest.engines.vscode}`);
 	console.log(`  enabledApiProposals:\n    ${manifest.enabledApiProposals?.join('\n    ') || 'none'}`);
 

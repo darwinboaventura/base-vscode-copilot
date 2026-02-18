@@ -1991,15 +1991,8 @@ export abstract class AbstractExtensionGalleryService implements IExtensionGalle
 			}
 		}
 
-		deprecated[this.productService.defaultChatAgent.extensionId.toLowerCase()] = {
-			disallowInstall: true,
-			extension: {
-				id: this.productService.defaultChatAgent.chatExtensionId,
-				displayName: 'GitHub Copilot Chat',
-				autoMigrate: { storage: false, donotDisable: true },
-				preRelease: this.productService.quality !== 'stable'
-			}
-		};
+		// StackCode: Do not deprecate or auto-migrate GitHub.copilot to GitHub.copilot-chat
+		// from the marketplace. The built-in stackcode-chat extension handles this.
 
 		return { malicious, deprecated, search, autoUpdate };
 	}
