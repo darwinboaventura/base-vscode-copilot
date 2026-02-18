@@ -9,7 +9,7 @@ import { ICopilotTokenManager } from '../../../platform/authentication/common/co
 import { StaticGitHubAuthenticationService } from '../../../platform/authentication/common/staticGitHubAuthenticationService';
 import { createStaticGitHubTokenProvider, getOrCreateTestingCopilotTokenManager } from '../../../platform/authentication/node/copilotTokenManager';
 import { AuthenticationService } from '../../../platform/authentication/vscode-node/authenticationService';
-import { VSCodeCopilotTokenManager } from '../../../platform/authentication/vscode-node/copilotTokenManager';
+import { StackspotCopilotTokenManager } from '../../../platform/authentication/vscode-node/stackspotCopilotTokenManager';
 import { IChatAgentService } from '../../../platform/chat/common/chatAgents';
 import { IChatHookService } from '../../../platform/chat/common/chatHookService';
 import { IChatMLFetcher } from '../../../platform/chat/common/chatMLFetcher';
@@ -111,7 +111,8 @@ import { IPromptCategorizerService, PromptCategorizerService } from '../../promp
 import { IPromptVariablesService } from '../../prompt/node/promptVariablesService';
 import { ITodoListContextProvider, TodoListContextProvider } from '../../prompt/node/todoListContextProvider';
 import { DevContainerConfigurationServiceImpl } from '../../prompt/vscode-node/devContainerConfigurationServiceImpl';
-import { ProductionEndpointProvider } from '../../prompt/vscode-node/endpointProviderImpl';
+// STACKCODE: ProductionEndpointProvider is no longer imported — replaced by StackspotEndpointProvider
+import { StackspotEndpointProvider } from '../../prompt/vscode-node/stackspotEndpointProviderImpl';
 import { GitCommitMessageServiceImpl } from '../../prompt/vscode-node/gitCommitMessageServiceImpl';
 import { GitDiffService } from '../../prompt/vscode-node/gitDiffService';
 import { PromptVariablesServiceImpl } from '../../prompt/vscode-node/promptVariablesService';
@@ -175,7 +176,10 @@ export function registerServices(builder: IInstantiationServiceBuilder, extensio
 		builder.define(ICopilotTokenManager, getOrCreateTestingCopilotTokenManager(env.devDeviceId));
 	} else {
 		setupTelemetry(builder, extensionContext, internalAIKey, internalLargeEventAIKey, ariaKey);
-		builder.define(ICopilotTokenManager, new SyncDescriptor(VSCodeCopilotTokenManager));
+		// STACKCODE: Use StackspotCopilotTokenManager instead of VSCodeCopilotTokenManager
+		// This replaces GitHub Copilot token management with Stackspot AI OAuth2 authentication
+		// Uses SyncDescriptor so DI resolves @IVSCodeExtensionContext and @ILogService automatically
+		builder.define(ICopilotTokenManager, new SyncDescriptor(StackspotCopilotTokenManager));
 	}
 
 	if (isScenarioAutomation) {
@@ -184,7 +188,9 @@ export function registerServices(builder: IInstantiationServiceBuilder, extensio
 		builder.define(IIgnoreService, new SyncDescriptor(NullIgnoreService));
 	} else {
 		builder.define(IAuthenticationService, new SyncDescriptor(AuthenticationService));
-		builder.define(IEndpointProvider, new SyncDescriptor(ProductionEndpointProvider, [collectFetcherTelemetry]));
+		// STACKCODE: Use StackspotEndpointProvider instead of ProductionEndpointProvider
+		// This routes all chat requests through Stackspot AI agents instead of GitHub Copilot CAPI
+		builder.define(IEndpointProvider, new SyncDescriptor(StackspotEndpointProvider, [collectFetcherTelemetry]));
 		builder.define(IIgnoreService, new SyncDescriptor(VsCodeIgnoreService));
 	}
 

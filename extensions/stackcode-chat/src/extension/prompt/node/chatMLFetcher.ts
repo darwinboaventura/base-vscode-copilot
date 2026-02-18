@@ -770,9 +770,9 @@ export class ChatMLFetcherImpl extends AbstractChatMLFetcher {
 		});
 
 		for (const [key, value] of Object.entries(request)) {
-			if (key === 'messages' || key === 'input') {
+			if (key === 'messages' || key === 'input' || key === 'user_prompt') {
 				continue;
-			} // Skip messages (PII)
+			} // Skip messages and user_prompt (PII)
 			telemetryData.properties[`request.option.${key}`] = JSON.stringify(value) ?? 'undefined';
 		}
 

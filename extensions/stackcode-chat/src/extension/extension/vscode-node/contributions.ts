@@ -52,6 +52,7 @@ import { NesRenameContribution } from '../../typescriptContext/vscode-node/nesRe
 import * as workspaceChunkSearchContribution from '../../workspaceChunkSearch/node/workspaceChunkSearch.contribution';
 import * as workspaceIndexingContribution from '../../workspaceChunkSearch/vscode-node/workspaceChunkSearch.contribution';
 import { WorkspaceRecorderFeature } from '../../workspaceRecorder/vscode-node/workspaceRecorderFeature';
+import { StackspotAuthContribution } from '../../stackspot/vscode-node/stackspot.contribution';
 import vscodeContributions from '../vscode/contributions';
 
 // ###################################################################################################
@@ -96,7 +97,9 @@ export const vscodeNodeContributions: IExtensionContributionFactory[] = [
 	asContributionFactory(CompletionsUnificationContribution),
 	workspaceIndexingContribution,
 	asContributionFactory(ChatSessionsContrib),
-	asContributionFactory(GitHubMcpContrib)
+	asContributionFactory(GitHubMcpContrib),
+	// STACKCODE: Register Stackspot AI login/logout commands
+	asContributionFactory(StackspotAuthContribution),
 ];
 
 /**

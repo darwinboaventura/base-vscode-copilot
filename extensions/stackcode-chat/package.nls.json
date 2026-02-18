@@ -64,12 +64,11 @@
 		]
 	},
 	"github.copilot.viewsWelcome.gitHubLoginFailed": {
-		"message": "GitHub login failed. Please sign in to your GitHub account to use Copilot.\n\n[Sign In](command:workbench.action.chat.triggerSetupForceSignIn)\n\nSee also [Copilot log](command:github.copilot.debug.showOutputChannel.internal) and [run diagnostics](command:github.copilot.debug.collectDiagnostics.internal).",
+		"message": "Connect to StackSpot AI to start using the assistant.\n\nEnter your Realm, Client ID, and Client Key to authenticate.\n\n[Connect to StackSpot AI](command:stackcode.login)\n\nSee also [Copilot log](command:github.copilot.debug.showOutputChannel.internal).",
 		"comment": [
 			"{Locked='['}",
-			"{Locked='](command:workbench.action.chat.triggerSetupForceSignIn)'}",
-			"{Locked='](command:github.copilot.debug.showOutputChannel.internal)'}",
-			"{Locked='](command:github.copilot.debug.collectDiagnostics.internal)'}"
+			"{Locked='](command:stackcode.login)'}",
+			"{Locked='](command:github.copilot.debug.showOutputChannel.internal)'}"
 		]
 	},
 	"github.copilot.viewsWelcome.contactSupport": {

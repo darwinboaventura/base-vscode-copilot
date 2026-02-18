@@ -2217,6 +2217,16 @@
 		],
 		"commands": [
 			{
+				"command": "stackcode.login",
+				"title": "Connect to StackSpot AI",
+				"category": "StackCode"
+			},
+			{
+				"command": "stackcode.logout",
+				"title": "Disconnect from StackSpot AI",
+				"category": "StackCode"
+			},
+			{
 				"command": "github.copilot.chat.triggerPermissiveSignIn",
 				"title": "%github.copilot.command.triggerPermissiveSignIn%"
 			},

@@ -234,3 +234,133 @@ div.chat-welcome-view {
 		background-color: var(--vscode-list-hoverBackground);
 	}
 }
+
+/* ============================================================================
+ * STACKCODE: Custom login form styles
+ * ============================================================================ */
+
+.stackcode-login-view {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 24px 20px;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.stackcode-login-logo {
+	margin-bottom: 16px;
+}
+
+.stackcode-login-logo svg {
+	width: 64px;
+	height: 64px;
+}
+
+.stackcode-login-title {
+	font-size: 24px;
+	font-weight: 600;
+	margin-bottom: 8px;
+	color: var(--vscode-foreground);
+	text-align: center;
+}
+
+.stackcode-login-subtitle {
+	font-size: 13px;
+	color: var(--vscode-descriptionForeground);
+	margin-bottom: 20px;
+	text-align: center;
+}
+
+.stackcode-login-form {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+	width: 100%;
+	max-width: 340px;
+}
+
+.stackcode-login-field {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.stackcode-login-label {
+	font-size: 12px;
+	font-weight: 600;
+	color: var(--vscode-foreground);
+}
+
+.stackcode-login-input {
+	background-color: var(--vscode-input-background);
+	color: var(--vscode-input-foreground);
+	border: 1px solid var(--vscode-input-border, transparent);
+	border-radius: 4px;
+	padding: 6px 10px;
+	font-size: 13px;
+	font-family: inherit;
+	outline: none;
+	box-sizing: border-box;
+	width: 100%;
+}
+
+.stackcode-login-input:focus {
+	border-color: var(--vscode-focusBorder);
+	outline: none;
+}
+
+.stackcode-login-input::placeholder {
+	color: var(--vscode-input-placeholderForeground);
+}
+
+.stackcode-login-input:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+.stackcode-login-error {
+	font-size: 12px;
+	color: var(--vscode-errorForeground);
+	padding: 4px 0;
+}
+
+.stackcode-login-button-container {
+	margin-top: 8px;
+}
+
+.stackcode-login-button {
+	width: 100%;
+	padding: 8px 16px;
+	font-size: 13px;
+	font-weight: 600;
+	font-family: inherit;
+	border: none;
+	border-radius: 4px;
+	cursor: pointer;
+	background-color: #E8732A;
+	color: #ffffff;
+	transition: background-color 0.15s ease;
+}
+
+.stackcode-login-button:hover:not(:disabled) {
+	background-color: #D4621F;
+}
+
+.stackcode-login-button:active:not(:disabled) {
+	background-color: #C05518;
+}
+
+.stackcode-login-button:disabled {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+.stackcode-login-notice {
+	font-size: 11px;
+	color: var(--vscode-descriptionForeground);
+	margin-top: 16px;
+	text-align: center;
+	max-width: 300px;
+}

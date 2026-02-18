@@ -78,6 +78,17 @@ export class ChatSetupContribution extends Disposable implements IWorkbenchContr
 	) {
 		super();
 
+		// StackCode: Disable the entire GitHub Copilot setup system.
+		// The stackcode-chat extension manages its own authentication
+		// and agent registration via StackSpot AI. The setup agents
+		// registered here (isCore: true) block shouldShowWelcome() in
+		// ChatViewPane, preventing the extension's chatViewsWelcome
+		// login screen from appearing.
+		const _stackcodeManagesAuth = true;
+		if (_stackcodeManagesAuth) {
+			return;
+		}
+
 		const context = chatEntitlementService.context?.value;
 		const requests = chatEntitlementService.requests?.value;
 		if (!context || !requests) {

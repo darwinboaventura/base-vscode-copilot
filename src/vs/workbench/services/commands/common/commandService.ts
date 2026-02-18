@@ -52,21 +52,47 @@ export class CommandService extends Disposable implements ICommandService {
 	async executeCommand<T>(id: string, ...args: unknown[]): Promise<T> {
 		this._logService.trace('CommandService#executeCommand', id);
 
+		// STACKCODE DEBUG: trace command execution path
+		if (id.startsWith('stackcode.')) {
+			console.log(`[stackcode-cmd] executeCommand called: ${id}, args count: ${args.length}`);
+		}
+
 		const activationEvent = `onCommand:${id}`;
 		const commandIsRegistered = !!CommandsRegistry.getCommand(id);
+
+		if (id.startsWith('stackcode.')) {
+			console.log(`[stackcode-cmd] commandIsRegistered: ${commandIsRegistered}, extensionHostIsReady: ${this._extensionHostIsReady}, activationEventIsDone: ${this._extensionService.activationEventIsDone(activationEvent)}`);
+		}
 
 		if (commandIsRegistered) {
 
 			// if the activation event has already resolved (i.e. subsequent call),
 			// we will execute the registered command immediately
 			if (this._extensionService.activationEventIsDone(activationEvent)) {
+				if (id.startsWith('stackcode.')) {
+					console.log(`[stackcode-cmd] Path A: activationEventIsDone, calling _tryExecuteCommand`);
+				}
 				return this._tryExecuteCommand(id, args);
 			}
 
 			// if the extension host didn't start yet, we will execute the registered
 			// command immediately and send an activation event, but not wait for it
 			if (!this._extensionHostIsReady) {
+				if (id.startsWith('stackcode.')) {
+					console.log(`[stackcode-cmd] Path B: extensionHost not ready, calling _tryExecuteCommand`);
+				}
 				this._extensionService.activateByEvent(activationEvent); // intentionally not awaited
+				return this._tryExecuteCommand(id, args);
+			}
+
+			// STACKCODE FIX: For stackcode.* commands, the extension is activated via
+			// onStartupFinished (not via onCommand:), so activationEventIsDone returns
+			// false even though the handler is already registered. Since the command IS
+			// registered and the extension host IS ready, we can safely execute directly
+			// and fire activateByEvent without awaiting it.
+			if (id.startsWith('stackcode.')) {
+				console.log(`[stackcode-cmd] Path A2: command registered + extHost ready, executing directly`);
+				this._extensionService.activateByEvent(activationEvent); // fire-and-forget
 				return this._tryExecuteCommand(id, args);
 			}
 
@@ -77,6 +103,9 @@ export class CommandService extends Disposable implements ICommandService {
 
 		// finally, if the command is not registered we will send a simple activation event
 		// as well as a * activation event raced against registration and against 30s
+		if (id.startsWith('stackcode.')) {
+			console.log(`[stackcode-cmd] Path D: command NOT registered, awaiting activation + registration`);
+		}
 		await Promise.all([
 			this._extensionService.activateByEvent(activationEvent),
 			raceCancellablePromises<unknown>([
@@ -86,20 +115,35 @@ export class CommandService extends Disposable implements ICommandService {
 			]),
 		]);
 
+		if (id.startsWith('stackcode.')) {
+			console.log(`[stackcode-cmd] Path D: activation resolved, calling _tryExecuteCommand`);
+		}
 		return this._tryExecuteCommand(id, args);
 	}
 
 	private _tryExecuteCommand(id: string, args: unknown[]): Promise<any> {
 		const command = CommandsRegistry.getCommand(id);
 		if (!command) {
+			if (id.startsWith('stackcode.')) {
+				console.error(`[stackcode-cmd] _tryExecuteCommand: command '${id}' NOT FOUND in registry`);
+			}
 			return Promise.reject(new Error(`command '${id}' not found`));
+		}
+		if (id.startsWith('stackcode.')) {
+			console.log(`[stackcode-cmd] _tryExecuteCommand: invoking handler for '${id}'`);
 		}
 		try {
 			this._onWillExecuteCommand.fire({ commandId: id, args });
 			const result = this._instantiationService.invokeFunction(command.handler, ...args);
+			if (id.startsWith('stackcode.')) {
+				console.log(`[stackcode-cmd] _tryExecuteCommand: handler returned, result type: ${typeof result}`);
+			}
 			this._onDidExecuteCommand.fire({ commandId: id, args });
 			return Promise.resolve(result);
 		} catch (err) {
+			if (id.startsWith('stackcode.')) {
+				console.error(`[stackcode-cmd] _tryExecuteCommand: handler threw error:`, err);
+			}
 			return Promise.reject(err);
 		}
 	}
