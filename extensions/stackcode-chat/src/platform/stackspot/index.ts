@@ -10,3 +10,4 @@ export * from './realmAgents.js';
 export * from './sseHandler.js';
 export * from './requestConverter.js';
 export * from './stackspotProxy.js';
+export * from './toolCallParser.js';
