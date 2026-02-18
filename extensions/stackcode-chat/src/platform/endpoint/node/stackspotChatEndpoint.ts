@@ -141,7 +141,22 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 		const tools = options.postOptions?.tools ?? options.requestOptions?.tools as OpenAiFunctionTool[] | undefined;
 		this._lastRequestTools = tools;
 
+		// Log message structure for debugging tool call flow
+		const msgSummary = options.messages.map(m => {
+			const roleNum = m.role as number;
+			const role = roleNum === 0 ? 'System' : roleNum === 1 ? 'User' : roleNum === 2 ? 'Assistant' : roleNum === 3 ? 'Tool' : `Unknown(${roleNum})`;
+			const hasToolCalls = roleNum === 2 && (m as Raw.AssistantChatMessage).toolCalls?.length;
+			const toolCallId = roleNum === 3 ? (m as Raw.ToolChatMessage).toolCallId : undefined;
+			const textLen = getTextPart(m.content).length;
+			return `${role}(text=${textLen}${hasToolCalls ? `,toolCalls=${(m as Raw.AssistantChatMessage).toolCalls!.length}` : ''}${toolCallId ? `,toolCallId=${toolCallId}` : ''})`;
+		}).join(', ');
+		this._stackspotLogService.info(`[stackcode] createRequestBody: ${options.messages.length} messages [${msgSummary}], tools=${tools?.length ?? 0}`);
+
 		const userPrompt = this._convertMessagesToUserPrompt(options.messages, tools);
+
+		// Log a snippet of the generated prompt for debugging
+		const promptSnippet = userPrompt.length > 500 ? userPrompt.substring(0, 250) + '\n...[truncated]...\n' + userPrompt.substring(userPrompt.length - 250) : userPrompt;
+		this._stackspotLogService.info(`[stackcode] user_prompt (${userPrompt.length} chars): ${promptSnippet}`);
 
 		const body: Record<string, unknown> = {
 			streaming: true,
@@ -270,6 +285,7 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 								if (hasDetectedToolCalls) {
 									// Emit final delta with all completed tool calls
 									const fullText = plainTextParts.join('');
+									logService.info(`[stackcode] SSE complete: ${completedToolCalls.length} tool calls detected: ${completedToolCalls.map(tc => `${tc.name}(id=${tc.id}, args=${tc.arguments.substring(0, 100)})`).join(', ')}`);
 									await finishCallback(fullText, 0, {
 										text: '',
 										copilotToolCalls: completedToolCalls.map(tc => ({
@@ -282,6 +298,7 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 								} else {
 									// No tool calls — emit as plain text
 									const fullText = plainTextParts.join('');
+									logService.info(`[stackcode] SSE complete: NO tool calls detected, text length=${fullText.length}`);
 									await finishCallback(fullText, 0, { text: '' });
 									self._emitCompletion(emitter, fullText, allTokens, inputTokens, outputTokens, requestId, finishReason, telemetryData);
 								}
@@ -459,6 +476,7 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 
 			case ToolCallParserEventKind.ToolCallBegin: {
 				// Tool call started — emit beginToolCalls delta
+				this._stackspotLogService.info(`[stackcode] Parser event: ToolCallBegin name=${event.name} id=${event.id}`);
 				await finishCallback(plainTextParts.join(''), 0, {
 					text: '',
 					beginToolCalls: [{ name: event.name, id: event.id }],
@@ -481,6 +499,7 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 
 			case ToolCallParserEventKind.ToolCallComplete: {
 				// Tool call complete — store it (will be emitted in final delta)
+				this._stackspotLogService.info(`[stackcode] Parser event: ToolCallComplete name=${event.toolCall.name} id=${event.toolCall.id} args=${event.toolCall.arguments.substring(0, 200)}`);
 				completedToolCalls.push({
 					name: event.toolCall.name,
 					arguments: event.toolCall.arguments,
