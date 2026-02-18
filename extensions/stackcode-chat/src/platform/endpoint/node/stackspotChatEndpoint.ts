@@ -127,6 +127,7 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 		const body: Record<string, unknown> = {
 			streaming: true,
 			user_prompt: userPrompt,
+			use_conversation: false,
 			stackspot_knowledge: false,
 		};
 

@@ -26,7 +26,8 @@ import { DiffServiceImpl } from '../../../platform/diff/node/diffServiceImpl';
 import { ICAPIClientService } from '../../../platform/endpoint/common/capiClient';
 import { IDomainService } from '../../../platform/endpoint/common/domainService';
 import { IEndpointProvider } from '../../../platform/endpoint/common/endpointProvider';
-import { AutomodeService, IAutomodeService } from '../../../platform/endpoint/node/automodeService';
+import { IAutomodeService } from '../../../platform/endpoint/node/automodeService';
+import { StackspotAutomodeService } from '../../../platform/endpoint/node/stackspotAutomodeService';
 import { CAPIClientImpl } from '../../../platform/endpoint/node/capiClientImpl';
 import { DomainService } from '../../../platform/endpoint/node/domainServiceImpl';
 import { INativeEnvService, isScenarioAutomation } from '../../../platform/env/common/envService';
@@ -49,8 +50,9 @@ import { IFetcherService } from '../../../platform/networking/common/fetcherServ
 import { FetcherService } from '../../../platform/networking/vscode-node/fetcherServiceImpl';
 import { IParserService } from '../../../platform/parser/node/parserService';
 import { ParserServiceImpl } from '../../../platform/parser/node/parserServiceImpl';
-import { IProxyModelsService } from '../../../platform/proxyModels/common/proxyModelsService';
-import { ProxyModelsService } from '../../../platform/proxyModels/node/proxyModelsService';
+import { IProxyModelsService, NullProxyModelsService } from '../../../platform/proxyModels/common/proxyModelsService';
+// STACKCODE: ProxyModelsService disabled — Stackspot has no /models endpoint
+// import { ProxyModelsService } from '../../../platform/proxyModels/node/proxyModelsService';
 import { AdoCodeSearchService, IAdoCodeSearchService } from '../../../platform/remoteCodeSearch/common/adoCodeSearchService';
 import { GithubCodeSearchService, IGithubCodeSearchService } from '../../../platform/remoteCodeSearch/common/githubCodeSearchService';
 import { ICodeSearchAuthenticationService } from '../../../platform/remoteCodeSearch/node/codeSearchRepoAuth';
@@ -146,7 +148,9 @@ export function registerServices(builder: IInstantiationServiceBuilder, extensio
 
 	registerCommonServices(builder, extensionContext);
 
-	builder.define(IAutomodeService, new SyncDescriptor(AutomodeService));
+	// STACKCODE: Use StackspotAutomodeService — no CAPI auto-model calls needed
+	// The upstream AutomodeService calls GitHub CAPI /auto_models which doesn't exist on Stackspot
+	builder.define(IAutomodeService, new SyncDescriptor(StackspotAutomodeService));
 	builder.define(IConversationStore, new ConversationStore());
 	builder.define(IDiffService, new DiffServiceImpl());
 	builder.define(ITokenizerProvider, new SyncDescriptor(TokenizerProvider, [true]));
@@ -242,7 +246,8 @@ export function registerServices(builder: IInstantiationServiceBuilder, extensio
 	builder.define(ITodoListContextProvider, new SyncDescriptor(TodoListContextProvider));
 	builder.define(IGithubAvailableEmbeddingTypesService, new SyncDescriptor(GithubAvailableEmbeddingTypesService));
 	builder.define(IRerankerService, new SyncDescriptor(RerankerService));
-	builder.define(IProxyModelsService, new SyncDescriptor(ProxyModelsService));
+	// STACKCODE: Use NullProxyModelsService — Stackspot AI has no /models proxy endpoint
+	builder.define(IProxyModelsService, new SyncDescriptor(NullProxyModelsService));
 	builder.define(IPowerService, new SyncDescriptor(PowerService));
 	builder.define(IInlineEditsModelService, new SyncDescriptor(InlineEditsModelService));
 	builder.define(IUndesiredModelsManager, new SyncDescriptor(UndesiredModels.Manager));

@@ -185,9 +185,21 @@ export class LanguageModelAccess extends Disposable implements IExtensionContrib
 
 		const models: vscode.LanguageModelChatInformation[] = [];
 		const allEndpoints = await this._endpointProvider.getAllChatEndpoints();
+		console.log(`[stackcode] _provideLanguageModelChatInfo: allEndpoints=${allEndpoints.length}, models: ${allEndpoints.map(e => `${e.name}(showInModelPicker=${e.showInModelPicker}, model=${e.model})`).join(', ')}`);
 		const chatEndpoints = allEndpoints.filter(e => e.showInModelPicker || e.model === 'gpt-4o-mini');
-		const autoEndpoint = await this._automodeService.resolveAutoModeEndpoint(undefined, allEndpoints);
-		chatEndpoints.push(autoEndpoint);
+		let autoEndpoint: IChatEndpoint;
+		try {
+			autoEndpoint = await this._automodeService.resolveAutoModeEndpoint(undefined, allEndpoints);
+		} catch (e) {
+			// If automode resolution fails (e.g., no CAPI), fall back to first endpoint
+			autoEndpoint = chatEndpoints[0] ?? allEndpoints[0];
+		}
+		// STACKCODE: Only add autoEndpoint if it's not already in chatEndpoints
+		// (StackspotAutomodeService returns an existing endpoint from knownEndpoints,
+		// so pushing it again would create a duplicate entry in the model picker)
+		if (autoEndpoint && !chatEndpoints.includes(autoEndpoint)) {
+			chatEndpoints.push(autoEndpoint);
+		}
 		let defaultChatEndpoint: IChatEndpoint;
 		const defaultExpModel = this._expService.getTreatmentVariable<string>('chat.defaultLanguageModel')?.replace('copilot/', '');
 		if (this._authenticationService.copilotToken?.isNoAuthUser || !defaultExpModel || defaultExpModel === AutoChatEndpoint.pseudoModelId) {
@@ -308,6 +320,7 @@ export class LanguageModelAccess extends Disposable implements IExtensionContrib
 
 		this._currentModels = models;
 		this._chatEndpoints = chatEndpoints;
+		console.log(`[stackcode] _provideLanguageModelChatInfo: returning ${models.length} models: ${models.map(m => `${m.name}(id=${m.id}, isDefault=${JSON.stringify(m.isDefault)}, isUserSelectable=${m.isUserSelectable}, toolCalling=${m.capabilities?.toolCalling})`).join(', ')}`);
 		return models;
 	}
 

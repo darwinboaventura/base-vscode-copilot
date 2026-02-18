@@ -117,18 +117,9 @@
 		},
 		"providerUriSetting": "github-enterprise.uri",
 		"providerScopes": [
-			[
-				"read:user",
-				"user:email",
-				"repo",
-				"workflow"
-			],
-			[
-				"user:email"
-			],
-			[
-				"read:user"
-			]
+			["read:user", "user:email", "repo", "workflow"],
+			["user:email"],
+			["read:user"]
 		],
 		"entitlementUrl": "https://api.github.com/copilot_internal/user",
 		"entitlementSignupLimitedUrl": "https://api.github.com/copilot_internal/subscribe_limited_user",
@@ -147,11 +138,93 @@
 		"mcpRegistryDataUrl": "https://api.github.com/copilot/mcp_registry"
 	},
 	"trustedExtensionAuthAccess": {
-		"github": [
-			"GitHub.copilot-chat"
-		],
-		"github-enterprise": [
-			"GitHub.copilot-chat"
-		]
+		"github": ["GitHub.copilot-chat"],
+		"github-enterprise": ["GitHub.copilot-chat"]
+	},
+	"stackspot": {
+		"models": {
+			"itau": {
+				"realm": "itau",
+				"displayName": "Itau",
+				"agents": [
+					{
+						"id": "01KDNJ7X6K21MS1Z4G46MEKNNP",
+						"name": "GPT 5.1",
+						"description": "OpenAI GPT 5.1 - Best for complex reasoning",
+						"llmModel": "gpt-5.1",
+						"forChat": true
+					},
+					{
+						"id": "01KDDKWCDT5WR1R996MSM0Q656",
+						"name": "GPT 4.1",
+						"description": "OpenAI GPT 4.1 - Fast and intelligent",
+						"llmModel": "gpt-4.1",
+						"forChat": true
+					},
+					{
+						"id": "01KFG701JPY62PQT8GFBHEGE4D",
+						"name": "Completion Agent",
+						"description": "Completions",
+						"llmModel": "gpt-4.1",
+						"forCompletions": true
+					},
+					{
+						"id": "01KFG701JPY62PQT8GFBHEGE4D",
+						"name": "GPT 4.1 (Auxiliary)",
+						"description": "OpenAI GPT 4.1 - Fast and intelligent",
+						"llmModel": "gpt-4.1",
+						"forAISupportFeatures": true
+					}
+				]
+			},
+			"zup": {
+				"realm": "zup",
+				"displayName": "Zup",
+				"agents": [
+					{
+						"id": "01KD1H4TJ53PCTC1YSPAGPJXSG",
+						"name": "GPT 5.1",
+						"description": "OpenAI GPT 5.1 - Best for complex reasoning",
+						"llmModel": "gpt-5.1",
+						"forChat": true
+					},
+					{
+						"id": "01KD1H4W39D5ZFGGMJ9TN3JEN5",
+						"name": "GPT 4.1",
+						"description": "OpenAI GPT 4.1 - Fast and intelligent",
+						"llmModel": "gpt-4.1",
+						"forChat": true
+					},
+					{
+						"id": "01KD1H4VBNPVBSADYMTE0GDXEK",
+						"name": "Claude Sonnet 4.5",
+						"description": "Anthropic Sonnet 4.5 - Fast and intelligent",
+						"llmModel": "sonnet4.5",
+						"forChat": true
+					},
+					{
+						"id": "01KF3EVTTDQ3C7QJHMVT3J604P",
+						"name": "Gemini 3",
+						"description": "Google Gemini",
+						"llmModel": "gemini-3",
+						"forChat": true
+					},
+					{
+						"id": "01KFC5236SN6F57MHYTRK28JRP",
+						"name": "Completion Agent",
+						"description": "Completions",
+						"llmModel": "gpt-4.1",
+						"forCompletions": true
+					},
+					{
+						"id": "01KFC5236SN6F57MHYTRK28JRP",
+						"name": "GPT 4.1 (Auxiliary)",
+						"description": "OpenAI GPT 4.1 - Fast and intelligent",
+						"llmModel": "gpt-4.1",
+						"forAISupportFeatures": true
+					}
+				]
+			}
+		}
 	}
 }

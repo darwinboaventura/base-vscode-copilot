@@ -5,15 +5,8 @@
  * Suporta descoberta de agents disponíveis baseado no realm
  */
 
-import { StackspotCredentials, StackspotTokenResponse, StackspotAgent, StackspotAvailableModels } from './types.js';
-
-const DEFAULT_AGENTS: StackspotAgent[] = [
-	{ id: 'gpt-4o', name: 'GPT-4o', description: 'Modelo principal' },
-	{ id: 'gpt-4o-mini', name: 'GPT-4o Mini', description: 'Modelo rápido' },
-	{ id: 'o1-preview', name: 'O1 Preview', description: 'Reasoning model' },
-	{ id: 'o1-mini', name: 'O1 Mini', description: 'Reasoning rápido' },
-	{ id: 'claude-3-5-sonnet', name: 'Claude 3.5 Sonnet', description: 'Anthropic model' },
-];
+import { StackspotCredentials, StackspotTokenResponse, StackspotAvailableModels } from './types.js';
+import { getChatAgents, getRealmConfig } from './realmAgents.js';
 
 export class StackspotAuthService {
 	private credentials: StackspotCredentials | null = null;
@@ -123,16 +116,24 @@ export class StackspotAuthService {
 
 	/**
 	 * Retorna os agents disponíveis para o realm logado
-	 * Por enquanto retorna a lista hardcoded
+	 * Usa a configuração hardcoded por realm
 	 */
 	getAvailableModels(): StackspotAvailableModels {
 		if (!this.credentials) {
 			throw new Error('[stackcode] Not authenticated');
 		}
 
+		const chatAgents = getChatAgents(this.credentials.realm);
+		const config = getRealmConfig(this.credentials.realm);
+
+		if (!config || chatAgents.length === 0) {
+			console.warn(`[stackcode] No agents configured for realm: ${this.credentials.realm}`);
+			return { agents: [], models: [] };
+		}
+
 		return {
-			agents: DEFAULT_AGENTS,
-			models: DEFAULT_AGENTS.map(a => a.id)
+			agents: chatAgents,
+			models: chatAgents.map(a => a.id)
 		};
 	}
 }

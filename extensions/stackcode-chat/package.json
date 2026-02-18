@@ -2905,12 +2905,12 @@
 				"properties": {
 					"github.copilot.chat.backgroundAgent.enabled": {
 						"type": "boolean",
-						"default": true,
+						"default": false,
 						"markdownDescription": "%github.copilot.config.backgroundAgent.enabled%"
 					},
 					"github.copilot.chat.cloudAgent.enabled": {
 						"type": "boolean",
-						"default": true,
+						"default": false,
 						"markdownDescription": "%github.copilot.config.cloudAgent.enabled%"
 					},
 					"github.copilot.chat.codeGeneration.useInstructionFiles": {
@@ -3197,7 +3197,7 @@
 					},
 					"github.copilot.chat.claudeAgent.enabled": {
 						"type": "boolean",
-						"default": true,
+						"default": false,
 						"markdownDescription": "%github.copilot.config.claudeAgent.enabled%",
 						"tags": [
 							"preview"
@@ -5474,7 +5474,10 @@
 		"configurationDefaults": {
 			"workbench.editorAssociations": {
 				"*.copilotmd": "vscode.markdown.preview.editor"
-			}
+			},
+			"github.copilot.chat.cloudAgent.enabled": false,
+			"github.copilot.chat.backgroundAgent.enabled": false,
+			"github.copilot.chat.claudeAgent.enabled": false
 		},
 		"keybindings": [
 			{

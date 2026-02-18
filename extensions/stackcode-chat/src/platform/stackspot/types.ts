@@ -20,6 +20,23 @@ export interface StackspotAgent {
 	id: string;
 	name: string;
 	description?: string;
+	/** The underlying LLM model name (e.g. 'gpt-5.1', 'gpt-4.1', 'sonnet4.5') */
+	llmModel?: string;
+	/** Whether this agent is used for interactive chat */
+	forChat?: boolean;
+	/** Whether this agent is used for code completions */
+	forCompletions?: boolean;
+	/** Whether this agent is used for AI support features (e.g. rename, explain) */
+	forAISupportFeatures?: boolean;
+}
+
+/**
+ * Configuration for a specific Stackspot realm.
+ */
+export interface StackspotRealmConfig {
+	realm: string;
+	displayName: string;
+	agents: StackspotAgent[];
 }
 
 export interface StackspotChatRequest {
