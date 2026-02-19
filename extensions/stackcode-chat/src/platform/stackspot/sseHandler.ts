@@ -40,8 +40,7 @@ export class StackspotSSEHandler {
 		try {
 			const response: StackspotSSEResponse = JSON.parse(data);
 			return this.processResponse(response);
-		} catch (error) {
-			console.error('[stackcode] Failed to parse SSE response:', error);
+		} catch {
 			return [];
 		}
 	}

@@ -59,7 +59,6 @@ export class StackspotAuthService {
 		}
 
 		const tokenUrl = `https://idm.stackspot.com/${this.credentials.realm}/oidc/oauth/token`;
-		console.log('[stackcode] Fetching access token from:', tokenUrl);
 
 		const params = new URLSearchParams({
 			grant_type: 'client_credentials',
@@ -70,12 +69,10 @@ export class StackspotAuthService {
 		// Use AbortController to timeout after 15 seconds
 		const controller = new AbortController();
 		const timeoutId = setTimeout(() => {
-			console.error('[stackcode] Fetch timed out after 15s');
 			controller.abort();
 		}, 15000);
 
 		try {
-			console.log('[stackcode] About to call fetch...');
 			const response = await fetch(tokenUrl, {
 				method: 'POST',
 				headers: {
@@ -85,7 +82,6 @@ export class StackspotAuthService {
 				signal: controller.signal,
 			});
 			clearTimeout(timeoutId);
-			console.log('[stackcode] Fetch response status:', response.status);
 
 			if (!response.ok) {
 				const error = await response.text();
@@ -96,14 +92,25 @@ export class StackspotAuthService {
 
 			this.accessToken = data.access_token;
 			this.tokenExpiresAt = Date.now() + (data.expires_in - 60) * 1000;
-			console.log('[stackcode] Access token obtained successfully, expires in', data.expires_in, 'seconds');
 
 			return this.accessToken;
 		} catch (e) {
 			clearTimeout(timeoutId);
-			console.error('[stackcode] Fetch error:', e);
 			throw e;
 		}
+	}
+
+	/**
+	 * Returns the cached access token synchronously (no refresh).
+	 * Returns undefined if no token is cached or it has expired.
+	 * Used by endpoints that need the token in a synchronous context
+	 * (e.g. getExtraHeaders).
+	 */
+	getCachedAccessToken(): string | undefined {
+		if (this.accessToken && Date.now() < this.tokenExpiresAt) {
+			return this.accessToken;
+		}
+		return undefined;
 	}
 
 	/**
@@ -127,7 +134,6 @@ export class StackspotAuthService {
 		const config = getRealmConfig(this.credentials.realm);
 
 		if (!config || chatAgents.length === 0) {
-			console.warn(`[stackcode] No agents configured for realm: ${this.credentials.realm}`);
 			return { agents: [], models: [] };
 		}
 

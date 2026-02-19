@@ -22,12 +22,10 @@ export class StackspotAuthContribution extends Disposable {
 		@ILogService private readonly _logService: ILogService,
 	) {
 		super();
-		console.log('[stackcode] StackspotAuthContribution constructor called');
 		try {
 			this._registerCommands();
-			console.log('[stackcode] Commands registered successfully');
 		} catch (e) {
-			console.error('[stackcode] Failed to register commands:', e);
+			this._logService.error(`[stackcode] Failed to register commands: ${e}`);
 		}
 		// Attempt to restore credentials from SecretStorage at startup
 		this._tryRestoreCredentials();
@@ -55,8 +53,7 @@ export class StackspotAuthContribution extends Disposable {
 	}
 
 	private async _login(args?: { realm: string; clientId: string; clientKey: string }): Promise<void> {
-		console.log('[stackcode] _login called, args present:', !!args, args ? `realm=${args.realm}` : 'no args');
-		this._logService.info('[stackcode] _login called');
+		this._logService.info('[stackcode] Login initiated');
 		const tokenManager = this._tokenManager as StackspotCopilotTokenManager;
 
 		let realm: string;
@@ -68,7 +65,6 @@ export class StackspotAuthContribution extends Disposable {
 			realm = args.realm;
 			clientId = args.clientId;
 			clientKey = args.clientKey;
-			console.log('[stackcode] Using inline form credentials');
 		} else {
 			// Fallback: show sequential InputBoxes (e.g. from Command Palette)
 			const realmInput = await window.showInputBox({
@@ -127,27 +123,23 @@ export class StackspotAuthContribution extends Disposable {
 
 		// Attempt login
 		try {
-			console.log('[stackcode] About to call tokenManager.login with realm:', realm);
 			await window.withProgress(
 				{
 					location: { viewId: 'workbench.panel.chat.view.copilot' },
 					title: 'Connecting to StackSpot AI...',
 				},
 				async () => {
-					console.log('[stackcode] Inside withProgress callback');
 					await tokenManager.login({
 						realm,
 						clientId,
 						clientKey,
 					});
-					console.log('[stackcode] tokenManager.login completed');
 				}
 			);
-			console.log('[stackcode] withProgress completed');
 			this._logService.info('[stackcode] Successfully connected to StackSpot AI');
 			window.showInformationMessage('Successfully connected to StackSpot AI!');
 		} catch (error) {
-			this._logService.error('[stackcode] Failed to connect to StackSpot AI:', error);
+			this._logService.error(`[stackcode] Failed to connect to StackSpot AI: ${error instanceof Error ? error.message : String(error)}`);
 			const message = error instanceof Error ? error.message : String(error);
 			window.showErrorMessage(`Failed to connect to StackSpot AI: ${message}`);
 			throw error; // Re-throw so the login form can show the error

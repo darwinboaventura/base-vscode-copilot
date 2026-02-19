@@ -20,13 +20,13 @@ import { deepClone, mixin } from '../../../util/vs/base/common/objects';
 import { generateUuid } from '../../../util/vs/base/common/uuid';
 import { IInstantiationService } from '../../../util/vs/platform/instantiation/common/instantiation';
 import { IChatMLFetcher } from '../../chat/common/chatMLFetcher';
-import { ChatLocation } from '../../chat/common/commonTypes';
+import { ChatLocation, ChatResponse } from '../../chat/common/commonTypes';
 import { getTextPart, toTextParts } from '../../chat/common/globalStringUtils';
 import { IConfigurationService } from '../../configuration/common/configurationService';
 import { ILogService } from '../../log/common/logService';
 import { FinishedCallback, OpenAiFunctionTool } from '../../networking/common/fetch';
 import { Response } from '../../networking/common/fetcherService';
-import { IChatEndpoint, ICreateEndpointBodyOptions, IEndpointBody } from '../../networking/common/networking';
+import { IChatEndpoint, ICreateEndpointBodyOptions, IEndpointBody, IMakeChatRequestOptions } from '../../networking/common/networking';
 import { ChatCompletion, FinishedCompletionReason } from '../../networking/common/openai';
 import { IExperimentationService } from '../../telemetry/common/nullExperimentationService';
 import { ITelemetryService } from '../../telemetry/common/telemetry';
@@ -80,6 +80,8 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 	 */
 	private static readonly _passthroughDebugNames = new Set([
 		'editingSession/speculate',
+		'XtabProvider',
+		'nes.nextCursorPosition',
 	]);
 
 	constructor(
@@ -123,8 +125,21 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 	 * the correct header here — getExtraHeaders() is spread AFTER the default
 	 * Authorization header in networkRequest() (networking.ts line 334-342),
 	 * so it overwrites the synthetic token with the real one.
+	 *
+	 * Tries in order:
+	 * 1. Live cached token from StackspotAuthService (always fresh)
+	 * 2. Fallback to token stored on modelMetadata (set during endpoint creation)
 	 */
 	public override getExtraHeaders(_location?: ChatLocation): Record<string, string> {
+		// Prefer live token from auth service (handles token refresh)
+		const liveToken = this._stackspotAuth.getCachedAccessToken();
+		if (liveToken) {
+			return {
+				'Authorization': `Bearer ${liveToken}`,
+			};
+		}
+
+		// Fallback to token stored on modelMetadata
 		const accessToken: string | undefined = (this.modelMetadata as any)._stackspotAccessToken;
 
 		if (!accessToken) {
@@ -156,7 +171,22 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 		// Extract tools from postOptions (populated by chatMLFetcher from requestOptions).
 		// Both options.postOptions.tools and options.requestOptions.tools carry the same tools;
 		// we use postOptions as the primary carrier (see createCapiRequestBody in networking.ts).
-		const tools = options.postOptions?.tools ?? options.requestOptions?.tools as OpenAiFunctionTool[] | undefined;
+		const rawTools = options.postOptions?.tools ?? options.requestOptions?.tools as OpenAiFunctionTool[] | undefined;
+		const toolChoice = options.postOptions?.tool_choice ?? options.requestOptions?.tool_choice;
+
+		// ── tool_choice handling ──────────────────────────────────────
+		// Stackspot API does NOT support tool_choice natively. We simulate it:
+		// - 'none'  → suppress tools entirely (don't inject definitions in prompt)
+		// - 'auto'  → default behavior (inject tools, LLM decides)
+		// - { type: 'function', function: { name: '...' } } → inject tools + add
+		//   a MANDATORY instruction forcing the LLM to call that specific tool
+		const isToolChoiceNone = toolChoice === 'none';
+		const forcedToolName = typeof toolChoice === 'object' && toolChoice?.type === 'function'
+			? toolChoice.function?.name
+			: undefined;
+
+		// When tool_choice is 'none', suppress all tools so the LLM won't attempt tool calls
+		const tools = isToolChoiceNone ? undefined : rawTools;
 		this._lastRequestTools = tools;
 		this._lastRequestDebugName = options.debugName;
 
@@ -171,7 +201,7 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 			const textLen = getTextPart(m.content).length;
 			return `${role}(text=${textLen}${hasToolCalls ? `,toolCalls=${(m as Raw.AssistantChatMessage).toolCalls!.length}` : ''}${toolCallId ? `,toolCallId=${toolCallId}` : ''})`;
 		}).join(', ');
-		this._stackspotLogService.info(`[stackcode] createRequestBody: ${options.messages.length} messages [${msgSummary}], tools=${tools?.length ?? 0}, debugName=${options.debugName}${isPassthrough ? ' (PASSTHROUGH)' : ''}`);
+		this._stackspotLogService.info(`[stackcode] createRequestBody: ${options.messages.length} messages [${msgSummary}], tools=${tools?.length ?? 0}, debugName=${options.debugName}${isPassthrough ? ' (PASSTHROUGH)' : ''}${isToolChoiceNone ? ' (tool_choice=none)' : ''}${forcedToolName ? ` (tool_choice=forced:${forcedToolName})` : ''}`);
 
 		// ── Passthrough mode ──────────────────────────────────────────
 		// For special request types like 'editingSession/speculate', the prompt
@@ -186,7 +216,7 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 			userPrompt = options.messages.map(m => getTextPart(m.content)).join('\n');
 			this._stackspotLogService.info(`[stackcode] Passthrough prompt for '${options.debugName}' (${userPrompt.length} chars)`);
 		} else {
-			userPrompt = this._convertMessagesToUserPrompt(options.messages, tools);
+			userPrompt = this._convertMessagesToUserPrompt(options.messages, tools, forcedToolName);
 		}
 
 		// Log a snippet of the generated prompt for debugging
@@ -596,6 +626,22 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 	}
 
 	/**
+	 * Override makeChatRequest2 to refresh the Stackspot access token
+	 * before every request. This ensures the token is always fresh,
+	 * even for endpoints created outside StackspotEndpointProvider
+	 * (e.g. xtab/NES endpoints where no one refreshes the token).
+	 */
+	public override async makeChatRequest2(options: IMakeChatRequestOptions, token: CancellationToken): Promise<ChatResponse> {
+		try {
+			const freshToken = await this._stackspotAuth.getAccessToken();
+			(this.modelMetadata as any)._stackspotAccessToken = freshToken;
+		} catch (e) {
+			this._stackspotLogService.warn(`[stackcode] Failed to refresh token before request: ${e}`);
+		}
+		return super.makeChatRequest2(options, token);
+	}
+
+	/**
 	 * Override cloneWithTokenOverride to create a StackspotChatEndpoint (not vanilla ChatEndpoint).
 	 * This preserves all Stackspot overrides when the endpoint is cloned.
 	 */
@@ -635,6 +681,7 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 	private _convertMessagesToUserPrompt(
 		messages: Raw.ChatMessage[],
 		tools?: OpenAiFunctionTool[],
+		forcedToolName?: string,
 	): string {
 		const hasTools = tools && tools.length > 0;
 		const promptSections: string[] = [];
@@ -704,9 +751,19 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 						if (assistantMsg.toolCalls && assistantMsg.toolCalls.length > 0) {
 							for (const tc of assistantMsg.toolCalls) {
 								const name = tc.function.name;
-								const params = tc.function.arguments; // Already a JSON string
+								const rawParams = tc.function.arguments; // JSON string from toolCallParser
 								const id = tc.id;
-								segments.push(`<tool_call id="${id}" tool="${name}">\n${params}\n</tool_call>`);
+								// Pretty-print the arguments JSON for better LLM readability.
+								// The raw params are a compact JSON string (from JSON.stringify in
+								// toolCallParser). Expanding them makes tool call history easier
+								// for the LLM to parse, especially for large payloads like file content.
+								let prettyParams: string;
+								try {
+									prettyParams = JSON.stringify(JSON.parse(rawParams), null, 2);
+								} catch {
+									prettyParams = rawParams; // Fallback to raw if parsing fails
+								}
+								segments.push(`<tool_call id="${id}" tool="${name}">\n${prettyParams}\n</tool_call>`);
 							}
 						}
 
@@ -734,6 +791,22 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 			if (historyParts.length > 0) {
 				promptSections.push(`<history>\n${historyParts.join('\n\n')}\n</history>`);
 			}
+		}
+
+		// ── Forced tool call instruction ──────────────────────────────
+		// When tool_choice specifies a forced function call, we inject an explicit
+		// instruction telling the LLM it MUST respond with that specific tool call.
+		// This simulates OpenAI's tool_choice: { type: 'function', function: { name: '...' } }
+		if (forcedToolName && hasTools) {
+			promptSections.push(
+				`<system>\n` +
+				`MANDATORY: You MUST respond ONLY with a single <tool_use> call to the "${forcedToolName}" tool.\n` +
+				`Do NOT respond with any text, explanation, or commentary.\n` +
+				`Your entire response must be exactly:\n` +
+				`<tool_use>{"name":"${forcedToolName}","parameters":{...}}</tool_use>\n` +
+				`Fill in the parameters according to the tool's schema.\n` +
+				`</system>`
+			);
 		}
 
 		// ── Format reminder (injected LAST when tools are present) ─────

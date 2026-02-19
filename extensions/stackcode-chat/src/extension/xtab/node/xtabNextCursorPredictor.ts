@@ -6,13 +6,18 @@
 import { RequestType } from '@vscode/copilot-api';
 import { ChatFetchResponseType, ChatLocation } from '../../../platform/chat/common/commonTypes';
 import { ConfigKey, IConfigurationService } from '../../../platform/configuration/common/configurationService';
+import { ICopilotTokenManager } from '../../../platform/authentication/common/copilotTokenManager';
+import { StackspotCopilotTokenManager } from '../../../platform/authentication/vscode-node/stackspotCopilotTokenManager';
 import { ChatEndpoint } from '../../../platform/endpoint/node/chatEndpoint';
+import { StackspotChatEndpoint } from '../../../platform/endpoint/node/stackspotChatEndpoint';
+import { IChatModelInformation } from '../../../platform/endpoint/common/endpointProvider';
+import { getCompletionAgent } from '../../../platform/stackspot/realmAgents';
 import { NextCursorLinePrediction } from '../../../platform/inlineEdits/common/dataTypes/nextCursorLinePrediction';
 import * as xtabPromptOptions from '../../../platform/inlineEdits/common/dataTypes/xtabPromptOptions';
 import { parseLintOptionString } from '../../../platform/inlineEdits/common/dataTypes/xtabPromptOptions';
 import { StatelessNextEditTelemetryBuilder } from '../../../platform/inlineEdits/common/statelessNextEditProvider';
 import { ILanguageDiagnosticsService } from '../../../platform/languages/common/languageDiagnosticsService';
-import { ILogger } from '../../../platform/log/common/logService';
+import { ILogger, ILogService } from '../../../platform/log/common/logService';
 import { OptionalChatRequestParams } from '../../../platform/networking/common/fetch';
 import { IExperimentationService } from '../../../platform/telemetry/common/nullExperimentationService';
 import { backwardCompatSetting } from '../../../util/common/backwardCompatSetting';
@@ -159,29 +164,73 @@ export class XtabNextCursorPredictor {
 		const url = this.configService.getConfig(ConfigKey.TeamInternal.InlineEditsNextCursorPredictionUrl);
 		const secretKey = this.configService.getConfig(ConfigKey.TeamInternal.InlineEditsNextCursorPredictionApiKey);
 
-		const endpoint = this.instaService.createInstance(ChatEndpoint, {
-			id: modelName,
-			name: 'nes.nextCursorPosition',
-			urlOrRequestMetadata: url ? url : { type: RequestType.ProxyChatCompletions },
-			model_picker_enabled: false,
-			is_chat_default: false,
-			is_chat_fallback: false,
-			version: '',
-			capabilities: {
-				type: 'chat',
-				family: '',
-				tokenizer: TokenizerType.CL100K,
-				limits: undefined,
-				supports: {
-					parallel_tool_calls: false,
-					tool_calls: false,
-					streaming: true,
-					vision: false,
-					prediction: false,
-					thinking: false
+		// ── STACKCODE: Route cursor prediction through Stackspot Completion Agent ──
+		// Try to create a StackspotChatEndpoint using the realm's Completion Agent
+		// instead of a ChatEndpoint with ProxyChatCompletions (which would fail with 401).
+		// Falls back to original ChatEndpoint if Stackspot is not available or if a
+		// custom URL is configured (team-internal override).
+		let endpoint: ChatEndpoint;
+		if (!url) {
+			try {
+				const tokenManager = this.instaService.invokeFunction(accessor => accessor.get(ICopilotTokenManager));
+				if (tokenManager instanceof StackspotCopilotTokenManager) {
+					const authService = tokenManager.getAuthService();
+					const credentials = authService.getCredentials();
+					if (credentials?.realm) {
+						const completionAgent = getCompletionAgent(credentials.realm);
+						if (completionAgent) {
+							const logService = this.instaService.invokeFunction(accessor => accessor.get(ILogService));
+							logService.info(`[stackcode] Creating Stackspot cursor prediction endpoint with Completion Agent: ${completionAgent.name} (${completionAgent.id})`);
+
+							const modelInfo: IChatModelInformation = {
+								id: modelName,
+								name: 'nes.nextCursorPosition',
+								model_picker_enabled: false,
+								is_chat_default: false,
+								is_chat_fallback: false,
+								version: '',
+								capabilities: {
+									type: 'chat',
+									family: 'cursor-prediction',
+									tokenizer: TokenizerType.CL100K,
+									limits: undefined,
+									supports: {
+										parallel_tool_calls: false,
+										tool_calls: false,
+										streaming: true,
+										vision: false,
+										prediction: false,
+										thinking: false
+									}
+								},
+							};
+
+							const accessToken = authService.getCachedAccessToken();
+							if (accessToken) {
+								(modelInfo as any)._stackspotAccessToken = accessToken;
+							}
+
+							endpoint = this.instaService.createInstance(
+								StackspotChatEndpoint,
+								modelInfo,
+								authService,
+								completionAgent.id,
+							);
+						} else {
+							endpoint = this._createFallbackEndpoint(modelName, url);
+						}
+					} else {
+						endpoint = this._createFallbackEndpoint(modelName, url);
+					}
+				} else {
+					endpoint = this._createFallbackEndpoint(modelName, url);
 				}
-			},
-		});
+			} catch {
+				endpoint = this._createFallbackEndpoint(modelName, url);
+			}
+		} else {
+			endpoint = this._createFallbackEndpoint(modelName, url);
+		}
 
 		const maxResponseTokens = this.configService.getExperimentBasedConfig(ConfigKey.TeamInternal.InlineEditsNextCursorPredictionMaxResponseTokens, this.expService);
 
@@ -245,6 +294,36 @@ export class XtabNextCursorPredictor {
 		}
 
 		return parseLintOptionString(expLintOptions);
+	}
+
+	/**
+	 * Creates a fallback ChatEndpoint with ProxyChatCompletions or custom URL.
+	 * Used when Stackspot is not available.
+	 */
+	private _createFallbackEndpoint(modelName: string, url: string | undefined): ChatEndpoint {
+		return this.instaService.createInstance(ChatEndpoint, {
+			id: modelName,
+			name: 'nes.nextCursorPosition',
+			urlOrRequestMetadata: url ? url : { type: RequestType.ProxyChatCompletions },
+			model_picker_enabled: false,
+			is_chat_default: false,
+			is_chat_fallback: false,
+			version: '',
+			capabilities: {
+				type: 'chat',
+				family: '',
+				tokenizer: TokenizerType.CL100K,
+				limits: undefined,
+				supports: {
+					parallel_tool_calls: false,
+					tool_calls: false,
+					streaming: true,
+					vision: false,
+					prediction: false,
+					thinking: false
+				}
+			},
+		});
 	}
 }
 

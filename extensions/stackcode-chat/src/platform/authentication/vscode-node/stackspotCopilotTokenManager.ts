@@ -101,13 +101,11 @@ export class StackspotCopilotTokenManager extends Disposable implements ICopilot
 	 * which causes the extension to re-evaluate auth state and activate the chat UI.
 	 */
 	async login(credentials: StackspotCredentials): Promise<void> {
-		console.log('[stackcode] StackspotCopilotTokenManager.login called, realm:', credentials.realm);
+		this._logService.info(`[stackcode] Login called, realm: ${credentials.realm}`);
 		await this._authService.login(credentials);
-		console.log('[stackcode] authService.login succeeded, storing credentials...');
 		// Persist credentials in SecretStorage for auto-restore on next startup
 		await this._storeCredentials(credentials);
 		this._cachedToken = undefined; // clear cache so next getCopilotToken() creates fresh token
-		console.log('[stackcode] Firing onDidCopilotTokenRefresh');
 		this._onDidCopilotTokenRefresh.fire();
 	}
 

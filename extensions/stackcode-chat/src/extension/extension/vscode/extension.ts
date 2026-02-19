@@ -65,26 +65,20 @@ export async function baseActivate(configuration: IExtensionActivationConfigurat
 
 		// Await intialization of exp service. This ensure cache is fresh.
 		// It will then auto refresh every 30 minutes after that.
-		console.log('[stackcode] baseActivate: about to call hasTreatments()');
 		// STACKCODE: Add timeout to prevent hasTreatments from blocking indefinitely
 		// when Stackspot auth doesn't provide a valid GitHub/Copilot token for TAS
 		await Promise.race([
 			expService.hasTreatments(),
 			new Promise<void>(resolve => setTimeout(() => {
-				console.log('[stackcode] baseActivate: hasTreatments() timed out after 5s, continuing anyway');
 				resolve();
 			}, 5000))
 		]);
-		console.log('[stackcode] baseActivate: hasTreatments() completed');
 
 		// THIS is awaited because some contributions can block activation
 		// via `IExtensionContribution#activationBlocker`
-		console.log('[stackcode] baseActivate: about to create ContributionCollection');
 		const contributions = instantiationService.createInstance(ContributionCollection, configuration.contributions);
-		console.log('[stackcode] baseActivate: ContributionCollection created');
 		context.subscriptions.push(contributions);
 		await contributions.waitForActivationBlockers();
-		console.log('[stackcode] baseActivate: activation complete');
 	});
 
 	if (ExtensionMode.Test === context.extensionMode && !isScenarioAutomation) {
