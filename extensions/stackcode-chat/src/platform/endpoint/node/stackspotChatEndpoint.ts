@@ -64,6 +64,24 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 	 */
 	private _lastRequestTools: OpenAiFunctionTool[] | undefined;
 
+	/**
+	 * Stores the debugName from the last createRequestBody() call so that
+	 * processResponseFromChatEndpoint() can adjust behavior for special
+	 * request types (e.g. editingSession/speculate).
+	 */
+	private _lastRequestDebugName: string | undefined;
+
+	/**
+	 * Debug names that indicate a "passthrough" prompt — the message content
+	 * should be sent as-is to user_prompt WITHOUT XML wrapping.
+	 *
+	 * These are single-message, no-tools requests where the prompt is
+	 * carefully formatted for continuation (e.g. CodeMapper's fast edit path).
+	 */
+	private static readonly _passthroughDebugNames = new Set([
+		'editingSession/speculate',
+	]);
+
 	constructor(
 		modelMetadata: IChatModelInformation,
 		private readonly _stackspotAuth: StackspotAuthService,
@@ -140,6 +158,9 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 		// we use postOptions as the primary carrier (see createCapiRequestBody in networking.ts).
 		const tools = options.postOptions?.tools ?? options.requestOptions?.tools as OpenAiFunctionTool[] | undefined;
 		this._lastRequestTools = tools;
+		this._lastRequestDebugName = options.debugName;
+
+		const isPassthrough = StackspotChatEndpoint._passthroughDebugNames.has(options.debugName);
 
 		// Log message structure for debugging tool call flow
 		const msgSummary = options.messages.map(m => {
@@ -150,9 +171,23 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 			const textLen = getTextPart(m.content).length;
 			return `${role}(text=${textLen}${hasToolCalls ? `,toolCalls=${(m as Raw.AssistantChatMessage).toolCalls!.length}` : ''}${toolCallId ? `,toolCallId=${toolCallId}` : ''})`;
 		}).join(', ');
-		this._stackspotLogService.info(`[stackcode] createRequestBody: ${options.messages.length} messages [${msgSummary}], tools=${tools?.length ?? 0}`);
+		this._stackspotLogService.info(`[stackcode] createRequestBody: ${options.messages.length} messages [${msgSummary}], tools=${tools?.length ?? 0}, debugName=${options.debugName}${isPassthrough ? ' (PASSTHROUGH)' : ''}`);
 
-		const userPrompt = this._convertMessagesToUserPrompt(options.messages, tools);
+		// ── Passthrough mode ──────────────────────────────────────────
+		// For special request types like 'editingSession/speculate', the prompt
+		// is a carefully formatted single User message designed for LLM continuation.
+		// Wrapping it in our XML <prompt>/<history> structure would BREAK the
+		// continuation pattern, causing the LLM to respond with a full markdown
+		// fenced code block instead of continuing from where the prompt left off.
+		// In passthrough mode, we extract the raw message content and send it as-is.
+		let userPrompt: string;
+		if (isPassthrough) {
+			// Passthrough: concatenate all message content as-is (typically a single User message)
+			userPrompt = options.messages.map(m => getTextPart(m.content)).join('\n');
+			this._stackspotLogService.info(`[stackcode] Passthrough prompt for '${options.debugName}' (${userPrompt.length} chars)`);
+		} else {
+			userPrompt = this._convertMessagesToUserPrompt(options.messages, tools);
+		}
 
 		// Log a snippet of the generated prompt for debugging
 		const promptSnippet = userPrompt.length > 500 ? userPrompt.substring(0, 250) + '\n...[truncated]...\n' + userPrompt.substring(userPrompt.length - 250) : userPrompt;
@@ -203,6 +238,7 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 	): Promise<AsyncIterableObject<ChatCompletion>> {
 		const self = this;
 		const hasTools = !!this._lastRequestTools && this._lastRequestTools.length > 0;
+		const debugName = this._lastRequestDebugName ?? 'unknown';
 
 		return new AsyncIterableObject<ChatCompletion>(async (emitter) => {
 			const textDecoder = response.body.pipeThrough(new TextDecoderStream());
@@ -285,7 +321,7 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 								if (hasDetectedToolCalls) {
 									// Emit final delta with all completed tool calls
 									const fullText = plainTextParts.join('');
-									logService.info(`[stackcode] SSE complete: ${completedToolCalls.length} tool calls detected: ${completedToolCalls.map(tc => `${tc.name}(id=${tc.id}, args=${tc.arguments.substring(0, 100)})`).join(', ')}`);
+									logService.info(`[stackcode] SSE complete (${debugName}): ${completedToolCalls.length} tool calls detected: ${completedToolCalls.map(tc => `${tc.name}(id=${tc.id}, args=${tc.arguments.substring(0, 100)})`).join(', ')}`);
 									await finishCallback(fullText, 0, {
 										text: '',
 										copilotToolCalls: completedToolCalls.map(tc => ({
@@ -298,7 +334,7 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 								} else {
 									// No tool calls — emit as plain text
 									const fullText = plainTextParts.join('');
-									logService.info(`[stackcode] SSE complete: NO tool calls detected, text length=${fullText.length}`);
+									logService.info(`[stackcode] SSE complete (${debugName}): NO tool calls detected, text length=${fullText.length}`);
 									await finishCallback(fullText, 0, { text: '' });
 									self._emitCompletion(emitter, fullText, allTokens, inputTokens, outputTokens, requestId, finishReason, telemetryData);
 								}

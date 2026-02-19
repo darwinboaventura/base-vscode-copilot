@@ -16,8 +16,6 @@ import { NotebookDocumentSnapshot } from '../../../../platform/editing/common/no
 import { TextDocumentSnapshot } from '../../../../platform/editing/common/textDocumentSnapshot';
 import { IEndpointProvider } from '../../../../platform/endpoint/common/endpointProvider';
 import { ChatEndpoint } from '../../../../platform/endpoint/node/chatEndpoint';
-import { Proxy4oEndpoint } from '../../../../platform/endpoint/node/proxy4oEndpoint';
-import { ProxyInstantApplyShortEndpoint } from '../../../../platform/endpoint/node/proxyInstantApplyShortEndpoint';
 import { ILogService } from '../../../../platform/log/common/logService';
 import { IEditLogService } from '../../../../platform/multiFileEdit/common/editLogService';
 import { IMultiFileEditInternalTelemetryService } from '../../../../platform/multiFileEdit/common/multiFileEditQualityTelemetry';
@@ -312,14 +310,19 @@ export class CodeMapper {
 		this.shortContextLimit = configurationService.getExperimentBasedConfig<number>(ConfigKey.Advanced.InstantApplyShortContextLimit, experimentationService) ?? 8000;
 	}
 
-	private async getGpt4oProxyEndpoint(): Promise<Proxy4oEndpoint> {
+	private async getGpt4oProxyEndpoint(): Promise<ChatEndpoint> {
 		await this.experimentationService.hasTreatments();
-		return this.instantiationService.createInstance(Proxy4oEndpoint);
+		// STACKCODE: Route through IEndpointProvider so all requests go via
+		// StackspotChatEndpoint instead of directly using Proxy4oEndpoint
+		// (which routes to CAPI / GitHub proxy and fails with 401).
+		return await this.endpointProvider.getChatEndpoint('gpt-4.1') as ChatEndpoint;
 	}
 
-	private async getShortIAEndpoint(): Promise<ProxyInstantApplyShortEndpoint> {
+	private async getShortIAEndpoint(): Promise<ChatEndpoint> {
 		await this.experimentationService.hasTreatments();
-		return this.instantiationService.createInstance(ProxyInstantApplyShortEndpoint);
+		// STACKCODE: Same as above — use IEndpointProvider instead of
+		// directly instantiating ProxyInstantApplyShortEndpoint.
+		return await this.endpointProvider.getChatEndpoint('gpt-4.1') as ChatEndpoint;
 	}
 
 	public async mapCode(request: ICodeMapperRequestInput, resultStream: MappedEditsResponseStream, telemetryInfo: ICodeMapperTelemetryInfo | undefined, token: CancellationToken): Promise<CodeMapperOutcome | undefined> {
