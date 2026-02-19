@@ -49,12 +49,28 @@ export class StackspotCopilotTokenManager extends Disposable implements ICopilot
 	private readonly _authService: StackspotAuthService;
 	private _cachedToken: CopilotToken | undefined;
 
+	/**
+	 * Tracks the pending tryRestoreCredentials() promise.
+	 * getCopilotToken() awaits this before throwing GitHubLoginFailedError,
+	 * preventing the login screen from flickering on startup while
+	 * SecretStorage is still being read.
+	 */
+	private _restorePromise: Promise<boolean> | undefined;
+
 	constructor(
 		@IVSCodeExtensionContext private readonly _extensionContext: IVSCodeExtensionContext,
 		@ILogService private readonly _logService: ILogService,
 	) {
 		super();
 		this._authService = new StackspotAuthService();
+
+		// Kick off credential restoration immediately at construction time.
+		// This ensures _restorePromise is set BEFORE any contribution constructor
+		// calls getCopilotToken(). ContextKeysContribution (which triggers the
+		// login screen) is instantiated after this service, so getCopilotToken()
+		// will find _restorePromise set and await it instead of immediately
+		// throwing GitHubLoginFailedError — preventing the login screen flicker.
+		this.tryRestoreCredentials();
 	}
 
 	/**
@@ -66,11 +82,24 @@ export class StackspotCopilotTokenManager extends Disposable implements ICopilot
 
 	/**
 	 * Attempts to restore credentials from SecretStorage.
-	 * Called by StackspotAuthContribution at startup.
-	 * If credentials are found and valid, authenticates silently.
+	 * Called internally at construction time and can be called externally.
+	 * If a restore is already in progress, returns the existing promise
+	 * to avoid double-restoring.
 	 * Returns true if credentials were restored successfully.
 	 */
-	async tryRestoreCredentials(): Promise<boolean> {
+	tryRestoreCredentials(): Promise<boolean> {
+		if (this._restorePromise) {
+			return this._restorePromise;
+		}
+		const promise = this._doRestoreCredentials();
+		this._restorePromise = promise;
+		promise.finally(() => {
+			this._restorePromise = undefined;
+		});
+		return promise;
+	}
+
+	private async _doRestoreCredentials(): Promise<boolean> {
 		try {
 			const realm = await this._extensionContext.secrets.get(SECRET_KEY_REALM);
 			const clientId = await this._extensionContext.secrets.get(SECRET_KEY_CLIENT_ID);
@@ -161,8 +190,17 @@ export class StackspotCopilotTokenManager extends Disposable implements ICopilot
 	 * error that the original VSCodeCopilotTokenManager throws when GitHub
 	 * auth fails, so the existing context key / welcome view infrastructure
 	 * handles it correctly.
+	 *
+	 * If credential restoration is in progress (_restorePromise is set),
+	 * awaits it first before checking auth state. This prevents the login
+	 * screen from flickering on startup while SecretStorage is being read.
 	 */
 	async getCopilotToken(_force?: boolean): Promise<CopilotToken> {
+		// Wait for any pending credential restore before deciding auth state
+		if (this._restorePromise) {
+			await this._restorePromise;
+		}
+
 		if (!this._authService.getCredentials()) {
 			throw new GitHubLoginFailedError('GitHubLoginFailed');
 		}
