@@ -5,8 +5,10 @@
 
 import { Emitter, Event } from '../../../../../base/common/event.js';
 import { IMarkdownString } from '../../../../../base/common/htmlContent.js';
-import { Disposable } from '../../../../../base/common/lifecycle.js';
+import { Disposable, DisposableStore } from '../../../../../base/common/lifecycle.js';
 import { ThemeIcon } from '../../../../../base/common/themables.js';
+import { URI } from '../../../../../base/common/uri.js';
+import { ICommandService } from '../../../../../platform/commands/common/commands.js';
 import { ContextKeyExpression } from '../../../../../platform/contextkey/common/contextkey.js';
 import { Registry } from '../../../../../platform/registry/common/platform.js';
 
@@ -14,11 +16,24 @@ export const enum ChatViewsWelcomeExtensions {
 	ChatViewsWelcomeRegistry = 'workbench.registry.chat.viewsWelcome',
 }
 
+/**
+ * Services passed to `inputPartFactory` so the factory can execute commands
+ * (e.g. login) without needing full DI.
+ */
+export interface IChatViewsWelcomeServices {
+	readonly commandService: ICommandService;
+}
+
 export interface IChatViewsWelcomeDescriptor {
-	readonly icon?: ThemeIcon;
+	readonly icon?: ThemeIcon | URI;
 	readonly title: string;
 	readonly content: IMarkdownString;
 	readonly when: ContextKeyExpression;
+	/**
+	 * Optional factory that creates a custom DOM element (e.g. a login form)
+	 * to be rendered below the welcome message.
+	 */
+	readonly inputPartFactory?: (store: DisposableStore, services: IChatViewsWelcomeServices) => HTMLElement;
 }
 
 export interface IChatViewsWelcomeContributionRegistry {

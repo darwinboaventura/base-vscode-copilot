@@ -7,7 +7,8 @@ import './media/gettingStarted.css';
 import { localize } from '../../../../nls.js';
 import { EditorInput } from '../../../common/editor/editorInput.js';
 import { URI } from '../../../../base/common/uri.js';
-import { Schemas } from '../../../../base/common/network.js';
+import { FileAccess, Schemas } from '../../../../base/common/network.js';
+import { ThemeIcon } from '../../../../base/common/themables.js';
 import { IUntypedEditorInput } from '../../../common/editor.js';
 import { IEditorOptions } from '../../../../platform/editor/common/editor.js';
 
@@ -42,6 +43,10 @@ export class GettingStartedInput extends EditorInput {
 
 	override get editorId(): string | undefined {
 		return this.typeId;
+	}
+
+	override getIcon(): ThemeIcon | URI | undefined {
+		return FileAccess.asBrowserUri('vs/workbench/contrib/chat/browser/widget/media/stackspot-icon.svg');
 	}
 
 	override toUntyped(): IUntypedEditorInput {

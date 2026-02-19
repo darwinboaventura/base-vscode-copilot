@@ -32,7 +32,7 @@ import { ITelemetryService } from '../../../../../platform/telemetry/common/tele
 import { defaultButtonStyles } from '../../../../../platform/theme/browser/defaultStyles.js';
 import { ChatAgentLocation } from '../../common/constants.js';
 import { IChatWidgetService } from '../chat.js';
-import { chatViewsWelcomeRegistry, IChatViewsWelcomeDescriptor } from './chatViewsWelcome.js';
+import { chatViewsWelcomeRegistry, IChatViewsWelcomeDescriptor, IChatViewsWelcomeServices } from './chatViewsWelcome.js';
 
 const $ = dom.$;
 
@@ -59,6 +59,7 @@ export class ChatViewWelcomeController extends Disposable {
 		private readonly location: ChatAgentLocation,
 		@IContextKeyService private contextKeyService: IContextKeyService,
 		@IInstantiationService private instantiationService: IInstantiationService,
+		@ICommandService private commandService: ICommandService,
 	) {
 		super();
 
@@ -104,18 +105,6 @@ export class ChatViewWelcomeController extends Disposable {
 		}
 	}
 
-	/**
-	 * Checks if the matching descriptor is the StackCode login descriptor.
-	 * We detect this by checking if the `when` clause contains the
-	 * `github.copilot.interactiveSession.gitHubLoginFailed` key and the
-	 * content references the `stackcode.login` command.
-	 */
-	private _isStackCodeLoginDescriptor(descriptor: IChatViewsWelcomeDescriptor): boolean {
-		const keys = descriptor.when.keys();
-		return keys.includes('github.copilot.interactiveSession.gitHubLoginFailed')
-			&& descriptor.content.value.includes('stackcode.login');
-	}
-
 	private render(descriptors: ReadonlyArray<IChatViewsWelcomeDescriptor>): void {
 		this.renderDisposables.clear();
 		dom.clearNode(this.element!);
@@ -123,19 +112,19 @@ export class ChatViewWelcomeController extends Disposable {
 		const matchingDescriptors = descriptors.filter(descriptor => this.contextKeyService.contextMatchesRules(descriptor.when));
 		const enabledDescriptor = matchingDescriptors.at(0);
 		if (enabledDescriptor) {
-			// STACKCODE: If this is the StackCode login descriptor, render the custom login form
-			if (this._isStackCodeLoginDescriptor(enabledDescriptor)) {
-				const loginView = this.renderDisposables.add(this.instantiationService.createInstance(StackCodeLoginPart));
-				this.element!.appendChild(loginView.element);
-			} else {
-				const content: IChatViewWelcomeContent = {
-					icon: enabledDescriptor.icon,
-					title: enabledDescriptor.title,
-					message: enabledDescriptor.content
-				};
-				const welcomeView = this.renderDisposables.add(this.instantiationService.createInstance(ChatViewWelcomePart, content, { firstLinkToButton: true, location: this.location }));
-				this.element!.appendChild(welcomeView.element);
+			let inputPart: HTMLElement | undefined;
+			if (enabledDescriptor.inputPartFactory) {
+				const services: IChatViewsWelcomeServices = { commandService: this.commandService };
+				inputPart = enabledDescriptor.inputPartFactory(this.renderDisposables, services);
 			}
+			const content: IChatViewWelcomeContent = {
+				icon: enabledDescriptor.icon,
+				title: enabledDescriptor.title,
+				message: enabledDescriptor.content,
+				inputPart
+			};
+			const welcomeView = this.renderDisposables.add(this.instantiationService.createInstance(ChatViewWelcomePart, content, { firstLinkToButton: true, location: this.location }));
+			this.element!.appendChild(welcomeView.element);
 			this.container.classList.toggle('chat-view-welcome-visible', true);
 			this._isShowingWelcome.set(true, undefined);
 		} else {
@@ -220,6 +209,12 @@ export class ChatViewWelcomePart extends Disposable {
 
 			const messageResult = this.renderMarkdownMessageContent(content.message, options);
 			dom.append(message, messageResult.element);
+
+			// Input part (e.g. login form)
+			if (content.inputPart) {
+				const inputPartContainer = dom.append(this.element, $('.chat-welcome-view-input-part'));
+				inputPartContainer.appendChild(content.inputPart);
+			}
 
 			// Additional message
 			if (content.additionalMessage) {
@@ -376,185 +371,5 @@ export class ChatViewWelcomePart extends Disposable {
 			firstLink.replaceWith(button.element);
 		}
 		return messageResult;
-	}
-}
-
-/**
- * STACKCODE: Custom login form rendered inline in the chat welcome area.
- * Displays Client ID, Client Key, Realm fields + "Connect and Continue" button
- * matching the StackSpot AI branding design.
- */
-class StackCodeLoginPart extends Disposable {
-	public readonly element: HTMLElement;
-
-	constructor(
-		@ICommandService private readonly commandService: ICommandService,
-		@ILogService private readonly logService: ILogService,
-	) {
-		super();
-
-		this.element = dom.$('.stackcode-login-view');
-
-		try {
-			// Logo (orange dots grid pattern — built with DOM API for CSP compliance)
-			const logoContainer = dom.append(this.element, $('.stackcode-login-logo'));
-			const svgNS = 'http://www.w3.org/2000/svg';
-			const svg = document.createElementNS(svgNS, 'svg');
-			svg.setAttribute('width', '64');
-			svg.setAttribute('height', '64');
-			svg.setAttribute('viewBox', '0 0 64 64');
-			svg.setAttribute('fill', 'none');
-
-			const circlePositions = [
-				[32, 8], [20, 14], [32, 20], [44, 14],
-				[14, 26], [26, 26], [38, 26], [50, 26],
-				[8, 38], [20, 38], [32, 38], [44, 38], [56, 38],
-				[14, 50], [26, 50], [38, 50], [50, 50],
-				[20, 56], [32, 56], [44, 56],
-			];
-			for (const [cx, cy] of circlePositions) {
-				const circle = document.createElementNS(svgNS, 'circle');
-				circle.setAttribute('cx', String(cx));
-				circle.setAttribute('cy', String(cy));
-				circle.setAttribute('r', '4');
-				circle.setAttribute('fill', '#E8732A');
-				svg.appendChild(circle);
-			}
-			logoContainer.appendChild(svg);
-
-			// Title
-			const title = dom.append(this.element, $('.stackcode-login-title'));
-			title.textContent = 'StackSpot AI';
-
-			// Subtitle
-			const subtitle = dom.append(this.element, $('.stackcode-login-subtitle'));
-			subtitle.textContent = 'Enter your credentials to connect to StackSpot AI.';
-
-			// Form container
-			const form = dom.append(this.element, $('.stackcode-login-form'));
-
-			// Client ID field
-			const clientIdGroup = dom.append(form, $('.stackcode-login-field'));
-			const clientIdLabel = dom.append(clientIdGroup, $('label.stackcode-login-label'));
-			clientIdLabel.textContent = 'Client ID';
-			const clientIdInput = dom.append(clientIdGroup, $('input.stackcode-login-input')) as HTMLInputElement;
-			clientIdInput.type = 'text';
-			clientIdInput.placeholder = 'Enter your Client ID';
-			clientIdInput.autocomplete = 'off';
-			clientIdInput.spellcheck = false;
-
-			// Client Key field
-			const clientKeyGroup = dom.append(form, $('.stackcode-login-field'));
-			const clientKeyLabel = dom.append(clientKeyGroup, $('label.stackcode-login-label'));
-			clientKeyLabel.textContent = 'Client Key';
-			const clientKeyInput = dom.append(clientKeyGroup, $('input.stackcode-login-input')) as HTMLInputElement;
-			clientKeyInput.type = 'password';
-			clientKeyInput.placeholder = 'Enter your Client Key';
-			clientKeyInput.autocomplete = 'off';
-
-			// Realm field
-			const realmGroup = dom.append(form, $('.stackcode-login-field'));
-			const realmLabel = dom.append(realmGroup, $('label.stackcode-login-label'));
-			realmLabel.textContent = 'Realm';
-			const realmInput = dom.append(realmGroup, $('input.stackcode-login-input')) as HTMLInputElement;
-			realmInput.type = 'text';
-			realmInput.placeholder = 'e.g. my-company';
-			realmInput.autocomplete = 'off';
-			realmInput.spellcheck = false;
-
-			// Error message container (hidden by default)
-			const errorContainer = dom.append(form, $('.stackcode-login-error'));
-			errorContainer.style.display = 'none';
-
-			// Connect button
-			const buttonContainer = dom.append(form, $('.stackcode-login-button-container'));
-			const connectButton = dom.append(buttonContainer, $('button.stackcode-login-button')) as HTMLButtonElement;
-			connectButton.textContent = 'Connect and Continue';
-			connectButton.type = 'button';
-
-			// Security notice
-			const notice = dom.append(this.element, $('.stackcode-login-notice'));
-			notice.textContent = 'Your credentials are stored securely in the application.';
-
-			// Form submission handler
-			const doLogin = async () => {
-				console.log('[stackcode-ui] doLogin called');
-				const realm = realmInput.value.trim();
-				const clientId = clientIdInput.value.trim();
-				const clientKey = clientKeyInput.value.trim();
-
-				// Validation
-				if (!clientId) {
-					errorContainer.textContent = 'Client ID is required.';
-					errorContainer.style.display = 'block';
-					clientIdInput.focus();
-					return;
-				}
-				if (!clientKey) {
-					errorContainer.textContent = 'Client Key is required.';
-					errorContainer.style.display = 'block';
-					clientKeyInput.focus();
-					return;
-				}
-				if (!realm) {
-					errorContainer.textContent = 'Realm is required.';
-					errorContainer.style.display = 'block';
-					realmInput.focus();
-					return;
-				}
-
-				// Clear error
-				errorContainer.style.display = 'none';
-
-				// Disable form during login
-				connectButton.disabled = true;
-				connectButton.textContent = 'Connecting...';
-				clientIdInput.disabled = true;
-				clientKeyInput.disabled = true;
-				realmInput.disabled = true;
-
-				try {
-					console.log('[stackcode-ui] About to executeCommand stackcode.login with realm:', realm);
-					await this.commandService.executeCommand('stackcode.login', {
-						realm,
-						clientId,
-						clientKey,
-					});
-					console.log('[stackcode-ui] executeCommand completed successfully');
-				} catch (err) {
-					console.error('[stackcode-ui] executeCommand failed:', err);
-					this.logService.error('StackCode login failed', err);
-					errorContainer.textContent = err instanceof Error ? err.message : 'Connection failed. Please check your credentials.';
-					errorContainer.style.display = 'block';
-				} finally {
-					// Re-enable form
-					connectButton.disabled = false;
-					connectButton.textContent = 'Connect and Continue';
-					clientIdInput.disabled = false;
-					clientKeyInput.disabled = false;
-					realmInput.disabled = false;
-				}
-			};
-
-			// Click handler
-			this._register(dom.addDisposableListener(connectButton, dom.EventType.CLICK, () => {
-				doLogin();
-			}));
-
-			// Enter key submits form from any input
-			const handleEnter = (e: KeyboardEvent) => {
-				const event = new StandardKeyboardEvent(e);
-				if (event.equals(KeyCode.Enter)) {
-					e.preventDefault();
-					doLogin();
-				}
-			};
-			this._register(dom.addDisposableListener(clientIdInput, dom.EventType.KEY_DOWN, handleEnter));
-			this._register(dom.addDisposableListener(clientKeyInput, dom.EventType.KEY_DOWN, handleEnter));
-			this._register(dom.addDisposableListener(realmInput, dom.EventType.KEY_DOWN, handleEnter));
-
-		} catch (err) {
-			this.logService.error('Failed to render StackCode login view', err);
-		}
 	}
 }

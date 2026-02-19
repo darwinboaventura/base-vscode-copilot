@@ -54,6 +54,7 @@ div.chat-welcome-view {
 
 	& > .chat-welcome-view-icon {
 		min-height: 48px;
+		margin-bottom: 20px;
 	}
 
 	& > .chat-welcome-view-icon .codicon {
@@ -61,8 +62,11 @@ div.chat-welcome-view {
 	}
 
 	& > .chat-welcome-view-icon.custom-icon {
-		mask-size: 40px;
-		-webkit-mask-size: 40px;
+		width: 72px;
+		height: 72px;
+		mask-size: contain;
+		-webkit-mask-size: contain;
+		background-color: #FF6900 !important;
 	}
 
 	& > .chat-welcome-view-icon.large-icon {
@@ -85,7 +89,8 @@ div.chat-welcome-view {
 
 	& > .chat-welcome-view-title {
 		font-size: 24px;
-		margin-top: 5px;
+		margin-top: 0;
+		margin-bottom: 20px;
 		text-align: center;
 		line-height: normal;
 		padding: 0 8px;
@@ -235,132 +240,81 @@ div.chat-welcome-view {
 	}
 }
 
-/* ============================================================================
- * STACKCODE: Custom login form styles
- * ============================================================================ */
-
-.stackcode-login-view {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	padding: 24px 20px;
+/* Login form input part */
+.chat-welcome-view-input-part {
 	width: 100%;
+	max-width: 320px;
+	margin: 16px auto 0;
+	padding: 0 20px;
 	box-sizing: border-box;
 }
 
-.stackcode-login-logo {
-	margin-bottom: 16px;
+.chat-welcome-view-input-part .form-group {
+	margin-bottom: 12px;
+	text-align: left;
 }
 
-.stackcode-login-logo svg {
-	width: 64px;
-	height: 64px;
-}
-
-.stackcode-login-title {
-	font-size: 24px;
-	font-weight: 600;
-	margin-bottom: 8px;
-	color: var(--vscode-foreground);
-	text-align: center;
-}
-
-.stackcode-login-subtitle {
-	font-size: 13px;
-	color: var(--vscode-descriptionForeground);
-	margin-bottom: 20px;
-	text-align: center;
-}
-
-.stackcode-login-form {
-	display: flex;
-	flex-direction: column;
-	gap: 12px;
-	width: 100%;
-	max-width: 340px;
-}
-
-.stackcode-login-field {
-	display: flex;
-	flex-direction: column;
-	gap: 4px;
-}
-
-.stackcode-login-label {
+.chat-welcome-view-input-part .form-group label {
+	display: block;
+	margin-bottom: 4px;
 	font-size: 12px;
-	font-weight: 600;
 	color: var(--vscode-foreground);
 }
 
-.stackcode-login-input {
-	background-color: var(--vscode-input-background);
+.chat-welcome-view-input-part .form-group input,
+.chat-welcome-view-input-part .form-group select {
+	width: 100%;
+	box-sizing: border-box;
+	padding: 6px 8px;
+	font-size: 13px;
 	color: var(--vscode-input-foreground);
+	background-color: var(--vscode-input-background);
 	border: 1px solid var(--vscode-input-border, transparent);
 	border-radius: 4px;
-	padding: 6px 10px;
-	font-size: 13px;
-	font-family: inherit;
 	outline: none;
-	box-sizing: border-box;
-	width: 100%;
 }
 
-.stackcode-login-input:focus {
+.chat-welcome-view-input-part .form-group input:focus,
+.chat-welcome-view-input-part .form-group select:focus {
 	border-color: var(--vscode-focusBorder);
-	outline: none;
 }
 
-.stackcode-login-input::placeholder {
-	color: var(--vscode-input-placeholderForeground);
-}
-
-.stackcode-login-input:disabled {
-	opacity: 0.6;
-	cursor: not-allowed;
-}
-
-.stackcode-login-error {
-	font-size: 12px;
-	color: var(--vscode-errorForeground);
-	padding: 4px 0;
-}
-
-.stackcode-login-button-container {
-	margin-top: 8px;
-}
-
-.stackcode-login-button {
+.chat-welcome-view-input-part .submit-btn {
 	width: 100%;
 	padding: 8px 16px;
 	font-size: 13px;
-	font-weight: 600;
-	font-family: inherit;
+	cursor: pointer;
+	color: var(--vscode-button-foreground);
+	background-color: var(--vscode-button-background);
 	border: none;
 	border-radius: 4px;
-	cursor: pointer;
-	background-color: #E8732A;
-	color: #ffffff;
-	transition: background-color 0.15s ease;
+	margin-top: 8px;
 }
 
-.stackcode-login-button:hover:not(:disabled) {
-	background-color: #D4621F;
+.chat-welcome-view-input-part .submit-btn:hover {
+	background-color: var(--vscode-button-hoverBackground);
 }
 
-.stackcode-login-button:active:not(:disabled) {
-	background-color: #C05518;
-}
-
-.stackcode-login-button:disabled {
+.chat-welcome-view-input-part .submit-btn:disabled {
 	opacity: 0.6;
-	cursor: not-allowed;
+	cursor: default;
 }
 
-.stackcode-login-notice {
+.chat-welcome-view-input-part .disclaimer {
 	font-size: 11px;
 	color: var(--vscode-descriptionForeground);
-	margin-top: 16px;
 	text-align: center;
-	max-width: 300px;
+	margin-top: 12px;
+}
+
+.chat-welcome-view-input-part .error-message {
+	color: var(--vscode-errorForeground, #f44747);
+	font-size: 12px;
+	text-align: center;
+	margin-top: 8px;
+	display: none;
+}
+
+.chat-welcome-view-input-part .error-message.visible {
+	display: block;
 }
