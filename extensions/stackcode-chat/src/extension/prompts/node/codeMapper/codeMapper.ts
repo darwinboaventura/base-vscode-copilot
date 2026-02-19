@@ -680,14 +680,19 @@ export class CodeMapper {
 		//const { codeBlock, uri, documentContext, markdownBeforeBlock } = codemapperRequestInput;
 		const pushedLines: string[] = [];
 		const fetchStreamSource = new FetchStreamSource();
-		const textStream = fetchStreamSource.stream.map((part) => part.delta.text);
 
 		let processPromise: Promise<unknown> | undefined;
 		if (applyEdits) {
+			// Use extractCodeBlock instead of readLineByLine to strip fenced code blocks
+			// from the response. Stackspot AI LLM always wraps code in ```lang ... ``` fences
+			// even for editingSession/speculate requests, which expect raw code.
+			// extractCodeBlock handles: IResponsePart -> strips fences -> emits LineOfText
+			const codeStream = extractCodeBlock(fetchStreamSource.stream, token);
 			processPromise = existingDocument instanceof NotebookDocumentSnapshot
-				? processFullRewriteNotebook(existingDocument.document, readLineByLine(textStream, token), resultStream, this.alternativeNotebookEditGenerator, { source: NotebookEditGenrationSource.codeMapperFastApply, model: endpoint.model, requestId: undefined }, token) // corrected parameter passing
-				: processFullRewriteStream(uri, existingDocument, readLineByLine(textStream, token), resultStream, token, pushedLines);
+				? processFullRewriteNotebook(existingDocument.document, codeStream, resultStream, this.alternativeNotebookEditGenerator, { source: NotebookEditGenrationSource.codeMapperFastApply, model: endpoint.model, requestId: undefined }, token)
+				: processFullRewriteStream(uri, existingDocument, codeStream, resultStream, token, pushedLines);
 		} else {
+			const textStream = fetchStreamSource.stream.map((part) => part.delta.text);
 			processPromise = textStream.toPromise();
 		}
 
@@ -793,32 +798,8 @@ export class CodeMapper {
 	//#endregion
 }
 
-function readLineByLine(source: AsyncIterable<string>, token: CancellationToken): AsyncIterable<LineOfText> {
-	return new AsyncIterableObject<LineOfText>(async (emitter) => {
-		const reader = new PartialAsyncTextReader(source[Symbol.asyncIterator]());
-		let previousLineWasEmpty = false; // avoid emitting a trailing empty line all the time
-		while (!reader.endOfStream) {
-			// Skip everything until we hit a fence
-			if (token.isCancellationRequested) {
-				break;
-			}
-			const line = (await reader.readLine()).replace(/\r$/g, '');
-
-			if (previousLineWasEmpty) {
-				// Emit the previous held back empty line
-				emitter.emitOne(new LineOfText(''));
-			}
-
-			if (line === '') {
-				// Hold back empty lines and emit them with the next iteration
-				previousLineWasEmpty = true;
-			} else {
-				previousLineWasEmpty = false;
-				emitter.emitOne(new LineOfText(line));
-			}
-		}
-	});
-}
+// readLineByLine was removed — extractCodeBlock is used instead in the fast edit path
+// to handle Stackspot AI LLM responses that always include fenced code blocks.
 
 export interface ISuccessfulRewriteInfo {
 	allResponseText: string[];
