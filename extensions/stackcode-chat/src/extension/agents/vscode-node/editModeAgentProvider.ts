@@ -15,7 +15,7 @@ const BASE_EDIT_MODE_AGENT_CONFIG: AgentConfig = {
 	name: 'Edit',
 	description: 'Edit-only mode restricted to the currently active file and any files explicitly attached in the request context.',
 	argumentHint: 'Describe the edit to apply in the active or attached files',
-	target: 'vscode',
+	target: 'stackcode',
 	disableModelInvocation: true,
 	userInvokable: true,
 	tools: ['read', 'edit'],

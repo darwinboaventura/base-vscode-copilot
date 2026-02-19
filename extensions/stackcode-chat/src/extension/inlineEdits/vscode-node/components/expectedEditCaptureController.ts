@@ -42,7 +42,7 @@ interface CaptureState {
  */
 export class ExpectedEditCaptureController extends Disposable {
 
-	private static readonly CAPTURE_FOLDER = '.copilot/nes-feedback';
+	private static readonly CAPTURE_FOLDER = '.stackcode/nes-feedback';
 
 	private _state: CaptureState | undefined;
 	private _statusBarItem: StatusBarItem | undefined;

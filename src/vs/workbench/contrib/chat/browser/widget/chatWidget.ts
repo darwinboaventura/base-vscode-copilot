@@ -1057,7 +1057,7 @@ export class ChatWidget extends Disposable implements IChatWidget {
 	}
 
 	/**
-	 * Checks if any agent instruction files (.github/copilot-instructions.md or AGENTS.md) exist in the workspace.
+	 * Checks if any agent instruction files (AGENTS.md) exist in the workspace.
 	 * Used to determine whether to show the "Generate Agent Instructions" hint.
 	 *
 	 * @returns true if instruction files exist OR if instruction features are disabled (to hide the hint)
@@ -1122,8 +1122,8 @@ export class ChatWidget extends Disposable implements IChatWidget {
 				return [
 					{
 						icon: Codicon.vscode,
-						label: localize('chatWidget.suggestedPrompts.gettingStarted', "Ask @vscode"),
-						prompt: localize('chatWidget.suggestedPrompts.gettingStartedPrompt', "@vscode How do I change the theme to light mode?"),
+					label: localize('chatWidget.suggestedPrompts.gettingStarted', "Ask @stackcode"),
+					prompt: localize('chatWidget.suggestedPrompts.gettingStartedPrompt', "@stackcode How do I change the theme to light mode?"),
 					},
 					{
 						icon: Codicon.newFolder,

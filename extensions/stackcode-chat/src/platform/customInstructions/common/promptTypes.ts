@@ -16,12 +16,12 @@ export enum PromptsType {
 export const INSTRUCTIONS_LOCATION_KEY = 'chat.instructionsFilesLocations';
 export const SKILLS_LOCATION_KEY = 'chat.agentSkillsLocations';
 
-export const WORKSPACE_SKILL_FOLDERS = ['.github/skills', '.claude/skills'];
-export const PERSONAL_SKILL_FOLDERS = ['.copilot/skills', '.claude/skills'];
+export const WORKSPACE_SKILL_FOLDERS = ['.stackcode/skills', '.claude/skills'];
+export const PERSONAL_SKILL_FOLDERS = ['.stackcode/skills', '.claude/skills'];
 export const USE_AGENT_SKILLS_SETTING = 'chat.useAgentSkills';
 export const USE_SKILL_ADHERENCE_PROMPT_SETTING = 'chat.experimental.useSkillAdherencePrompt';
 
-export const COPILOT_INSTRUCTIONS_PATH = '.github/copilot-instructions.md';
+export const COPILOT_INSTRUCTIONS_PATH = '.stackcode/AGENTS.md';
 
 /**
  * File extension for the reusable prompt files.

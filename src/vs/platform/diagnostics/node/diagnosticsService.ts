@@ -73,7 +73,7 @@ export async function collectWorkspaceStats(folder: string, filter: string[]): P
 		{ tag: 'claude-skills-dir', filePattern: /^SKILL\.md$/i, relativePathPattern: /^\.claude[\/\\]skills[\/\\]/i },
 		{ tag: 'claude-rules-dir', filePattern: /\.md$/i, relativePathPattern: /^\.claude[\/\\]rules$/i },
 		{ tag: 'gemini.md', filePattern: /^gemini\.md$/i },
-		{ tag: 'copilot-instructions.md', filePattern: /^copilot\-instructions\.md$/i, relativePathPattern: /^\.github$/i },
+		{ tag: 'agents.md', filePattern: /^AGENTS\.md$/i, relativePathPattern: /^\.stackcode$/i },
 	];
 
 	const fileTypes = new Map<string, number>();
@@ -196,7 +196,7 @@ export function getMachineInfo(): IMachineInfo {
 export async function collectLaunchConfigs(folder: string): Promise<WorkspaceStatItem[]> {
 	try {
 		const launchConfigs = new Map<string, number>();
-		const launchConfig = join(folder, '.vscode', 'launch.json');
+		const launchConfig = join(folder, '.stackcode', 'launch.json');
 
 		const contents = await fs.promises.readFile(launchConfig);
 

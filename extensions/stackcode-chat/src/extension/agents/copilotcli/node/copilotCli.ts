@@ -304,7 +304,7 @@ export class CopilotCLIAgents extends Disposable implements ICopilotCLIAgents {
 		const workspaceFolders = this.workspaceService.getWorkspaceFolders();
 		const refresher = this._fileWatchers.add(new Delayer(500));
 		for (const folder of workspaceFolders) {
-			const pattern = new RelativePattern(folder, '.github/agents/*.agent.md');
+			const pattern = new RelativePattern(folder, '.stackcode/agents/*.agent.md');
 			const watcher = this._fileWatchers.add(this.fileSystemService.createFileSystemWatcher(pattern));
 			this._fileWatchers.add(watcher.onDidCreate(() => refresher.trigger(() => this._refreshAgents())));
 			this._fileWatchers.add(watcher.onDidChange(() => refresher.trigger(() => this._refreshAgents())));

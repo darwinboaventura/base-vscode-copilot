@@ -138,7 +138,7 @@ export function isCustomAgentVisibility(obj: unknown): obj is ICustomAgentVisibi
 }
 
 export enum Target {
-	VSCode = 'vscode',
+	VSCode = 'stackcode',
 	GitHubCopilot = 'github-copilot',
 	Claude = 'claude',
 	Undefined = 'undefined',
@@ -402,7 +402,7 @@ export interface IPromptsService extends IDisposable {
 	listNestedAgentMDs(token: CancellationToken): Promise<IResolvedAgentFile[]>;
 
 	/**
-	 * Gets combined list of agent instruction files (AGENTS.md, CLAUDE.md, copilot-instructions.md).
+	 * Gets combined list of agent instruction files (AGENTS.md, CLAUDE.md).
 	 * Combines results from listAgentMDs (non-nested), listClaudeMDs, and listCopilotInstructionsMDs.
 	 */
 	listAgentInstructions(token: CancellationToken, logger?: Logger): Promise<IResolvedAgentFile[]>;

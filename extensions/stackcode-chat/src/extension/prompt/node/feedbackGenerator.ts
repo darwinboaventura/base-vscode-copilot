@@ -50,7 +50,7 @@ export class FeedbackGenerator {
 			return {
 				type: 'error',
 				severity: 'info',
-				reason: l10n.t('All input documents are ignored by configuration. Check your .copilotignore file.')
+				reason: l10n.t('All input documents are ignored by configuration. Check your .stackcodeignore file.')
 			};
 		}
 

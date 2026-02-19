@@ -4,10 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as fs from 'fs';
-import { exec } from 'child_process';
 import { app, BrowserWindow, clipboard, contentTracing, Display, Menu, MessageBoxOptions, MessageBoxReturnValue, Notification, OpenDevToolsOptions, OpenDialogOptions, OpenDialogReturnValue, powerMonitor, powerSaveBlocker, SaveDialogOptions, SaveDialogReturnValue, screen, shell, webContents } from 'electron';
-import { arch, cpus, freemem, loadavg, platform, release, totalmem, type } from 'os';
-import { promisify } from 'util';
+import { arch, cpus, freemem, homedir, loadavg, platform, release, totalmem, type } from 'os';
 import { memoize } from '../../../base/common/decorators.js';
 import { Emitter, Event } from '../../../base/common/event.js';
 import { Disposable, DisposableMap, DisposableStore, toDisposable } from '../../../base/common/lifecycle.js';
@@ -42,7 +40,6 @@ import { WindowProfiler } from '../../profiling/electron-main/windowProfiling.js
 import { IV8Profile } from '../../profiling/common/profiling.js';
 import { IAuxiliaryWindowsMainService } from '../../auxiliaryWindow/electron-main/auxiliaryWindows.js';
 import { IAuxiliaryWindow } from '../../auxiliaryWindow/electron-main/auxiliaryWindow.js';
-import { CancellationError } from '../../../base/common/errors.js';
 import { zip } from '../../../base/node/zip.js';
 import { IConfigurationService } from '../../configuration/common/configuration.js';
 import { IProxyAuthService } from './auth.js';
@@ -481,60 +478,45 @@ export class NativeHostMainService extends Disposable implements INativeHostMain
 			}
 		}
 
-		await this.installShellCommandWithPrivileges(windowId, source, target);
+		await this.installShellCommandNoAdmin(windowId, source, target);
 	}
 
-	private async installShellCommandWithPrivileges(windowId: number | undefined, source: string, target: string): Promise<void> {
-		const { response } = await this.showMessageBox(windowId, {
-			type: 'info',
-			message: localize('warnEscalation', "{0} will now prompt with 'osascript' for Administrator privileges to install the shell command.", this.productService.nameShort),
-			buttons: [
-				localize({ key: 'ok', comment: ['&& denotes a mnemonic'] }, "&&OK"),
-				localize('cancel', "Cancel")
-			]
-		});
-
-		if (response === 1 /* Cancel */) {
-			throw new CancellationError();
-		}
-
+	private async installShellCommandNoAdmin(windowId: number | undefined, source: string, target: string): Promise<void> {
 		try {
-			const command = `osascript -e "do shell script \\"mkdir -p /usr/local/bin && ln -sf \'${target}\' \'${source}\'\\" with administrator privileges"`;
-			await promisify(exec)(command);
+			const sourceDir = dirname(source);
+			await fs.promises.mkdir(sourceDir, { recursive: true });
+			// Remove existing symlink/file if present
+			try {
+				await fs.promises.unlink(source);
+			} catch (e) {
+				// ignore if not exists
+			}
+			await fs.promises.symlink(target, source);
 		} catch (error) {
 			throw new Error(localize('cantCreateBinFolder', "Unable to install the shell command '{0}'.", source));
 		}
+
+		// Hint user if ~/.local/bin is not in PATH
+		const sourceDir = dirname(source);
+		const pathEnv = process.env['PATH'] ?? '';
+		if (!pathEnv.split(':').some(p => resolve(p) === resolve(sourceDir))) {
+			await this.showMessageBox(windowId, {
+				type: 'info',
+				message: localize('pathHint', "The shell command was installed to '{0}'. Make sure '{1}' is in your PATH (e.g. add 'export PATH=\"{1}:$PATH\"' to your ~/.zshrc or ~/.bashrc).", source, sourceDir),
+				buttons: [
+					localize({ key: 'ok', comment: ['&& denotes a mnemonic'] }, "&&OK"),
+				]
+			});
+		}
 	}
 
-	async uninstallShellCommand(windowId: number | undefined): Promise<void> {
+	async uninstallShellCommand(_windowId: number | undefined): Promise<void> {
 		const { source } = await this.getShellCommandLink();
 
 		try {
 			await fs.promises.unlink(source);
 		} catch (error) {
 			switch (error.code) {
-				case 'EACCES': {
-					const { response } = await this.showMessageBox(windowId, {
-						type: 'info',
-						message: localize('warnEscalationUninstall', "{0} will now prompt with 'osascript' for Administrator privileges to uninstall the shell command.", this.productService.nameShort),
-						buttons: [
-							localize({ key: 'ok', comment: ['&& denotes a mnemonic'] }, "&&OK"),
-							localize('cancel', "Cancel")
-						]
-					});
-
-					if (response === 1 /* Cancel */) {
-						throw new CancellationError();
-					}
-
-					try {
-						const command = `osascript -e "do shell script \\"rm \'${source}\'\\" with administrator privileges"`;
-						await promisify(exec)(command);
-					} catch (error) {
-						throw new Error(localize('cantUninstall', "Unable to uninstall the shell command '{0}'.", source));
-					}
-					break;
-				}
 				case 'ENOENT':
 					break; // ignore file not found
 				default:
@@ -544,12 +526,13 @@ export class NativeHostMainService extends Disposable implements INativeHostMain
 	}
 
 	private async getShellCommandLink(): Promise<{ readonly source: string; readonly target: string }> {
-		const target = resolve(this.environmentMainService.appRoot, 'bin', 'code');
-		const source = `/usr/local/bin/${this.productService.applicationName}`;
+		const target = resolve(this.environmentMainService.appRoot, 'bin', 'stackcode');
+		const localBinDir = join(homedir(), '.local', 'bin');
+		const source = join(localBinDir, this.productService.applicationName);
 
-		// Ensure source exists
-		const sourceExists = await Promises.exists(target);
-		if (!sourceExists) {
+		// Ensure target (the shell script in the app bundle) exists
+		const targetExists = await Promises.exists(target);
+		if (!targetExists) {
 			throw new Error(localize('sourceMissing', "Unable to find shell script in '{0}'", target));
 		}
 
@@ -813,7 +796,7 @@ export class NativeHostMainService extends Disposable implements INativeHostMain
 
 		// macOS
 		if (this.environmentMainService.isBuilt) {
-			return join(this.environmentMainService.appRoot, 'bin', 'code');
+			return join(this.environmentMainService.appRoot, 'bin', 'stackcode');
 		}
 
 		return join(this.environmentMainService.appRoot, 'scripts', 'code-cli.sh');

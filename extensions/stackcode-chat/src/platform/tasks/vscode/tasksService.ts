@@ -107,7 +107,7 @@ export class TasksService extends DisposableStore implements ITasksService {
 			return undefined;
 		}
 
-		const uri = URI.joinPath(workspaceFolder, '.vscode', 'tasks.json');
+		const uri = URI.joinPath(workspaceFolder, '.stackcode', 'tasks.json');
 		let text: string;
 		try {
 			const contents = await this.fileSystemService.readFile(uri);

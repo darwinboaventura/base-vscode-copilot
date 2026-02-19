@@ -4,26 +4,25 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as dom from '../../../../base/browser/dom.js';
-import { Disposable, DisposableStore } from '../../../../base/common/lifecycle.js';
+import { DisposableStore } from '../../../../base/common/lifecycle.js';
 import { MarkdownString } from '../../../../base/common/htmlContent.js';
 import { localize } from '../../../../nls.js';
 import { FileAccess } from '../../../../base/common/network.js';
-import { ContextKeyExpr, IContextKeyService, RawContextKey } from '../../../../platform/contextkey/common/contextkey.js';
-import { IAuthenticationService } from '../../../services/authentication/common/authentication.js';
-import { registerWorkbenchContribution2, WorkbenchPhase } from '../../../common/contributions.js';
+import { ContextKeyExpr } from '../../../../platform/contextkey/common/contextkey.js';
 import { chatViewsWelcomeRegistry, IChatViewsWelcomeServices } from './viewsWelcome/chatViewsWelcome.js';
 
 const $ = dom.$;
 
-export const STACKSPOT_SIGNED_IN_KEY = new RawContextKey<boolean>('stackspot.signedIn', false);
-export const STACKSPOT_SIGNED_OUT_KEY = new RawContextKey<boolean>('stackspot.signedOut', false);
-
-// Register the welcome view descriptor for the login form
+// Register the welcome view descriptor for the login form.
+// This uses the same context key that the extension's ContextKeysContribution sets
+// when authentication fails (gitHubLoginFailed = true). Our descriptor is registered
+// first (at module-load time, before extension descriptors), so it wins when the
+// condition matches.
 chatViewsWelcomeRegistry.register({
 	icon: FileAccess.asBrowserUri('vs/workbench/contrib/chat/browser/widget/media/stackspot-icon.svg'),
 	title: localize('stackspot.welcome.title', "StackSpot AI"),
 	content: new MarkdownString(localize('stackspot.welcome.message', "Enter your credentials to connect to StackSpot AI.")),
-	when: ContextKeyExpr.equals('stackspot.signedOut', true),
+	when: ContextKeyExpr.equals('github.copilot.interactiveSession.gitHubLoginFailed', true),
 	inputPartFactory: (store, services) => createLoginForm(store, services)
 });
 
@@ -121,76 +120,3 @@ function createLoginForm(store: DisposableStore, services: IChatViewsWelcomeServ
 
 	return container;
 }
-
-/**
- * Workbench contribution that manages the `stackspot.signedIn` and `stackspot.signedOut`
- * context keys by listening to the authentication provider registration and session changes.
- *
- * IMPORTANT: Both keys start as `false` (loading state). We ONLY set `signedOut = true`
- * after confirming the provider IS registered but has no sessions. We never set it before
- * the provider is registered — that would cause the login form to flash on startup before
- * the extension has had a chance to restore credentials from SecretStorage.
- */
-class StackspotAuthContextContribution extends Disposable {
-
-	static readonly ID = 'workbench.contrib.stackspotAuthContext';
-
-	constructor(
-		@IContextKeyService private readonly contextKeyService: IContextKeyService,
-		@IAuthenticationService private readonly authenticationService: IAuthenticationService,
-	) {
-		super();
-
-		const signedInKey = STACKSPOT_SIGNED_IN_KEY.bindTo(this.contextKeyService);
-		const signedOutKey = STACKSPOT_SIGNED_OUT_KEY.bindTo(this.contextKeyService);
-
-		// Both keys start as false — no login form shown during loading
-		signedInKey.set(false);
-		signedOutKey.set(false);
-
-		const updateKeys = (isSignedIn: boolean) => {
-			signedInKey.set(isSignedIn);
-			signedOutKey.set(!isSignedIn);
-		};
-
-		const checkSessions = async () => {
-			try {
-				const sessions = await this.authenticationService.getSessions('stackspot');
-				updateKeys(sessions.length > 0);
-			} catch {
-				updateKeys(false);
-			}
-		};
-
-		// When the provider registers, check if it already has sessions
-		this._register(this.authenticationService.onDidRegisterAuthenticationProvider(e => {
-			if (e.id === 'stackspot') {
-				checkSessions();
-			}
-		}));
-
-		// When sessions change (login/logout), update keys
-		this._register(this.authenticationService.onDidChangeSessions(e => {
-			if (e.providerId === 'stackspot') {
-				checkSessions();
-			}
-		}));
-
-		// When the provider unregisters, we are signed out
-		this._register(this.authenticationService.onDidUnregisterAuthenticationProvider(e => {
-			if (e.id === 'stackspot') {
-				updateKeys(false);
-			}
-		}));
-
-		// If the provider is already registered at construction time, check now
-		if (this.authenticationService.isAuthenticationProviderRegistered('stackspot')) {
-			checkSessions();
-		}
-		// Otherwise: both keys stay false until onDidRegisterAuthenticationProvider fires.
-		// The login form will NOT appear during this loading period — it only appears
-		// when stackspot.signedOut === true, which requires the provider to be registered first.
-	}
-}
-
-registerWorkbenchContribution2(StackspotAuthContextContribution.ID, StackspotAuthContextContribution, WorkbenchPhase.BlockStartup);

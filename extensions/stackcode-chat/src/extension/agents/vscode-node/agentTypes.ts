@@ -41,7 +41,7 @@ export const DEFAULT_READ_TOOLS: readonly string[] = [
 	'search',
 	'read',
 	'web',
-	'vscode/memory',
+	'stackcode/memory',
 	'github/issue_read',
 	'github.vscode-pull-request-github/issue_fetch',
 	'github.vscode-pull-request-github/activePullRequest',

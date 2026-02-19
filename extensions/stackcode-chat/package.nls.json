@@ -86,7 +86,7 @@
 		]
 	},
 	"github.copilot.viewsWelcome.switchToReleaseChannel": {
-		"message": "The Pre-Release version of the GitHub Copilot Chat extension is not currently supported in the stable version of VS Code. Please switch to the release version for GitHub Copilot Chat or try VS Code Insiders.\n\n[Switch to Release Version and Reload](command:runCommands?%7B%22commands%22%3A%5B%7B%22command%22%3A%22workbench.extensions.action.switchToRelease%22%2C%22args%22%3A%5B%22GitHub.copilot-chat%22%5D%7D%2C%22workbench.action.reloadWindow%22%5D%7D)\n\n[Switch to VS Code Insiders](https://aka.ms/vscode-insiders)",
+		"message": "The Pre-Release version of the GitHub Copilot Chat extension is not currently supported in the stable version of StackCode. Please switch to the release version for GitHub Copilot Chat or try StackCode Insiders.\n\n[Switch to Release Version and Reload](command:runCommands?%7B%22commands%22%3A%5B%7B%22command%22%3A%22workbench.extensions.action.switchToRelease%22%2C%22args%22%3A%5B%22GitHub.copilot-chat%22%5D%7D%2C%22workbench.action.reloadWindow%22%5D%7D)\n\n[Switch to StackCode Insiders](https://aka.ms/vscode-insiders)",
 		"comment": [
 			"{Locked='['}",
 			"{Locked='](command:runCommands?%7B%22commands%22%3A%5B%7B%22command%22%3A%22workbench.extensions.action.switchToRelease%22%2C%22args%22%3A%5B%22GitHub.copilot-chat%22%5D%7D%2C%22workbench.action.reloadWindow%22%5D%7D)'}",
@@ -94,7 +94,7 @@
 		]
 	},
 	"github.copilot.viewsWelcome.debug": {
-		"message": "Debug using a [terminal command](command:github.copilot.chat.startCopilotDebugCommand) or in an [interactive chat](command:workbench.action.chat.open?%7B%22query%22%3A%22%40vscode%20%2FstartDebugging%20%22%2C%22isPartialQuery%22%3Atrue%7D).",
+		"message": "Debug using a [terminal command](command:github.copilot.chat.startCopilotDebugCommand) or in an [interactive chat](command:workbench.action.chat.open?%7B%22query%22%3A%22%40stackcode%20%2FstartDebugging%20%22%2C%22isPartialQuery%22%3Atrue%7D).",
 		"comment": [
 			"{Locked='['}",
 			"{Locked='](command:github.copilot.chat.startCopilotDebugCommand)'}",
@@ -120,7 +120,7 @@
 	"github.copilot.devcontainer.generateDevContainerConfig": "Generate Dev Container Configuration",
 	"github.copilot.config.enableCodeActions": "Controls if Copilot commands are shown as Code Actions when available",
 	"github.copilot.config.renameSuggestions.triggerAutomatically": "Controls whether Copilot generates suggestions for renaming",
-	"github.copilot.config.localeOverride": "Specify a locale that Copilot should respond in, e.g. `en` or `fr`. By default, Copilot will respond using VS Code's configured display language locale.",
+	"github.copilot.config.localeOverride": "Specify a locale that Copilot should respond in, e.g. `en` or `fr`. By default, Copilot will respond using StackCode's configured display language locale.",
 	"github.copilot.config.edits.enabled": "Whether to enable the Copilot Edits feature.",
 	"github.copilot.config.codesearch.enabled": "Whether to enable agentic codesearch when using `#codebase`.",
 	"github.copilot.nextEditSuggestions.enabled": "Whether to enable next edit suggestions (NES).\n\nNES can propose a next edit based on your recent changes. [Learn more](https://aka.ms/vscode-nes) about next edit suggestions.",
@@ -138,7 +138,7 @@
 	"github.copilot.config.debugTerminalCommandPatterns": "A list of commands for which the \"Debug Command\" quick fix action should be shown in the debug terminal.",
 	"github.copilot.config.codeGeneration.instructions": "A set of instructions that will be added to Copilot requests that generate code.\nInstructions can come from: \n- a file in the workspace: `{ \"file\": \"fileName\" }`\n- text in natural language: `{ \"text\": \"Use underscore for field names.\" }`\n\nNote: Keep your instructions short and precise. Poor instructions can degrade Copilot's quality and performance.",
 	"github.copilot.config.codeGeneration.instructions.deprecated": "Use instructions files instead. See https://aka.ms/vscode-ghcp-custom-instructions for more information.",
-	"github.copilot.config.codeGeneration.useInstructionFiles": "Controls whether code instructions from `.github/copilot-instructions.md` are added to Copilot requests.\n\nNote: Keep your instructions short and precise. Poor instructions can degrade Copilot's quality and performance. [Learn more](https://aka.ms/github-copilot-custom-instructions) about customizing Copilot.",
+	"github.copilot.config.codeGeneration.useInstructionFiles": "Controls whether code instructions from `AGENTS.md` are added to Copilot requests.\n\nNote: Keep your instructions short and precise. Poor instructions can degrade Copilot's quality and performance. [Learn more](https://aka.ms/github-copilot-custom-instructions) about customizing Copilot.",
 	"github.copilot.config.codeGeneration.instruction.text": "A text instruction that will be added to Copilot requests that generate code. Optionally, you can specify a language for the instruction.",
 	"github.copilot.config.codeGeneration.instruction.file": "A path to a file that will be added to Copilot requests that generate code. Optionally, you can specify a language for the instruction.",
 	"github.copilot.config.testGeneration.instructions": "A set of instructions that will be added to Copilot requests that generate tests.\nInstructions can come from: \n- a file in the workspace: `{ \"file\": \"fileName\" }`\n- text in natural language: `{ \"text\": \"Use underscore for field names.\" }`\n\nNote: Keep your instructions short and precise. Poor instructions can degrade Copilot's quality and performance.",

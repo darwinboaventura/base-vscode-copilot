@@ -32,7 +32,7 @@
         ],
         "extensions": [
           ".instructions.md",
-          "copilot-instructions.md"
+          "AGENTS.md"
         ],
         "filenamePatterns": [
           "**/.claude/rules/**/*.md"
@@ -50,7 +50,7 @@
           ".chatmode.md"
         ],
         "filenamePatterns": [
-          "**/.github/agents/*.md",
+          "**/.stackcode/agents/*.md",
           "**/.claude/agents/*.md"
         ],
         "configuration": "./language-configuration.json"

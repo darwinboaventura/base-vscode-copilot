@@ -270,7 +270,7 @@ export class PromptHeaderAutocompletion implements CompletionItemProvider {
 				break;
 			case PromptHeaderAttributes.target:
 				if (promptType === PromptsType.agent) {
-					return [{ name: 'vscode' }, { name: 'github-copilot' }];
+					return [{ name: 'stackcode' }, { name: 'github-copilot' }];
 				}
 				break;
 			case PromptHeaderAttributes.tools:

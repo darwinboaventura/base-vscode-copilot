@@ -21,7 +21,7 @@ const BASE_ASK_AGENT_CONFIG: AgentConfig = {
 	name: 'Ask',
 	description: 'Answers questions without making changes',
 	argumentHint: 'Ask a question about your code or project',
-	target: 'vscode',
+	target: 'stackcode',
 	disableModelInvocation: true,
 	agents: [],
 	tools: [
@@ -101,7 +101,7 @@ Your job: understand the user's question → research the codebase as needed →
 - NEVER use file editing tools, terminal commands that modify state, or any write operations
 - Focus on answering questions, explaining concepts, and providing information
 - Use search and read tools to gather context from the codebase when needed
-- Provide code examples in your responses when helpful, but do NOT apply them${askQuestionsEnabled ? `\n- Use #tool:vscode/askQuestions to clarify ambiguous questions before researching` : ''}
+- Provide code examples in your responses when helpful, but do NOT apply them${askQuestionsEnabled ? `\n- Use #tool:stackcode/askQuestions to clarify ambiguous questions before researching` : ''}
 - When the user's question is about code, reference specific files and symbols
 - If a question would require making changes, explain what changes would be needed but do NOT make them
 </rules>
@@ -119,7 +119,7 @@ You can help with:
 
 <workflow>
 1. **Understand** the question — identify what the user needs to know
-2. **Research** the codebase if needed — use search and read tools to find relevant code${askQuestionsEnabled ? '\n3. **Clarify** if the question is ambiguous — use #tool:vscode/askQuestions' : ''}
+2. **Research** the codebase if needed — use search and read tools to find relevant code${askQuestionsEnabled ? '\n3. **Clarify** if the question is ambiguous — use #tool:stackcode/askQuestions' : ''}
 ${askQuestionsEnabled ? '4' : '3'}. **Answer** clearly — provide a well-structured response with references to relevant code
 </workflow>`;
 	}
@@ -132,7 +132,7 @@ ${askQuestionsEnabled ? '4' : '3'}. **Answer** clearly — provide a well-struct
 		// Collect tools to add
 		const toolsToAdd: string[] = [...additionalTools];
 		if (askQuestionsEnabled) {
-			toolsToAdd.push('vscode/askQuestions');
+			toolsToAdd.push('stackcode/askQuestions');
 		}
 
 		// Merge additional tools (deduplicated)

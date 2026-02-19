@@ -49,6 +49,7 @@ export async function createTasExperimentationService(
 			targetPopulation = tas.TargetPopulation.Internal;
 			break;
 		case 'code-oss':
+		case 'stackcode':
 			targetPopulation = tas.TargetPopulation.Team;
 			break;
 		default:

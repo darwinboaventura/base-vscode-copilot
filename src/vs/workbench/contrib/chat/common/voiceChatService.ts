@@ -79,7 +79,7 @@ export class VoiceChatService extends Disposable implements IVoiceChatService {
 		[this.COMMAND_PREFIX]: 'Slash'
 	};
 
-	private static readonly CHAT_AGENT_ALIAS = new Map<string, string>([['vscode', 'code']]);
+	private static readonly CHAT_AGENT_ALIAS = new Map<string, string>([['stackcode', 'stackcode']]);
 
 	private readonly voiceChatInProgress: IContextKey<boolean>;
 	private activeVoiceChatSessions = 0;

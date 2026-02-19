@@ -39,7 +39,7 @@ export class LaunchConfigService implements ILaunchConfigService {
 
 	/** @inheritdoc */
 	async show(workspaceFolder: URI, showConfigName?: string): Promise<void> {
-		const fileUri = URI.joinPath(workspaceFolder, '.vscode', 'launch.json');
+		const fileUri = URI.joinPath(workspaceFolder, '.stackcode', 'launch.json');
 		let document: vscode.TextDocument | undefined;
 		try {
 			document = await vscode.workspace.openTextDocument(fileUri);

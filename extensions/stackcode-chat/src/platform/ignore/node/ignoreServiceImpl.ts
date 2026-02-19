@@ -21,7 +21,7 @@ import { IIgnoreService } from '../common/ignoreService';
 import { IgnoreFile } from './ignoreFile';
 import { RemoteContentExclusion } from './remoteContentExclusion';
 
-export const COPILOT_IGNORE_FILE_NAME = '.copilotignore';
+export const COPILOT_IGNORE_FILE_NAME = '.stackcodeignore';
 
 export class BaseIgnoreService implements IIgnoreService {
 

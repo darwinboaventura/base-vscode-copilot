@@ -614,6 +614,6 @@ export namespace SpecedToolAliases {
 
 export namespace VSCodeToolReference {
 	export const runSubagent = 'runSubagent';
-	export const vscode = 'vscode';
+	export const vscode = 'stackcode';
 
 }

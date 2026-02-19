@@ -572,7 +572,7 @@ export class PromptFilesLocator {
 					result.push({ uri: file, realPath, type: AgentFileType.copilotInstructionsMd });
 				}
 			} catch (error) {
-				this.logService.trace(`[PromptFilesLocator] Skipping copilot-instructions.md at ${file.toString()}: ${error}`);
+				this.logService.trace(`[PromptFilesLocator] Skipping AGENTS.md at ${file.toString()}: ${error}`);
 			}
 		}
 		return result;

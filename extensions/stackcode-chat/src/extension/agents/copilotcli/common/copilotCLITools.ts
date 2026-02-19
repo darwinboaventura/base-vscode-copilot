@@ -235,8 +235,8 @@ export type UnknownToolCall = { toolName: string; arguments: unknown; toolCallId
 
 function isInstructionAttachmentPath(path: string): boolean {
 	const normalizedPath = path.replace(/\\/g, '/');
-	return normalizedPath.endsWith('/.github/copilot-instructions.md')
-		|| (normalizedPath.includes('/.github/instructions/') && normalizedPath.endsWith('.md'));
+	return normalizedPath.endsWith('/.stackcode/AGENTS.md')
+		|| (normalizedPath.includes('/.stackcode/instructions/') && normalizedPath.endsWith('.md'));
 }
 
 export function isCopilotCliEditToolCall(data: { toolName: string; arguments?: unknown }): boolean {
