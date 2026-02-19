@@ -4,14 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { Embedding, EmbeddingType } from '../../../../platform/embeddings/common/embeddingsComputer';
-import { EmbeddingCacheType, IEmbeddingsCache, RemoteCacheType, RemoteEmbeddingsCache } from '../../../../platform/embeddings/common/embeddingsIndex';
+import { EmbeddingCacheType, IEmbeddingsCache, LocalEmbeddingsCache } from '../../../../platform/embeddings/common/embeddingsIndex';
 import { IEnvService } from '../../../../platform/env/common/envService';
 import { ILogService } from '../../../../platform/log/common/logService';
 import { sanitizeVSCodeVersion } from '../../../../util/common/vscodeVersion';
 import { IInstantiationService } from '../../../../util/vs/platform/instantiation/common/instantiation';
 import { IToolEmbeddingsCache } from './toolEmbeddingsComputer';
 
-export const EMBEDDING_TYPE_FOR_TOOL_GROUPING = EmbeddingType.text3small_512;
+// STACKCODE: Use local embedding type for tool grouping (384-dim local ONNX model)
+export const EMBEDDING_TYPE_FOR_TOOL_GROUPING = EmbeddingType.local_minilm_384;
 
 export class PreComputedToolEmbeddingsCache implements IToolEmbeddingsCache {
 	private readonly cache: IEmbeddingsCache;
@@ -22,8 +23,9 @@ export class PreComputedToolEmbeddingsCache implements IToolEmbeddingsCache {
 		@IInstantiationService instantiationService: IInstantiationService,
 		@IEnvService envService: IEnvService
 	) {
+		// STACKCODE: Use local cache instead of remote CDN (incompatible dimensions + data leakage)
 		const cacheVersion = sanitizeVSCodeVersion(envService.getEditorInfo().version);
-		this.cache = instantiationService.createInstance(RemoteEmbeddingsCache, EmbeddingCacheType.GLOBAL, 'toolEmbeddings', cacheVersion, EMBEDDING_TYPE_FOR_TOOL_GROUPING, RemoteCacheType.Tools);
+		this.cache = instantiationService.createInstance(LocalEmbeddingsCache, EmbeddingCacheType.GLOBAL, 'toolEmbeddings', cacheVersion, EMBEDDING_TYPE_FOR_TOOL_GROUPING);
 	}
 
 	public get embeddingType(): EmbeddingType {
@@ -62,7 +64,7 @@ export class PreComputedToolEmbeddingsCache implements IToolEmbeddingsCache {
 
 			return embeddingsMap;
 		} catch (e) {
-			this._logService.error('Failed to load pre-computed tool embeddings', e);
+			this._logService.error(`Failed to load pre-computed tool embeddings: ${e}`);
 			return new Map<string, Embedding>();
 		}
 	}

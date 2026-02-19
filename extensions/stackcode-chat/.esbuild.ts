@@ -44,6 +44,7 @@ const baseNodeBuildOptions = {
 		'sqlite3',
 		'node-pty', // Required by @github/copilot
 		'@github/copilot',
+		'onnxruntime-node', // STACKCODE: native ONNX runtime for local embeddings (can't be bundled)
 		...(isDev ? [] : ['dotenv', 'source-map-support'])
 	],
 	platform: 'node',

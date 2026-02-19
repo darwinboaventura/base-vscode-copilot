@@ -317,6 +317,25 @@ export class LanguageModelAccess extends Disposable implements IExtensionContrib
 			}
 		}
 
+		// STACKCODE: Ensure 'copilot-fast' always exists in the model list.
+		// VS Code core features (terminal auto-reply, thinking content titles,
+		// editing explanations) use selectLanguageModels({ id: 'copilot-fast' })
+		// which would return empty if this alias model doesn't exist.
+		// In Stackspot, there's no separate "fast" model — we map it to the
+		// first available chat endpoint (which is already the best available).
+		if (!models.some(m => m.id === 'copilot-fast') && chatEndpoints.length > 0) {
+			const fallbackEndpoint = chatEndpoints[0];
+			const baseModel = models.find(m => m.id === fallbackEndpoint.model);
+			if (baseModel) {
+				models.push({
+					...baseModel,
+					id: 'copilot-fast',
+					family: 'copilot-fast',
+					isUserSelectable: false,
+				});
+			}
+		}
+
 		this._currentModels = models;
 		this._chatEndpoints = chatEndpoints;
 		return models;
@@ -329,7 +348,15 @@ export class LanguageModelAccess extends Disposable implements IExtensionContrib
 		progress: vscode.Progress<vscode.LanguageModelResponsePart2>,
 		token: vscode.CancellationToken
 	): Promise<void> {
-		const endpoint = this._chatEndpoints.find(e => e.model === ModelAliasRegistry.resolveAlias(model.id));
+		const resolvedModelId = ModelAliasRegistry.resolveAlias(model.id);
+		let endpoint = this._chatEndpoints.find(e => e.model === resolvedModelId);
+
+		// STACKCODE: If no endpoint found (e.g., 'copilot-fast' alias that doesn't
+		// map to any Stackspot agent ID), fall back to the first available endpoint.
+		if (!endpoint && this._chatEndpoints.length > 0) {
+			endpoint = this._chatEndpoints[0];
+		}
+
 		if (!endpoint) {
 			throw new Error(`Endpoint not found for model ${model.id}`);
 		}
@@ -345,7 +372,14 @@ export class LanguageModelAccess extends Disposable implements IExtensionContrib
 		text: string | vscode.LanguageModelChatMessage | vscode.LanguageModelChatMessage2,
 		token: vscode.CancellationToken
 	): Promise<number> {
-		const endpoint = this._chatEndpoints.find(e => e.model === ModelAliasRegistry.resolveAlias(model.id));
+		const resolvedModelId = ModelAliasRegistry.resolveAlias(model.id);
+		let endpoint = this._chatEndpoints.find(e => e.model === resolvedModelId);
+
+		// STACKCODE: Fallback to first endpoint for alias models like 'copilot-fast'
+		if (!endpoint && this._chatEndpoints.length > 0) {
+			endpoint = this._chatEndpoints[0];
+		}
+
 		if (!endpoint) {
 			throw new Error(`Endpoint not found for model ${model.id}`);
 		}
@@ -365,9 +399,10 @@ export class LanguageModelAccess extends Disposable implements IExtensionContrib
 				return;
 			}
 
-			const embeddingsComputer = this._embeddingsComputer;
-			const embeddingType = EmbeddingType.text3small_512;
-			const model = getWellKnownEmbeddingTypeInfo(embeddingType)?.model;
+		const embeddingsComputer = this._embeddingsComputer;
+		// STACKCODE: Use local MiniLM embedding type instead of remote text3small
+		const embeddingType = EmbeddingType.local_minilm_384;
+		const model = getWellKnownEmbeddingTypeInfo(embeddingType)?.model;
 			if (!model) {
 				throw new Error(`No model found for embedding type ${embeddingType.id}`);
 			}

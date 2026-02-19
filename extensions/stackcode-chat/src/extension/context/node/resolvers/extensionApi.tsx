@@ -5,7 +5,7 @@
 import { BasePromptElementProps, PromptElement, PromptPiece, PromptSizing, TextChunk } from '@vscode/prompt-tsx';
 import { ChatResponsePart } from '@vscode/prompt-tsx/dist/base/vscodeTypes';
 import { Embedding, EmbeddingType, EmbeddingVector, IEmbeddingsComputer, rankEmbeddings } from '../../../../platform/embeddings/common/embeddingsComputer';
-import { EmbeddingCacheType, IEmbeddingsCache, LocalEmbeddingsCache, RemoteCacheType, RemoteEmbeddingsCache } from '../../../../platform/embeddings/common/embeddingsIndex';
+import { EmbeddingCacheType, IEmbeddingsCache, LocalEmbeddingsCache } from '../../../../platform/embeddings/common/embeddingsIndex';
 import { IEnvService } from '../../../../platform/env/common/envService';
 import { Progress } from '../../../../platform/notification/common/notificationService';
 import { createFencedCodeBlock } from '../../../../util/common/markdown';
@@ -31,9 +31,9 @@ export class ApiEmbeddingsIndex implements IApiEmbeddingsIndex {
 		@IInstantiationService instantiationService: IInstantiationService
 	) {
 		const cacheVersion = sanitizeVSCodeVersion(envService.getEditorInfo().version);
-		this.embeddingsCache = useRemoteCache ?
-			instantiationService.createInstance(RemoteEmbeddingsCache, EmbeddingCacheType.GLOBAL, 'api', cacheVersion, EmbeddingType.text3small_512, RemoteCacheType.Api) :
-			instantiationService.createInstance(LocalEmbeddingsCache, EmbeddingCacheType.GLOBAL, 'api', cacheVersion, EmbeddingType.text3small_512);
+		// STACKCODE: Always use local cache — remote CDN caches are incompatible (512-dim vs 384-dim)
+		this.embeddingsCache =
+			instantiationService.createInstance(LocalEmbeddingsCache, EmbeddingCacheType.GLOBAL, 'api', cacheVersion, EmbeddingType.local_minilm_384);
 	}
 
 	async updateIndex(): Promise<void> {
@@ -95,7 +95,7 @@ export class VSCodeAPIContextElement extends PromptElement<VSCodeAPIContextProps
 			return [];
 		}
 
-		const embeddingResult = await this.embeddingsComputer.computeEmbeddings(EmbeddingType.text3small_512, [this.props.query], {}, new TelemetryCorrelationId('VSCodeAPIContextElement::getSnippets'), token);
+		const embeddingResult = await this.embeddingsComputer.computeEmbeddings(EmbeddingType.local_minilm_384, [this.props.query], {}, new TelemetryCorrelationId('VSCodeAPIContextElement::getSnippets'), token);
 		return this.apiEmbeddingsIndex.nClosestValues(embeddingResult.values[0], 5);
 	}
 

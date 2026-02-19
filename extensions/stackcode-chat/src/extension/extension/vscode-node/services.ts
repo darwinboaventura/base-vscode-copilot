@@ -59,6 +59,9 @@ import { ICodeSearchAuthenticationService } from '../../../platform/remoteCodeSe
 import { VsCodeCodeSearchAuthenticationService } from '../../../platform/remoteCodeSearch/vscode-node/codeSearchRepoAuth';
 import { IDocsSearchClient } from '../../../platform/remoteSearch/common/codeOrDocsSearchClient';
 import { DocsSearchClient } from '../../../platform/remoteSearch/node/codeOrDocsSearchClientImpl';
+import { IEmbeddingsComputer } from '../../../platform/embeddings/common/embeddingsComputer';
+// STACKCODE: Local ONNX-based embeddings — replaces RemoteEmbeddingsComputer (no data leakage)
+import { LocalEmbeddingsComputer } from '../../../platform/embeddings/node/localEmbeddingsComputer';
 import { IRequestLogger } from '../../../platform/requestLogger/node/requestLogger';
 import { IScopeSelector } from '../../../platform/scopeSelection/common/scopeSelection';
 import { ScopeSelectorImpl } from '../../../platform/scopeSelection/vscode-node/scopeSelectionImpl';
@@ -77,7 +80,9 @@ import { ITestDepsResolver, TestDepsResolver } from '../../../platform/testing/n
 import { ITokenizerProvider, TokenizerProvider } from '../../../platform/tokenizer/node/tokenizer';
 import { ITrajectoryLogger } from '../../../platform/trajectory/common/trajectoryLogger';
 import { TrajectoryLogger } from '../../../platform/trajectory/node/trajectoryLogger';
-import { GithubAvailableEmbeddingTypesService, IGithubAvailableEmbeddingTypesService } from '../../../platform/workspaceChunkSearch/common/githubAvailableEmbeddingTypes';
+// STACKCODE: Use LocalAvailableEmbeddingTypesService instead of GithubAvailableEmbeddingTypesService
+// to avoid HTTP calls to api.githubcopilot.com for embedding type discovery
+import { IGithubAvailableEmbeddingTypesService, LocalAvailableEmbeddingTypesService } from '../../../platform/workspaceChunkSearch/common/githubAvailableEmbeddingTypes';
 import { IRerankerService, RerankerService } from '../../../platform/workspaceChunkSearch/common/rerankerService';
 import { IWorkspaceChunkSearchService, WorkspaceChunkSearchService } from '../../../platform/workspaceChunkSearch/node/workspaceChunkSearchService';
 import { IWorkspaceFileIndex, WorkspaceFileIndex } from '../../../platform/workspaceChunkSearch/node/workspaceFileIndex';
@@ -147,6 +152,9 @@ export function registerServices(builder: IInstantiationServiceBuilder, extensio
 	const isTestMode = extensionContext.extensionMode === ExtensionMode.Test;
 
 	registerCommonServices(builder, extensionContext);
+
+	// STACKCODE: Override the noop IEmbeddingsComputer from common services with the real ONNX-based implementation
+	builder.define(IEmbeddingsComputer, new SyncDescriptor(LocalEmbeddingsComputer));
 
 	// STACKCODE: Use StackspotAutomodeService — no CAPI auto-model calls needed
 	// The upstream AutomodeService calls GitHub CAPI /auto_models which doesn't exist on Stackspot
@@ -244,7 +252,8 @@ export function registerServices(builder: IInstantiationServiceBuilder, extensio
 	builder.define(IWorkspaceListenerService, new SyncDescriptor(WorkspacListenerService));
 	builder.define(ICodeSearchAuthenticationService, new SyncDescriptor(VsCodeCodeSearchAuthenticationService));
 	builder.define(ITodoListContextProvider, new SyncDescriptor(TodoListContextProvider));
-	builder.define(IGithubAvailableEmbeddingTypesService, new SyncDescriptor(GithubAvailableEmbeddingTypesService));
+	// STACKCODE: Use LocalAvailableEmbeddingTypesService — no HTTP calls to GitHub for embedding types
+	builder.define(IGithubAvailableEmbeddingTypesService, new SyncDescriptor(LocalAvailableEmbeddingTypesService));
 	builder.define(IRerankerService, new SyncDescriptor(RerankerService));
 	// STACKCODE: Use NullProxyModelsService — Stackspot AI has no /models proxy endpoint
 	builder.define(IProxyModelsService, new SyncDescriptor(NullProxyModelsService));

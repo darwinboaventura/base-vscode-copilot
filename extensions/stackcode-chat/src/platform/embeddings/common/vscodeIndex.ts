@@ -6,14 +6,13 @@
 import type { CancellationToken, CommandInformationResult, RelatedInformationProvider, RelatedInformationResult, SettingInformationResult } from 'vscode';
 import { createServiceIdentifier } from '../../../util/common/services';
 import { TelemetryCorrelationId } from '../../../util/common/telemetryCorrelationId';
-import { sanitizeVSCodeVersion } from '../../../util/common/vscodeVersion';
 import { IInstantiationService } from '../../../util/vs/platform/instantiation/common/instantiation';
 import { IEnvService } from '../../env/common/envService';
 import { ILogService } from '../../log/common/logService';
 import { ITelemetryService } from '../../telemetry/common/telemetry';
 import { IWorkbenchService } from '../../workbench/common/workbenchService';
 import { distance, Embedding, EmbeddingType, EmbeddingVector, IEmbeddingsComputer } from './embeddingsComputer';
-import { BaseEmbeddingsIndex, EmbeddingCacheType, IEmbeddingsCache, LocalEmbeddingsCache, RemoteCacheType, RemoteEmbeddingsExtensionCache } from './embeddingsIndex';
+import { BaseEmbeddingsIndex, EmbeddingCacheType, IEmbeddingsCache, LocalEmbeddingsCache } from './embeddingsIndex';
 
 // A command entry in the embedding index
 export type CommandListItem = {
@@ -108,7 +107,7 @@ abstract class RelatedInformationProviderEmbeddingsIndex<V extends { key: string
 			return [];
 		}
 		const startOfEmbeddingRequest = Date.now();
-		const embeddingResult = await this.embeddingsComputer.computeEmbeddings(EmbeddingType.text3small_512, [query], {}, new TelemetryCorrelationId('RelatedInformationProviderEmbeddingsIndex::provideRelatedInformation'), token);
+		const embeddingResult = await this.embeddingsComputer.computeEmbeddings(EmbeddingType.local_minilm_384, [query], {}, new TelemetryCorrelationId('RelatedInformationProviderEmbeddingsIndex::provideRelatedInformation'), token);
 		this._logService.debug(`Related Information: Remote similarly request took ${Date.now() - startOfEmbeddingRequest}ms`);
 		if (token.isCancellationRequested) {
 			// return an array of 0s the same length as comparisons
@@ -123,7 +122,7 @@ abstract class RelatedInformationProviderEmbeddingsIndex<V extends { key: string
 				break;
 			}
 			if (item.embedding) {
-				const score = distance(embeddingResult.values[0], { value: item.embedding, type: EmbeddingType.text3small_512 }).value;
+				const score = distance(embeddingResult.values[0], { value: item.embedding, type: EmbeddingType.local_minilm_384 }).value;
 				if (score > this.relatedInformationConfig.threshold) {
 					results.push(this.toRelatedInformation(item, score));
 				}
@@ -157,7 +156,7 @@ class CommandIdIndex extends RelatedInformationProviderEmbeddingsIndex<CommandLi
 	) {
 		super(
 			'CommandIdIndex',
-			EmbeddingType.text3small_512,
+			EmbeddingType.local_minilm_384,
 			'commandEmbeddings',
 			embeddingsFetcher,
 			embeddingscache,
@@ -218,7 +217,7 @@ class SettingsIndex extends RelatedInformationProviderEmbeddingsIndex<SettingLis
 	) {
 		super(
 			'SettingsIndex',
-			EmbeddingType.text3small_512,
+			EmbeddingType.local_minilm_384,
 			'settingEmbeddings',
 			embeddingsFetcher,
 			embeddingsCache,
@@ -285,13 +284,12 @@ export class VSCodeCombinedIndexImpl implements ICombinedEmbeddingIndex {
 		@IInstantiationService instantiationService: IInstantiationService,
 		@IEnvService envService: IEnvService
 	) {
-		// Local embeddings cache version is locked to 1.98
-		const settingsEmbeddingsCache = useRemoteCache ?
-			instantiationService.createInstance(RemoteEmbeddingsExtensionCache, EmbeddingCacheType.GLOBAL, 'settingEmbeddings', sanitizeVSCodeVersion(envService.getEditorInfo().version), EmbeddingType.text3small_512, RemoteCacheType.Settings) :
-			instantiationService.createInstance(LocalEmbeddingsCache, EmbeddingCacheType.GLOBAL, 'settingEmbeddings', '1.98', EmbeddingType.text3small_512);
-		const commandsEmbeddingsCache = useRemoteCache ?
-			instantiationService.createInstance(RemoteEmbeddingsExtensionCache, EmbeddingCacheType.GLOBAL, 'commandEmbeddings', sanitizeVSCodeVersion(envService.getEditorInfo().version), EmbeddingType.text3small_512, RemoteCacheType.Commands) :
-			instantiationService.createInstance(LocalEmbeddingsCache, EmbeddingCacheType.GLOBAL, 'commandEmbeddings', '1.98', EmbeddingType.text3small_512);
+		// STACKCODE: Always use local cache — remote CDN caches are incompatible (512-dim vs 384-dim)
+		// and would leak data to embeddings.vscode-cdn.net
+		const settingsEmbeddingsCache =
+			instantiationService.createInstance(LocalEmbeddingsCache, EmbeddingCacheType.GLOBAL, 'settingEmbeddings', '1.98', EmbeddingType.local_minilm_384);
+		const commandsEmbeddingsCache =
+			instantiationService.createInstance(LocalEmbeddingsCache, EmbeddingCacheType.GLOBAL, 'commandEmbeddings', '1.98', EmbeddingType.local_minilm_384);
 
 		this.settingsIndex = instantiationService.createInstance(SettingsIndex, settingsEmbeddingsCache);
 		this.commandIdIndex = instantiationService.createInstance(CommandIdIndex, commandsEmbeddingsCache);

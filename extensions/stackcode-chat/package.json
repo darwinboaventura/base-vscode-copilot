@@ -6018,6 +6018,7 @@
 		"lru-cache": "^11.1.0",
 		"markdown-it": "^14.1.0",
 		"minimatch": "^10.0.3",
+		"onnxruntime-node": "^1.21.0",
 		"undici": "^7.18.2",
 		"vscode-tas-client": "^0.1.84",
 		"web-tree-sitter": "^0.23.0"

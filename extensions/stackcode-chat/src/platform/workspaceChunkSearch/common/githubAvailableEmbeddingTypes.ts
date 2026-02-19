@@ -238,3 +238,13 @@ export class MockGithubAvailableEmbeddingTypesService implements IGithubAvailabl
 		return EmbeddingType.metis_1024_I16_Binary;
 	}
 }
+
+// STACKCODE: Local-only implementation that always returns local_minilm_384.
+// Replaces GithubAvailableEmbeddingTypesService which requires HTTP calls to api.githubcopilot.com.
+export class LocalAvailableEmbeddingTypesService implements IGithubAvailableEmbeddingTypesService {
+	declare readonly _serviceBrand: undefined;
+
+	async getPreferredType(_silent: boolean): Promise<EmbeddingType | undefined> {
+		return EmbeddingType.local_minilm_384;
+	}
+}

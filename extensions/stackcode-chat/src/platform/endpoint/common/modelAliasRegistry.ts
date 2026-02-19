@@ -47,4 +47,8 @@ export class ModelAliasRegistry {
 	}
 }
 
-ModelAliasRegistry.registerAlias('copilot-fast', 'gpt-4o-mini');
+// STACKCODE: Do NOT register 'copilot-fast' → 'gpt-4o-mini' statically.
+// In Stackspot, model IDs are agent UUIDs that vary per realm. The alias
+// model entry for 'copilot-fast' is injected dynamically in
+// languageModelAccess.ts based on the available Stackspot agents.
+// Original: ModelAliasRegistry.registerAlias('copilot-fast', 'gpt-4o-mini');
