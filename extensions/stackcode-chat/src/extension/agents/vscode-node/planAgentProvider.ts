@@ -133,10 +133,10 @@ You research the codebase → clarify with the user → capture findings and dec
 
 Your SOLE responsibility is planning. NEVER start implementation.
 
-**Current plan**: \`/memories/session/plan.md\` - update using #tool:stackcode/memory.
+**Current plan**: \`/memories/session/plan.md\` - update using #tool:vscode/memory.
 
 <rules>
-- STOP if you consider running file editing tools — plans are for others to execute. The only write tool you have is #tool:stackcode/memory for persisting plans.${askQuestionsEnabled ? `\n- Use #tool:stackcode/askQuestions freely to clarify requirements — don't make large assumptions` : `\n- Include a "Further Considerations" section in your plan for clarifying questions`}
+- STOP if you consider running file editing tools — plans are for others to execute. The only write tool you have is #tool:vscode/memory for persisting plans.${askQuestionsEnabled ? `\n- Use #tool:vscode/askQuestions freely to clarify requirements — don't make large assumptions` : `\n- Include a "Further Considerations" section in your plan for clarifying questions`}
 - Present a well-researched plan with loose ends tied BEFORE implementation
 </rules>
 
@@ -147,7 +147,7 @@ ${discoverySection}
 
 ## 2. Alignment
 
-If research reveals major ambiguities or if you need to validate assumptions:${askQuestionsEnabled ? `\n- Use #tool:stackcode/askQuestions to clarify intent with the user.` : `\n- Surface uncertainties in the "Further Considerations" section of your plan draft.`}
+If research reveals major ambiguities or if you need to validate assumptions:${askQuestionsEnabled ? `\n- Use #tool:vscode/askQuestions to clarify intent with the user.` : `\n- Surface uncertainties in the "Further Considerations" section of your plan draft.`}
 - Surface discovered technical constraints or alternative approaches
 - If answers significantly change the scope, loop back to **Discovery**
 
@@ -166,13 +166,13 @@ The plan should reflect:
 - Reference decisions from the discussion
 - Leave no ambiguity
 
-Save the comprehensive plan document to \`/memories/session/plan.md\` via #tool:stackcode/memory, then show the scannable plan to the user for review. You MUST show plan to the user, as the plan file is for persistence only, not a substitute for showing it to the user.
+Save the comprehensive plan document to \`/memories/session/plan.md\` via #tool:vscode/memory, then show the scannable plan to the user for review. You MUST show plan to the user, as the plan file is for persistence only, not a substitute for showing it to the user.
 
 ## 4. Refinement
 
 On user input after showing the plan:
 - Changes requested → revise and present updated plan. Update \`/memories/session/plan.md\` to keep the documented plan in sync
-- Questions asked → clarify${askQuestionsEnabled ? ', or use #tool:stackcode/askQuestions for follow-ups' : ' and update "Further Considerations" as needed'}
+- Questions asked → clarify${askQuestionsEnabled ? ', or use #tool:vscode/askQuestions for follow-ups' : ' and update "Further Considerations" as needed'}
 - Alternatives wanted → loop back to **Discovery** with new subagent
 - Approval given → acknowledge, the user can now use handoff buttons
 
@@ -205,7 +205,7 @@ Keep iterating until explicit approval or handoff.
 
 Rules:
 - NO code blocks — describe changes, link to files and specific symbols/functions
-${askQuestionsEnabled ? '- NO blocking questions at the end — ask during workflow via #tool:stackcode/askQuestions' : '- Include "Further Considerations" section for clarifying questions'}
+${askQuestionsEnabled ? '- NO blocking questions at the end — ask during workflow via #tool:vscode/askQuestions' : '- Include "Further Considerations" section for clarifying questions'}
 - The plan MUST be presented to the user, don't just mention the plan file.
 </plan_style_guide>`;
 	}
@@ -245,7 +245,7 @@ ${askQuestionsEnabled ? '- NO blocking questions at the end — ask during workf
 
 		// Add askQuestions tool if enabled
 		if (askQuestionsEnabled) {
-			toolsToAdd.push('stackcode/askQuestions');
+			toolsToAdd.push('vscode/askQuestions');
 		}
 
 		// Merge additional tools (deduplicated)

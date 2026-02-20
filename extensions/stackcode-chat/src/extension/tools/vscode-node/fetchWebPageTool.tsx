@@ -64,6 +64,20 @@ class FetchWebPageTool implements ICopilotTool<IFetchWebPageParams> {
 
 	async invoke(options: LanguageModelToolInvocationOptions<IFetchWebPageParams>, token: CancellationToken): Promise<LanguageModelToolResult> {
 		this._logService.trace('FetchWebPageTool: invoke');
+
+		// STACKCODE: Wrap entire invoke in try/catch to prevent unhandled exceptions
+		// from crashing the Electron process (e.g. OOM from huge web pages).
+		try {
+			return await this._doInvoke(options, token);
+		} catch (error) {
+			this._logService.error(`FetchWebPageTool: invoke failed with error: ${error}`);
+			return new LanguageModelToolResult([
+				new LanguageModelTextPart(`Error fetching web page: ${error instanceof Error ? error.message : String(error)}`)
+			]);
+		}
+	}
+
+	private async _doInvoke(options: LanguageModelToolInvocationOptions<IFetchWebPageParams>, token: CancellationToken): Promise<LanguageModelToolResult> {
 		const tool = lm.tools.find(t => t.name === internalToolName);
 		if (!tool) {
 			throw new Error('Tool not found');
@@ -128,21 +142,38 @@ class FetchWebPageTool implements ICopilotTool<IFetchWebPageParams> {
 		} catch (e) {
 			// STACKCODE: If URL chunking/embedding fails (e.g. no GitHub chunking API access),
 			// fall back to returning the raw fetched content as a single chunk per URL.
-			this._logService.debug(`FetchWebPageTool: URL chunk indexing failed, falling back to raw content: ${e}`);
-			webPageResults = validTextContent.map(file => ({
-				uri: file.uri,
-				chunks: [{
-					chunk: {
-						file: file.uri,
-						text: file.content,
-						rawText: undefined,
-						range: new Range(1, 0, file.content.split('\n').length, 0),
-						isFullFile: true,
-					},
-					distance: undefined,
-				}],
-				sumScore: 0,
-			}));
+			// IMPORTANT: Limit raw content size to prevent OOM crashes. Large pages
+			// (e.g. full documentation) can be several MB which, when serialized into
+			// the prompt XML, causes the Electron process to run out of memory.
+			const MAX_RAW_CONTENT_BYTES = 100 * 1024; // 100 KB per URL
+			this._logService.debug(`FetchWebPageTool: URL chunk indexing failed, falling back to raw content (max ${MAX_RAW_CONTENT_BYTES} bytes per URL): ${e}`);
+			webPageResults = validTextContent.map(file => {
+				let text = file.content;
+				if (text.length > MAX_RAW_CONTENT_BYTES) {
+					this._logService.debug(`FetchWebPageTool: Truncating raw content for ${file.uri.toString()} from ${text.length} to ${MAX_RAW_CONTENT_BYTES} bytes`);
+					// Keep first 60% and last 40% to preserve both intro and conclusion context
+					const keepStart = Math.floor(MAX_RAW_CONTENT_BYTES * 0.6);
+					const keepEnd = MAX_RAW_CONTENT_BYTES - keepStart;
+					text = text.slice(0, keepStart) +
+						'\n\n[... Content truncated due to size (' + Math.round(file.content.length / 1024) + 'KB). Only first and last portions shown. ...]\n\n' +
+						text.slice(-keepEnd);
+				}
+				const lineCount = text.split('\n').length;
+				return {
+					uri: file.uri,
+					chunks: [{
+						chunk: {
+							file: file.uri,
+							text,
+							rawText: undefined,
+							range: new Range(1, 0, lineCount, 0),
+							isFullFile: text.length === file.content.length,
+						},
+						distance: undefined,
+					}],
+					sumScore: 0,
+				};
+			});
 		}
 
 		const element = await renderPromptElementJSON(

@@ -2,11 +2,9 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { IInstantiationService, ServicesAccessor } from '../../../../../../util/vs/platform/instantiation/common/instantiation';
-import { ICompletionsLogTargetService } from '../logger';
-import { getLastKnownEndpoints } from '../networkConfiguration';
-import { ICompletionsFetcherService } from '../networking';
-import { codeReferenceLogger } from './logger';
+import { ServicesAccessor } from '../../../../../../util/vs/platform/instantiation/common/instantiation';
+// STACKCODE: Removed imports for IInstantiationService, ICompletionsLogTargetService, getLastKnownEndpoints,
+// ICompletionsFetcherService, codeReferenceLogger — all were used only by attemptToPing (origin-tracker ping).
 
 type ConnectionAPI = {
 	listen: (cb: () => void) => { dispose: () => void };
@@ -113,74 +111,19 @@ function registerConnectionState(): ConnectionAPI {
 		}
 	}
 
-	function enableRetry(accessor: ServicesAccessor, initialTimeout = InitialTimeout) {
+	function enableRetry(_accessor: ServicesAccessor, _initialTimeout = InitialTimeout) {
+		// STACKCODE: origin-tracker ping neutralized — no requests to GitHub servers.
 		if (isRetrying()) {
 			return;
 		}
-
-		setRetrying();
-		setInitialWait(true);
-		void attemptToPing(accessor, initialTimeout);
+		setDisabled();
 	}
 
 	function isInitialWait() {
 		return state.initialWait;
 	}
 
-	async function attemptToPing(accessor: ServicesAccessor, initialTimeout: number) {
-		const logTarget = accessor.get(ICompletionsLogTargetService);
-		const fetcher = accessor.get(ICompletionsFetcherService);
-		const instantiationService = accessor.get(IInstantiationService);
-		codeReferenceLogger.info(logTarget, `Attempting to reconnect in ${initialTimeout}ms.`);
-
-		// Initial 3 second delay before attempting to reconnect to Snippy.
-		await timeout(initialTimeout);
-		setInitialWait(false);
-
-		function succeedOrRetry(time: number) {
-			if (time > MaxRetryTime) {
-				codeReferenceLogger.info(logTarget, 'Max retry time reached, disabling.');
-				setDisabled();
-				return;
-			}
-
-			const tryAgain = async () => {
-				state.retryAttempts = Math.min(state.retryAttempts + 1, MaxAttempts);
-
-				try {
-					codeReferenceLogger.info(logTarget, `Pinging service after ${time} second(s)`);
-					const response = await fetcher.fetch(
-						new URL('_ping', instantiationService.invokeFunction(getLastKnownEndpoints)['origin-tracker']).href,
-						{
-							method: 'GET',
-							headers: {
-								'content-type': 'application/json',
-							},
-						}
-					);
-
-					if (response.status !== 200 || !response.ok) {
-						succeedOrRetry(time ** 2);
-					} else {
-						codeReferenceLogger.info(logTarget, 'Successfully reconnected.');
-						setConnected();
-						return;
-					}
-				} catch (e) {
-					succeedOrRetry(time ** 2);
-				}
-			};
-			setTimeout(() => void tryAgain(), time * 1000);
-		}
-
-		codeReferenceLogger.info(logTarget, 'Attempting to reconnect.');
-
-		succeedOrRetry(BaseRetryTime);
-	}
-
-	const timeout = (ms: number) => {
-		return new Promise(resolve => setTimeout(resolve, ms));
-	};
+	// STACKCODE: attemptToPing removed — it pinged origin-tracker.githubusercontent.com
 
 	function listen(cb: () => void) {
 		const disposer = subscribe(cb);

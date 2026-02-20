@@ -73,8 +73,8 @@ import { IRemoteRepositoriesService, RemoteRepositoriesService } from '../../../
 import { IReviewService } from '../../../platform/review/common/reviewService';
 import { ReviewServiceImpl } from '../../../platform/review/vscode/reviewServiceImpl';
 import { ISimulationTestContext, NulSimulationTestContext } from '../../../platform/simulationTestContext/common/simulationTestContext';
-import { ISnippyService } from '../../../platform/snippy/common/snippyService';
-import { SnippyService } from '../../../platform/snippy/common/snippyServiceImpl';
+import { ISnippyService, NullSnippyService } from '../../../platform/snippy/common/snippyService';
+// STACKCODE: SnippyService neutralized — origin-tracker sends user code to GitHub (critical legal violation)
 import { ISurveyService } from '../../../platform/survey/common/surveyService';
 import { SurveyService } from '../../../platform/survey/vscode/surveyServiceImpl';
 import { ITabsAndEditorsService } from '../../../platform/tabs/common/tabsAndEditorsService';
@@ -166,7 +166,7 @@ export function registerServices(builder: IInstantiationServiceBuilder, extensio
 	builder.define(IPromptPathRepresentationService, new SyncDescriptor(PromptPathRepresentationService));
 	builder.define(IPromptsService, new SyncDescriptor(PromptsServiceImpl));
 	builder.define(IReleaseNotesService, new SyncDescriptor(ReleaseNotesService));
-	builder.define(ISnippyService, new SyncDescriptor(SnippyService));
+	builder.define(ISnippyService, new SyncDescriptor(NullSnippyService)); // STACKCODE: neutralized — no origin-tracker requests
 	builder.define(IInteractiveSessionService, new InteractiveSessionServiceImpl());
 	builder.define(IAuthenticationChatUpgradeService, new SyncDescriptor(AuthenticationChatUpgradeService));
 	// STACKCODE: IEmbeddingsComputer registered here as noop for web build.

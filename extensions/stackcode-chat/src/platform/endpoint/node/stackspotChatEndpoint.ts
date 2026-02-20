@@ -791,8 +791,24 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 
 					case Raw.ChatRole.Tool: {
 						const toolMsg = message as Raw.ToolChatMessage;
-						const text = getTextPart(message.content);
+						let text = getTextPart(message.content);
 						const toolCallId = toolMsg.toolCallId ?? 'unknown';
+
+						// STACKCODE: Safety truncation for tool results to prevent OOM.
+						// Even though prompt-tsx applies token budgets, the raw text
+						// can still be very large (e.g. full web pages from fetchWebPage
+						// returning LanguageModelPromptTsxPart which bypasses onText()
+						// disk-caching/truncation). Apply a hard byte cap here.
+						const MAX_TOOL_RESULT_CHARS = 150 * 1024; // 150 KB
+						if (text.length > MAX_TOOL_RESULT_CHARS) {
+							const keepStart = Math.floor(MAX_TOOL_RESULT_CHARS * 0.6);
+							const keepEnd = MAX_TOOL_RESULT_CHARS - keepStart;
+							const originalLen = text.length;
+							text = text.slice(0, keepStart) +
+								'\n\n[... Tool result truncated from ' + Math.round(originalLen / 1024) + 'KB to ' + Math.round(MAX_TOOL_RESULT_CHARS / 1024) + 'KB ...]\n\n' +
+								text.slice(-keepEnd);
+						}
+
 						// Tool results are not errors unless indicated in the content
 						const isError = text.toLowerCase().includes('error') || text.toLowerCase().includes('failed');
 						historyParts.push(`<tool>\n<tool_result id="${toolCallId}" error="${isError}">\n${text.trim()}\n</tool_result>\n</tool>`);
