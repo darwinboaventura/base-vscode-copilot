@@ -140,7 +140,7 @@ export class StackspotCompletionsFetchService implements ICompletionsFetchServic
 		});
 
 		this.logService.info(`[stackcode] CompletionsFetchService: Routing inline completion to Stackspot Agent ${completionAgent.name} (${completionAgent.id})`);
-		this.logService.debug(`[stackcode] CompletionsFetchService: prompt length=${userPrompt.length}, suffix=${params.suffix ? 'yes' : 'no'}`);
+		this.logService.debug(`[stackcode] CompletionsFetchService: prompt length=${userPrompt.length}, suffix=${params.suffix ? 'yes' : 'no'}, stop=${JSON.stringify(params.stop)}, max_tokens=${params.max_tokens}`);
 
 		// 5. Fetch from Stackspot
 		const fetchAbortCtl = this.fetcherService.makeAbortController();
@@ -205,32 +205,53 @@ export class StackspotCompletionsFetchService implements ICompletionsFetchServic
 	/**
 	 * Build the user_prompt for completions.
 	 * Combines the prefix/suffix into a FIM (Fill-in-the-Middle) prompt.
+	 *
+	 * IMPORTANT: We do NOT wrap code in markdown fences because the model
+	 * would mirror them back in the response, polluting the completion text.
+	 * We use explicit delimiters (<|prefix|>, <|suffix|>, <|cursor|>) that
+	 * the model can recognise but won't echo.
 	 */
 	private _buildCompletionPrompt(params: Completions.ModelParams): string {
 		const prefix = params.prompt || '';
 		const suffix = params.suffix || '';
 
+		// Determine stop hint based on params.stop
+		const stopHint = params.stop && params.stop.length > 0
+			? `\nSTOP generating when you reach any of these sequences: ${JSON.stringify(params.stop)}`
+			: '';
+
+		// Determine max_tokens hint
+		const maxTokensHint = params.max_tokens
+			? `\nGenerate at most ${params.max_tokens} tokens.`
+			: '';
+
 		if (suffix) {
 			return [
-				'You are a code completion assistant. Complete the code at the cursor position marked by <CURSOR>.',
-				'Return ONLY the code that should be inserted at the cursor position. Do not include any explanation, markdown formatting, or code fences.',
-				'Do not repeat the prefix or suffix. Only output the missing code.',
+				'You are an inline code completion engine. You output ONLY raw code, never explanations, never markdown, never code fences.',
+				'Fill in the code at <|cursor|>. Output ONLY the inserted code — do not repeat the prefix or suffix.',
+				'Do not wrap your response in ``` or any other formatting. Output plain code only.',
+				stopHint,
+				maxTokensHint,
 				'',
-				'```',
-				prefix + '<CURSOR>' + suffix,
-				'```',
-			].join('\n');
+				'<|prefix|>',
+				prefix,
+				'<|cursor|>',
+				suffix,
+				'<|suffix|>',
+			].filter(l => l !== undefined).join('\n');
 		}
 
 		return [
-			'You are a code completion assistant. Continue the following code.',
-			'Return ONLY the continuation code. Do not include any explanation, markdown formatting, or code fences.',
-			'Do not repeat any of the provided code. Only output the new code that comes next.',
+			'You are an inline code completion engine. You output ONLY raw code, never explanations, never markdown, never code fences.',
+			'Continue the code below. Output ONLY the continuation — do not repeat any of the existing code.',
+			'Do not wrap your response in ``` or any other formatting. Output plain code only.',
+			stopHint,
+			maxTokensHint,
 			'',
-			'```',
+			'<|prefix|>',
 			prefix,
-			'```',
-		].join('\n');
+			'<|cursor|>',
+		].filter(l => l !== undefined).join('\n');
 	}
 
 	/**
@@ -345,11 +366,22 @@ export class StackspotCompletionsFetchService implements ICompletionsFetchServic
  *   data: {"message": "token_text", "stop_reason": null, ...}
  *   data: {"message": "", "stop_reason": "stop", ...}
  *
- * We convert each chunk to a Completion object with:
- *   { choices: [{ index: 0, finish_reason, text }], system_fingerprint, object, usage }
+ * Because the Stackspot Agent Chat API is a chat endpoint (not a FIM endpoint),
+ * the model may wrap its response in markdown code fences or add conversational
+ * preambles. We accumulate ALL tokens, then on the final chunk emit a single
+ * Completion with the cleaned text.
+ *
+ * Why accumulate-then-emit instead of streaming individual tokens?
+ * The upstream `convertStreamToApiChoices` concatenates `choice.text` from
+ * every Completion into `responseSoFar`. If we emitted intermediate tokens
+ * AND then a cleaned full-text final chunk, the accumulated text would be
+ * duplicated. By emitting a single Completion at the end, `responseSoFar`
+ * equals exactly the cleaned text, and `finish_reason: 'stop'` triggers
+ * immediate yield of the APIChoice.
  */
 async function* stackspotSSEToCompletions(lineStream: AsyncIterable<string>): AsyncGenerator<Completion> {
 	let accumulatedText = '';
+	let lastTokens: { input?: number; output?: number } | undefined;
 
 	for await (const line of lineStream) {
 		const trimmed = line.trim();
@@ -384,26 +416,91 @@ async function* stackspotSSEToCompletions(lineStream: AsyncIterable<string>): As
 
 		const isLast = parsed.stop_reason != null && parsed.stop_reason !== '';
 
-		// Build a Completion object per chunk
-		const completion: Completion = {
-			choices: [{
-				index: 0,
-				finish_reason: isLast ? Completion.FinishReason.Stop : null,
-				text: text,
-			}],
-			system_fingerprint: 'stackspot',
-			object: 'text_completion',
-			usage: isLast && parsed.tokens ? {
-				prompt_tokens: parsed.tokens.input ?? 0,
-				completion_tokens: parsed.tokens.output ?? 0,
-				total_tokens: (parsed.tokens.input ?? 0) + (parsed.tokens.output ?? 0),
-				completion_tokens_details: { audio_tokens: 0, reasoning_tokens: 0 },
-				prompt_tokens_details: { audio_tokens: 0, reasoning_tokens: 0 },
-			} : undefined,
-		};
+		if (isLast) {
+			lastTokens = parsed.tokens;
 
-		yield completion;
+			// Clean the accumulated text (strip markdown fences etc.)
+			const cleanedText = stripMarkdownFences(accumulatedText);
+
+			const completion: Completion = {
+				choices: [{
+					index: 0,
+					finish_reason: Completion.FinishReason.Stop,
+					text: cleanedText,
+				}],
+				system_fingerprint: 'stackspot',
+				object: 'text_completion',
+				usage: lastTokens ? {
+					prompt_tokens: lastTokens.input ?? 0,
+					completion_tokens: lastTokens.output ?? 0,
+					total_tokens: (lastTokens.input ?? 0) + (lastTokens.output ?? 0),
+					completion_tokens_details: { audio_tokens: 0, reasoning_tokens: 0 },
+					prompt_tokens_details: { audio_tokens: 0, reasoning_tokens: 0 },
+				} : undefined,
+			};
+			yield completion;
+		}
 	}
+
+	// If the stream ended without a stop_reason (abnormal), emit what we have
+	if (accumulatedText.length > 0 && !lastTokens) {
+		const cleanedText = stripMarkdownFences(accumulatedText);
+		if (cleanedText.length > 0) {
+			const completion: Completion = {
+				choices: [{
+					index: 0,
+					finish_reason: Completion.FinishReason.Stop,
+					text: cleanedText,
+				}],
+				system_fingerprint: 'stackspot',
+				object: 'text_completion',
+				usage: undefined,
+			};
+			yield completion;
+		}
+	}
+}
+
+/**
+ * Strips markdown code fences and conversational preambles from model output.
+ *
+ * The Stackspot Agent Chat API is a chat model, not a FIM model. Despite
+ * prompt instructions, it may wrap responses in:
+ *   ```language\n...\n```
+ *   or just ```\n...\n```
+ *   or add "Here is the completion:" preambles
+ *
+ * This function extracts the raw code from the response.
+ */
+function stripMarkdownFences(text: string): string {
+	// 1. Try to extract content inside a single code fence block
+	const fenceMatch = text.match(/^[^\S\n]*```[^\n]*\n([\s\S]*?)\n[^\S\n]*```[^\S\n]*$/m);
+	if (fenceMatch) {
+		return fenceMatch[1];
+	}
+
+	// 2. Handle case where response starts with ``` (opening fence) but
+	//    the closing fence might be the last line
+	const startFence = /^[^\S\n]*```[^\n]*\n/;
+	const endFence = /\n[^\S\n]*```[^\S\n]*$/;
+	if (startFence.test(text) && endFence.test(text)) {
+		return text.replace(startFence, '').replace(endFence, '');
+	}
+
+	// 3. Handle case where model just starts with ``` on the first line
+	if (text.startsWith('```')) {
+		const firstNewline = text.indexOf('\n');
+		if (firstNewline !== -1) {
+			let cleaned = text.substring(firstNewline + 1);
+			// Remove trailing fence if present
+			if (cleaned.trimEnd().endsWith('```')) {
+				cleaned = cleaned.replace(/\n?```\s*$/, '');
+			}
+			return cleaned;
+		}
+	}
+
+	return text;
 }
 
 /**
