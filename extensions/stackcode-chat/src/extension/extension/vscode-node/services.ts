@@ -45,7 +45,8 @@ import { InlineEditsModelService, UndesiredModels } from '../../../platform/inli
 import { ILanguageContextProviderService } from '../../../platform/languageContextProvider/common/languageContextProviderService';
 import { ILanguageContextService } from '../../../platform/languageServer/common/languageContextService';
 import { ICompletionsFetchService } from '../../../platform/nesFetch/common/completionsFetchService';
-import { CompletionsFetchService } from '../../../platform/nesFetch/node/completionsFetchServiceImpl';
+// STACKCODE: Use StackspotCompletionsFetchService to route inline completions through Stackspot AI
+import { StackspotCompletionsFetchService } from '../../../platform/nesFetch/node/stackspotCompletionsFetchServiceImpl';
 import { IFetcherService } from '../../../platform/networking/common/fetcherService';
 import { FetcherService } from '../../../platform/networking/vscode-node/fetcherServiceImpl';
 import { IParserService } from '../../../platform/parser/node/parserService';
@@ -245,7 +246,7 @@ export function registerServices(builder: IInstantiationServiceBuilder, extensio
 	builder.define(IDebuggableCommandIdentifier, new SyncDescriptor(DebuggableCommandIdentifier));
 	builder.define(ILanguageToolsProvider, new SyncDescriptor(LanguageToolsProvider));
 	builder.define(ICodeMapperService, new SyncDescriptor(CodeMapperService));
-	builder.define(ICompletionsFetchService, new SyncDescriptor(CompletionsFetchService));
+	builder.define(ICompletionsFetchService, new SyncDescriptor(StackspotCompletionsFetchService));
 	builder.define(IFixCookbookService, new SyncDescriptor(FixCookbookService));
 	builder.define(ILanguageContextService, new SyncDescriptor(LanguageContextServiceImpl));
 	builder.define(ILanguageContextProviderService, new SyncDescriptor(LanguageContextProviderService));

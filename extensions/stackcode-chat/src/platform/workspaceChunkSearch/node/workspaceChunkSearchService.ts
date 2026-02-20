@@ -158,7 +158,8 @@ export class WorkspaceChunkSearchService extends Disposable implements IWorkspac
 
 				return this._impl;
 			}
-		} catch {
+		} catch (e) {
+			this._logService.error(e instanceof Error ? e : String(e), 'WorkspaceChunkSearchService: tryInit failed during getPreferredType or impl creation');
 			return undefined;
 		}
 	}

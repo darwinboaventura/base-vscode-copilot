@@ -247,7 +247,15 @@ export class LocalEmbeddingsComputer implements IEmbeddingsComputer {
 			return;
 		}
 		if (!this._initPromise) {
-			this._initPromise = this._initialize();
+			this._initPromise = this._initialize().catch(err => {
+				// STACKCODE: Reset initPromise so retry is possible on next call
+				this._initPromise = undefined;
+				this._logService.error(`[LocalEmbeddingsComputer] Initialization FAILED (will retry on next call): ${err}`);
+				if (err instanceof Error && err.stack) {
+					this._logService.error(`[LocalEmbeddingsComputer] Stack: ${err.stack}`);
+				}
+				throw err;
+			});
 		}
 		return this._initPromise;
 	}
@@ -257,18 +265,62 @@ export class LocalEmbeddingsComputer implements IEmbeddingsComputer {
 		this._logService.info(`[LocalEmbeddingsComputer] Initializing from ${modelDir}`);
 
 		// Load vocab
-		const fs = await import('fs');
+		let fs: typeof import('fs');
+		try {
+			fs = await import('fs');
+		} catch (e) {
+			this._logService.error(`[LocalEmbeddingsComputer] Failed to import 'fs': ${e}`);
+			throw e;
+		}
+
 		const vocabPath = path.join(modelDir, 'vocab.txt');
+		this._logService.info(`[LocalEmbeddingsComputer] Loading vocab from: ${vocabPath}`);
+
+		// Verify model files exist
+		if (!fs.existsSync(vocabPath)) {
+			const err = new Error(`[LocalEmbeddingsComputer] vocab.txt not found at: ${vocabPath}`);
+			this._logService.error(err.message);
+			throw err;
+		}
+
+		const modelPath = path.join(modelDir, 'model.onnx');
+		if (!fs.existsSync(modelPath)) {
+			const err = new Error(`[LocalEmbeddingsComputer] model.onnx not found at: ${modelPath}`);
+			this._logService.error(err.message);
+			throw err;
+		}
+
+		this._logService.info(`[LocalEmbeddingsComputer] Model files verified. vocab=${vocabPath}, model=${modelPath}`);
+
 		const vocabText = fs.readFileSync(vocabPath, 'utf-8');
 		this._tokenizer = new BertTokenizer(vocabText, 512);
+		this._logService.info(`[LocalEmbeddingsComputer] Tokenizer loaded (vocab size: ${vocabText.split('\\n').length})`);
 
 		// Load ONNX model
-		this._ort = await import('onnxruntime-node');
-		const modelPath = path.join(modelDir, 'model.onnx');
-		this._session = await this._ort.InferenceSession.create(modelPath, {
-			executionProviders: ['cpu'],
-			graphOptimizationLevel: 'all',
-		});
+		this._logService.info(`[LocalEmbeddingsComputer] Loading onnxruntime-node...`);
+		try {
+			this._ort = await import('onnxruntime-node');
+		} catch (e) {
+			this._logService.error(`[LocalEmbeddingsComputer] Failed to import onnxruntime-node: ${e}`);
+			if (e instanceof Error && e.stack) {
+				this._logService.error(`[LocalEmbeddingsComputer] onnxruntime-node import stack: ${e.stack}`);
+			}
+			throw e;
+		}
+
+		this._logService.info(`[LocalEmbeddingsComputer] onnxruntime-node imported. Creating InferenceSession for: ${modelPath}`);
+		try {
+			this._session = await this._ort.InferenceSession.create(modelPath, {
+				executionProviders: ['cpu'],
+				graphOptimizationLevel: 'all',
+			});
+		} catch (e) {
+			this._logService.error(`[LocalEmbeddingsComputer] Failed to create InferenceSession: ${e}`);
+			if (e instanceof Error && e.stack) {
+				this._logService.error(`[LocalEmbeddingsComputer] InferenceSession stack: ${e.stack}`);
+			}
+			throw e;
+		}
 
 		this._logService.info('[LocalEmbeddingsComputer] ONNX model loaded successfully');
 	}

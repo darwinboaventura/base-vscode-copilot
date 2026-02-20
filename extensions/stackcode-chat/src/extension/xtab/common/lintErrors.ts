@@ -170,7 +170,9 @@ function formatCodeLines(diagnosticRange: Range, lintOptions: LintOptions, docum
 
 	const lineRange = lineRangeToInclude.intersect(new OffsetRange(0, documentLines.length));
 	if (!lineRange) {
-		throw new BugIndicatingError('Unexpected: line range to include is out of document bounds.');
+		// Diagnostic references lines outside the current document (e.g., stale diagnostic after deletion).
+		// Return empty rather than crashing — this is a benign race condition, not a bug.
+		return [];
 	}
 
 	const codeLines: string[] = [];

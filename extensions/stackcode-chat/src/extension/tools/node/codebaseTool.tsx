@@ -45,10 +45,17 @@ export class CodebaseTool implements vscode.LanguageModelTool<ICodebaseToolParam
 	) { }
 
 	async invoke(options: vscode.LanguageModelToolInvocationOptions<ICodebaseToolParams>, token: CancellationToken) {
-		if (this._input && this._isCodebaseAgentCall(options)) {
+		// Only take the codebase agent path if _input has all required fields (request + conversation).
+		// When isAnonymous (Stackspot, no GitHub session), _input may be set via provideInput() but lack
+		// request/conversation — in that case, fall through to the renderPromptElementJSON search path.
+		if (this._input && this._input.request && this._input.conversation && this._isCodebaseAgentCall(options)) {
 			const input = this._input;
 			this._input = undefined; // consumed
 			return this.invokeCodebaseAgent(input, token);
+		}
+		// Clear stale _input that doesn't have the required fields
+		if (this._input) {
+			this._input = undefined;
 		}
 
 		if (!options.input.query) {
@@ -119,7 +126,7 @@ export class CodebaseTool implements vscode.LanguageModelTool<ICodebaseToolParam
 	}
 
 	prepareInvocation(options: vscode.LanguageModelToolInvocationPrepareOptions<ICodebaseToolParams>, token: vscode.CancellationToken): vscode.ProviderResult<vscode.PreparedToolInvocation> {
-		if (this._input && this._isCodebaseAgentCall(options)) {
+		if (this._input && this._input.request && this._input.conversation && this._isCodebaseAgentCall(options)) {
 			return {
 				presentation: 'hidden'
 			};

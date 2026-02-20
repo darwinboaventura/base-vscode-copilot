@@ -20,7 +20,7 @@ import { createFencedCodeBlock, getLanguageId } from '../../../../../util/common
 import { TelemetryCorrelationId } from '../../../../../util/common/telemetryCorrelationId';
 import { DeferredPromise, raceCancellation, raceCancellationError } from '../../../../../util/vs/base/common/async';
 import { CancellationToken } from '../../../../../util/vs/base/common/cancellation';
-import { CancellationError } from '../../../../../util/vs/base/common/errors';
+import { CancellationError, isCancellationError } from '../../../../../util/vs/base/common/errors';
 import { Lazy } from '../../../../../util/vs/base/common/lazy';
 import { ResourceMap } from '../../../../../util/vs/base/common/map';
 import { URI } from '../../../../../util/vs/base/common/uri';
@@ -295,6 +295,16 @@ export class WorkspaceContext extends PromptElement<WorkspaceContextProps, Works
 			// Get the token length first
 			const questionTokenLengthP = contextEndpoint.acquireTokenizer().tokenLength(message);
 
+			// STACKCODE: Helper to create fallback keywords from the original message
+			// when the meta-prompt API call fails or throws a hard error.
+			const createFallbackQueryAndKeywords = (): ResolvedWorkspaceChunkQuery => {
+				const segmenter = new Intl.Segmenter(undefined, { granularity: 'word' });
+				return {
+					rephrasedQuery: message,
+					keywords: Array.from(segmenter.segment(message)).map((x): KeywordItem => ({ keyword: x.segment, variations: [] })),
+				};
+			};
+
 			// The entire response
 			const requestP = questionTokenLengthP.then(questionTokenLength => contextEndpoint.makeChatRequest(
 				'workspaceContext',
@@ -338,11 +348,7 @@ export class WorkspaceContext extends PromptElement<WorkspaceContextProps, Works
 						fetchMessage = fetchResult.truncatedValue;
 					} else {
 						// Fall back to using the original message
-						const segmenter = new Intl.Segmenter(undefined, { granularity: 'word' });
-						return {
-							rephrasedQuery: message,
-							keywords: Array.from(segmenter.segment(message)).map((x): KeywordItem => ({ keyword: x.segment, variations: [] })),
-						};
+						return createFallbackQueryAndKeywords();
 					}
 				} else {
 					fetchMessage = fetchResult.value;
@@ -369,6 +375,18 @@ export class WorkspaceContext extends PromptElement<WorkspaceContextProps, Works
 					rephrasedQuery: metaResponse.rephrasedQuestion,
 					keywords: metaResponse.keywords,
 				};
+			}).catch((e: unknown) => {
+				// STACKCODE: If the meta-prompt API call throws a hard error (network failure, etc.),
+				// fall back to word segmentation instead of letting the rejection propagate.
+				// This ensures TF-IDF search can still work with basic keywords.
+				if (isCancellationError(e)) {
+					throw e;
+				}
+				this.logService.warn(`[Workspace Resolver] Meta-prompt request failed, falling back to word segmentation: ${e}`);
+				if (!queryP.isSettled) {
+					queryP.complete(message);
+				}
+				return createFallbackQueryAndKeywords();
 			});
 
 			return {

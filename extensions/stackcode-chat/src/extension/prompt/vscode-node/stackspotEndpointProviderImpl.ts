@@ -25,7 +25,7 @@ import { StackspotChatEndpoint } from '../../../platform/endpoint/node/stackspot
 import { ILogService } from '../../../platform/log/common/logService';
 import { IChatEndpoint, IEmbeddingsEndpoint } from '../../../platform/networking/common/networking';
 import { StackspotAgent } from '../../../platform/stackspot/types';
-import { getChatAgents, getDefaultChatAgent } from '../../../platform/stackspot/realmAgents';
+import { getChatAgents, getDefaultChatAgent, getAISupportAgent } from '../../../platform/stackspot/realmAgents';
 import { TokenizerType } from '../../../util/common/tokenizer';
 import { Emitter, Event } from '../../../util/vs/base/common/event';
 import { Disposable } from '../../../util/vs/base/common/lifecycle';
@@ -175,6 +175,69 @@ export class StackspotEndpointProvider extends Disposable implements IEndpointPr
 		return endpoint;
 	}
 
+	private _aiSupportEndpoint: IChatEndpoint | undefined;
+
+	/**
+	 * Returns (or creates) a dedicated endpoint for the forAISupportFeatures agent.
+	 * This agent is optimized for low-latency auxiliary features (commit messages,
+	 * rename, summarization, intent detection, etc.) and should NEVER be used for
+	 * the interactive chat panel.
+	 *
+	 * Falls back to the default chat agent if no forAISupportFeatures agent exists.
+	 */
+	private async _getOrCreateAISupportEndpoint(): Promise<IChatEndpoint> {
+		if (this._aiSupportEndpoint) {
+			// Refresh token on existing endpoint
+			const auth = this._stackspotAuth;
+			if (auth) {
+				try {
+					const accessToken = await auth.getAccessToken();
+					(this._aiSupportEndpoint as StackspotChatEndpoint).modelMetadata &&
+						((this._aiSupportEndpoint as any).modelMetadata._stackspotAccessToken = accessToken);
+				} catch {
+					// Token refresh failed — will be caught at request time
+				}
+			}
+			return this._aiSupportEndpoint;
+		}
+
+		const realm = this._currentRealm ?? '';
+		const supportAgent = getAISupportAgent(realm);
+
+		if (!supportAgent) {
+			this._logService.warn(`[stackcode] No forAISupportFeatures agent for realm "${realm}" — falling back to default chat agent`);
+			const agents = this._chatAgents;
+			if (agents.length === 0) {
+				throw new Error(`[stackcode] No agents available for realm: ${realm}`);
+			}
+			return this._getOrCreateChatEndpoint(agents[0].id);
+		}
+
+		const auth = this._stackspotAuth;
+		if (!auth) {
+			throw new Error('[stackcode] StackspotAuthService not available');
+		}
+
+		// Build model info — mark as NOT default (this is not the user-facing chat model)
+		const modelInfo = agentToModelInfo(supportAgent, false);
+
+		try {
+			const accessToken = await auth.getAccessToken();
+			(modelInfo as any)._stackspotAccessToken = accessToken;
+		} catch (e) {
+			this._logService.error(`[stackcode] Failed to get access token for AI support endpoint: ${e}`);
+		}
+
+		this._aiSupportEndpoint = this._instantiationService.createInstance(
+			StackspotChatEndpoint,
+			modelInfo,
+			auth,
+			supportAgent.id,
+		);
+		this._logService.info(`[stackcode] Created AI support endpoint: ${supportAgent.name} (${supportAgent.id})`);
+		return this._aiSupportEndpoint;
+	}
+
 	async getChatEndpoint(requestOrFamilyOrModel: LanguageModelChat | ChatRequest | ChatEndpointFamily): Promise<IChatEndpoint> {
 		const realm = this._currentRealm;
 		this._logService.trace(`[stackcode] Resolving Stackspot chat endpoint (realm: ${realm})`);
@@ -184,25 +247,29 @@ export class StackspotEndpointProvider extends Disposable implements IEndpointPr
 			throw new Error(`[stackcode] No chat agents available for realm: ${realm ?? 'unknown'}`);
 		}
 
-		let agentId: string;
-
 		if (typeof requestOrFamilyOrModel === 'string') {
-			// Family string — map to default agent
-			agentId = agents[0].id;
+			// STACKCODE: Family string (e.g. 'copilot-fast', 'gpt-4.1', 'copilot-base')
+			// These are auxiliary/support features that need low latency — route them
+			// to the dedicated forAISupportFeatures agent instead of the user's
+			// selected chat model (which may be a slow reasoning model like GPT 5.1).
+			const endpoint = await this._getOrCreateAISupportEndpoint();
+			this._logService.trace(`[stackcode] Resolved AI support endpoint for family "${requestOrFamilyOrModel}"`);
+			return endpoint;
+		}
+
+		// ChatRequest or LanguageModelChat — use the user's selected chat model
+		let agentId: string;
+		const model = 'model' in requestOrFamilyOrModel ? requestOrFamilyOrModel.model : requestOrFamilyOrModel;
+		if (model && 'id' in model) {
+			// Try to find a matching agent
+			const matchingAgent = agents.find(a => a.id === model.id);
+			agentId = matchingAgent?.id ?? agents[0].id;
 		} else {
-			// ChatRequest or LanguageModelChat
-			const model = 'model' in requestOrFamilyOrModel ? requestOrFamilyOrModel.model : requestOrFamilyOrModel;
-			if (model && 'id' in model) {
-				// Try to find a matching agent
-				const matchingAgent = agents.find(a => a.id === model.id);
-				agentId = matchingAgent?.id ?? agents[0].id;
-			} else {
-				agentId = agents[0].id;
-			}
+			agentId = agents[0].id;
 		}
 
 		const endpoint = await this._getOrCreateChatEndpoint(agentId);
-		this._logService.trace(`[stackcode] Resolved Stackspot endpoint: ${agentId}`);
+		this._logService.trace(`[stackcode] Resolved Stackspot chat endpoint: ${agentId}`);
 		return endpoint;
 	}
 
