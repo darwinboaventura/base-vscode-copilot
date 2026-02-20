@@ -501,9 +501,25 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 				}
 
 			} catch (err) {
-				logService.error(`[stackcode] Error processing Stackspot SSE stream: ${err}`);
-				const fullText = allTokens.join('') || 'Error processing response from StackSpot AI';
-				self._emitCompletion(emitter, fullText, allTokens, inputTokens, outputTokens, requestId, FinishedCompletionReason.ServerError, telemetryData);
+				// Distinguish client-side cancellation (AbortError) from real server errors.
+				// When the user moves their cursor, CancellationToken fires → AbortController.abort()
+				// → the SSE stream throws AbortError. This is NOT a server error.
+				const isAbort = (err && (err as any).name === 'AbortError') || cancellationToken?.isCancellationRequested;
+				if (isAbort) {
+					logService.info(`[stackcode] SSE stream cancelled (debugName=${debugName})`);
+					if (!emittedCompletion && allTokens.length > 0) {
+						// Partial content was received — emit as successful completion
+						const fullText = allTokens.join('');
+						self._emitCompletion(emitter, fullText, allTokens, inputTokens, outputTokens, requestId, FinishedCompletionReason.Stop, telemetryData);
+					}
+					// If no tokens were received, don't emit anything — the upstream
+					// chatMLFetcher.processError() will handle the CancellationError/AbortError
+					// and return ChatFetchResponseType.Canceled
+				} else {
+					logService.error(`[stackcode] Error processing Stackspot SSE stream: ${err}`);
+					const fullText = allTokens.join('') || 'Error processing response from StackSpot AI';
+					self._emitCompletion(emitter, fullText, allTokens, inputTokens, outputTokens, requestId, FinishedCompletionReason.ServerError, telemetryData);
+				}
 			} finally {
 				try {
 					await response.body.destroy();

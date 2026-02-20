@@ -8,7 +8,6 @@ import { AuthenticationContrib } from '../../authentication/vscode-node/authenti
 import { BYOKContrib } from '../../byok/vscode-node/byokContribution';
 import { ChatQuotaContribution } from '../../chat/vscode-node/chatQuota.contribution';
 import { ChatSessionContextContribution } from '../../chatSessionContext/vscode-node/chatSessionContextProvider';
-import { ChatSessionsContrib } from '../../chatSessions/vscode-node/chatSessions';
 import * as chatBlockLanguageContribution from '../../codeBlocks/vscode-node/chatBlockLanguageFeatures.contribution';
 import { IExtensionContributionFactory, asContributionFactory } from '../../common/contributions';
 import { CompletionsUnificationContribution } from '../../completions/vscode-node/completionsUnificationContribution';
@@ -96,7 +95,9 @@ export const vscodeNodeContributions: IExtensionContributionFactory[] = [
 	asContributionFactory(ChatReplayContribution),
 	asContributionFactory(CompletionsUnificationContribution),
 	workspaceIndexingContribution,
-	asContributionFactory(ChatSessionsContrib),
+	// STACKCODE: ChatSessionsContrib disabled — claude-code, copilotcli, copilot-cloud-agent
+	// all require GitHub backend which is not available in StackCode
+	// asContributionFactory(ChatSessionsContrib),
 	asContributionFactory(GitHubMcpContrib),
 	// STACKCODE: Register Stackspot AI login/logout commands
 	asContributionFactory(StackspotAuthContribution),

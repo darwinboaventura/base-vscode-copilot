@@ -4,9 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { CancellationToken as ICancellationToken } from 'vscode-languageserver-protocol';
-import { IConfigurationService } from '../../../../../../platform/configuration/common/configurationService';
 import { NoNextEditReason, StatelessNextEditTelemetryBuilder } from '../../../../../../platform/inlineEdits/common/statelessNextEditProvider';
-import { IExperimentationService } from '../../../../../../platform/telemetry/common/nullExperimentationService';
 import { fromUnknown } from '../../../../../../util/common/errors';
 import { Result } from '../../../../../../util/common/result';
 import { assertNever } from '../../../../../../util/vs/base/common/assert';
@@ -44,9 +42,7 @@ export class CompletionsFromNetwork {
 		@ICompletionsRuntimeModeService private readonly runtimeMode: ICompletionsRuntimeModeService,
 		@ICompletionsLogTargetService private readonly logTarget: ICompletionsLogTargetService,
 		@ICompletionsCacheService private readonly completionsCacheService: ICompletionsCacheService,
-		@ICompletionsUserErrorNotifierService private readonly userErrorNotifier: ICompletionsUserErrorNotifierService,
-		@IConfigurationService private readonly _configurationService: IConfigurationService,
-		@IExperimentationService private readonly _expService: IExperimentationService
+		@ICompletionsUserErrorNotifierService private readonly userErrorNotifier: ICompletionsUserErrorNotifierService
 	) { }
 
 	/** Requests new completion from OpenAI, should be called if and only if the completions for given prompt were not cached before.
