@@ -868,7 +868,7 @@ export namespace ConfigKey {
 	export const Enable = defineSetting<{ [key: string]: boolean }>('enable', ConfigType.Simple, {
 		'*': true,
 		'plaintext': false,
-		'markdown': false,
+		'markdown': true,
 		'scminput': false
 	});
 	export const selectedCompletionsModel = defineSetting<string>('selectedCompletionModel', ConfigType.Simple, '');

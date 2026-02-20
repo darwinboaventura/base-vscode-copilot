@@ -74,7 +74,7 @@ export class ExternalIngestClient extends Disposable implements IExternalIngestC
 
 	constructor(
 		@IInstantiationService instantiationService: IInstantiationService,
-		@IAuthenticationService private readonly authenticationService: IAuthenticationService,
+		@IAuthenticationService _authenticationService: IAuthenticationService,
 		@ILogService private readonly logService: ILogService,
 		@ITelemetryService private readonly telemetryService: ITelemetryService,
 	) {
@@ -86,8 +86,9 @@ export class ExternalIngestClient extends Disposable implements IExternalIngestC
 	}
 
 	public async getAuthToken(): Promise<string | undefined> {
-		return (await this.authenticationService.getGitHubSession('permissive', { silent: true }))?.accessToken
-			?? (await this.authenticationService.getGitHubSession('any', { silent: true }))?.accessToken;
+		// STACKCODE: Neutralized — this service uploads source code to api.github.com which is a
+		// critical data leak. Always return undefined so all operations are safely no-ops.
+		return undefined;
 	}
 
 	public canIngestPathAndSize(filePath: string, size: number): boolean {

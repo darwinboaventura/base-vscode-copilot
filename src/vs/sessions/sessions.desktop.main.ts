@@ -192,6 +192,7 @@ import './contrib/chat/browser/chat.contribution.js';
 import './contrib/sessions/browser/sessions.contribution.js';
 import './contrib/changesView/browser/changesView.contribution.js';
 import './contrib/configuration/browser/configuration.contribution.js';
+import './contrib/keybindings/browser/keybindings.contribution.js';
 
 //#endregion
 

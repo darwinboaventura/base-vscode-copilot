@@ -170,6 +170,9 @@ export class StreamingToolCallParser {
 							toolCall: { name: toolCall.name, arguments: JSON.stringify(toolCall.parameters), id },
 						});
 						this._detectedToolCalls = true;
+					} else {
+						const preview = this._currentBuffer.trim().substring(0, 200);
+						console.warn(`[StreamingToolCallParser] Failed to parse unclosed <tool_use> content on flush: ${preview}${this._currentBuffer.length > 200 ? '...' : ''}`);
 					}
 				}
 				break;
@@ -445,7 +448,8 @@ export class StreamingToolCallParser {
 			this._inputBuffer.push(remainder);
 		}
 
-		const payload = this._safeParseToolUse(this._currentBuffer);
+		const rawContent = this._currentBuffer;
+		const payload = this._safeParseToolUse(rawContent);
 		this._resetState();
 
 		if (payload) {
@@ -464,6 +468,11 @@ export class StreamingToolCallParser {
 				},
 			});
 			this._detectedToolCalls = true;
+		} else if (rawContent.trim()) {
+			// Log a warning so failed tool_use parsing is never silent.
+			// Truncate to avoid flooding logs with large payloads.
+			const preview = rawContent.trim().substring(0, 200);
+			console.warn(`[StreamingToolCallParser] Failed to parse <tool_use> content: ${preview}${rawContent.length > 200 ? '...' : ''}`);
 		}
 
 		return true;
@@ -522,8 +531,9 @@ export class StreamingToolCallParser {
 				return undefined;
 			}
 
-			// Validate tool name: must be alphanumeric with underscores/hyphens/dots only
-			if (!/^[a-zA-Z0-9_\-.]+$/.test(name)) {
+			// Validate tool name: must be alphanumeric with underscores, hyphens, dots,
+			// and slashes (tool names like "stackcode/askQuestions" use slashes).
+			if (!/^[a-zA-Z0-9_\-./]+$/.test(name)) {
 				return undefined;
 			}
 

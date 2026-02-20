@@ -3066,12 +3066,12 @@
 					"github.copilot.enable": {
 						"type": "object",
 						"scope": "window",
-						"default": {
-							"*": true,
-							"plaintext": false,
-							"markdown": false,
-							"scminput": false
-						},
+					"default": {
+						"*": true,
+						"plaintext": false,
+						"markdown": true,
+						"scminput": false
+					},
 						"additionalProperties": {
 							"type": "boolean"
 						},

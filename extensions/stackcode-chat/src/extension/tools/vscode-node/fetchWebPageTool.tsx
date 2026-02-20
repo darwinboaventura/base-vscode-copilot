@@ -9,6 +9,7 @@ import { ILogService } from '../../../platform/log/common/logService';
 import { UrlChunkEmbeddingsIndex } from '../../../platform/urlChunkSearch/node/urlChunkEmbeddingsIndex';
 import { Lazy } from '../../../util/vs/base/common/lazy';
 import { URI } from '../../../util/vs/base/common/uri';
+import { Range } from '../../../util/vs/editor/common/core/range';
 import { IInstantiationService } from '../../../util/vs/platform/instantiation/common/instantiation';
 import { isImageDataPart } from '../../conversation/common/languageModelChatMessageHelpers';
 import { renderPromptElementJSON } from '../../prompts/node/base/promptRenderer';
@@ -107,21 +108,42 @@ class FetchWebPageTool implements ICopilotTool<IFetchWebPageParams> {
 			}
 		}
 
-		const filesAndTheirChunks = await this._index.value.findInUrls(
-			validTextContent,
-			options.input.query ?? '',
-			token
-		);
+		let webPageResults: WebPageChunkResult[];
+		try {
+			const filesAndTheirChunks = await this._index.value.findInUrls(
+				validTextContent,
+				options.input.query ?? '',
+				token
+			);
 
-		const webPageResults = new Array<WebPageChunkResult>();
-		for (let i = 0; i < validTextContent.length; i++) {
-			const file = validTextContent[i];
-			const chunks = filesAndTheirChunks[i];
-			const sumScore = chunks.reduce((acc, chunk) => acc + (chunk.distance?.value ?? 0), 0);
-			webPageResults.push({ uri: file.uri, chunks, sumScore });
+			webPageResults = new Array<WebPageChunkResult>();
+			for (let i = 0; i < validTextContent.length; i++) {
+				const file = validTextContent[i];
+				const chunks = filesAndTheirChunks[i];
+				const sumScore = chunks.reduce((acc, chunk) => acc + (chunk.distance?.value ?? 0), 0);
+				webPageResults.push({ uri: file.uri, chunks, sumScore });
+			}
+			// Sort by sumScore descending
+			webPageResults.sort((a, b) => b.sumScore - a.sumScore);
+		} catch (e) {
+			// STACKCODE: If URL chunking/embedding fails (e.g. no GitHub chunking API access),
+			// fall back to returning the raw fetched content as a single chunk per URL.
+			this._logService.debug(`FetchWebPageTool: URL chunk indexing failed, falling back to raw content: ${e}`);
+			webPageResults = validTextContent.map(file => ({
+				uri: file.uri,
+				chunks: [{
+					chunk: {
+						file: file.uri,
+						text: file.content,
+						rawText: undefined,
+						range: new Range(1, 0, file.content.split('\n').length, 0),
+						isFullFile: true,
+					},
+					distance: undefined,
+				}],
+				sumScore: 0,
+			}));
 		}
-		// Sort by sumScore descending
-		webPageResults.sort((a, b) => b.sumScore - a.sumScore);
 
 		const element = await renderPromptElementJSON(
 			this._instantiationService,

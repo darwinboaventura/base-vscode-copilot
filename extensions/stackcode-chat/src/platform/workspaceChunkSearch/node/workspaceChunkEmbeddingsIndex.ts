@@ -449,18 +449,13 @@ export class WorkspaceChunkEmbeddingsIndex extends Disposable {
 		return this._chunkingEndpointClient.computeChunks(authToken, this._embeddingType, file, batchInfo, qos, cachedChunks, telemetryInfo, token);
 	}
 
-	private async tryGetAuthToken(options: AuthenticationGetSessionOptions = { createIfNone: true }): Promise<string | undefined> {
-		// STACKCODE: Try GitHub session first (upstream behavior), then fall back to copilot token.
-		// In StackCode, there's no GitHub session — we use Stackspot auth which provides a synthetic copilot token.
-		const githubSession = await this._authService.getGitHubSession('any', options);
-		if (githubSession?.accessToken) {
-			return githubSession.accessToken;
-		}
-		// Fall back to copilot token (Stackspot synthetic token)
+	private async tryGetAuthToken(_options?: AuthenticationGetSessionOptions): Promise<string | undefined> {
+		// STACKCODE: Go straight to copilot token (Stackspot synthetic token).
+		// getGitHubSession() is neutralized and always returns undefined.
 		try {
 			const copilotToken = await this._authService.getCopilotToken();
 			return copilotToken?.token;
-		} catch (e) {
+		} catch {
 			return undefined;
 		}
 	}

@@ -34,7 +34,16 @@ Registry.as<IConfigurationRegistry>(Extensions.Configuration).registerDefaultCon
 		'workbench.startupEditor': 'none',
 		'workbench.tips.enabled': false,
 		'workbench.layoutControl.type': 'toggles',
-		'workbench.editor.allowOpenInModalEditor': false
+		'workbench.editor.allowOpenInModalEditor': false,
+
+		'terminal.integrated.defaultProfile.osx': 'bash',
+		'chat.tools.terminal.autoReplyToPrompts': false,
+		'redhat.telemetry.enabled': false,
+		'chat.tools.terminal.outputLocation': 'terminal',
+		'editor.wordWrap': 'on',
+		'editor.aiStats.enabled': false,
+		'chat.editMode.hidden': true,
+		'workbench.tree.indent': 20
 	},
 	donotCache: true
 }]);

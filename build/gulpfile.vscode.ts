@@ -100,6 +100,9 @@ const vscodeResourceIncludes = [
 	// Sessions
 	'out-build/vs/sessions/contrib/chat/browser/media/*.svg',
 
+	// Chat Widget (StackSpot login icon)
+	'out-build/vs/workbench/contrib/chat/browser/widget/media/stackspot-icon.svg',
+
 	// Extensions
 	'out-build/vs/workbench/contrib/extensions/browser/media/{theme-icon.png,language-icon.svg}',
 	'out-build/vs/workbench/services/extensionManagement/common/media/*.{svg,png}',

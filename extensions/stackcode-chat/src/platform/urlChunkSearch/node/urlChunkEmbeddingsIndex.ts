@@ -128,8 +128,15 @@ export class UrlChunkEmbeddingsIndex extends Disposable {
 		return chunksAndEmbeddings;
 	}
 
-	private async tryGetAuthToken(createIfNone = true): Promise<string | undefined> {
-		return (await this._authService.getGitHubSession('any', { createIfNone }))?.accessToken;
+	private async tryGetAuthToken(): Promise<string | undefined> {
+		// STACKCODE: Go straight to copilot token (Stackspot synthetic token).
+		// getGitHubSession() is neutralized and always returns undefined.
+		try {
+			const copilotToken = await this._authService.getCopilotToken();
+			return copilotToken?.token;
+		} catch {
+			return undefined;
+		}
 	}
 }
 

@@ -18,7 +18,8 @@ import { IHooksOutputChannel } from '../../../platform/chat/common/hooksOutputCh
 import { ISessionTranscriptService } from '../../../platform/chat/common/sessionTranscriptService';
 import { NodeHookExecutor } from '../../../platform/chat/node/hookExecutor';
 import { IChunkingEndpointClient } from '../../../platform/chunking/common/chunkingEndpointClient';
-import { ChunkingEndpointClientImpl } from '../../../platform/chunking/common/chunkingEndpointClientImpl';
+// STACKCODE: Use LocalChunkingEndpointClient instead of ChunkingEndpointClientImpl (remote GitHub API)
+import { LocalChunkingEndpointClient } from '../../../platform/chunking/node/localChunkingEndpointClient';
 import { INaiveChunkingService, NaiveChunkingService } from '../../../platform/chunking/node/naiveChunkerService';
 import { IDevContainerConfigurationService } from '../../../platform/devcontainer/common/devContainerConfigurationService';
 import { IDiffService } from '../../../platform/diff/common/diffService';
@@ -212,7 +213,8 @@ export function registerServices(builder: IInstantiationServiceBuilder, extensio
 	builder.define(IIntentService, new SyncDescriptor(IntentService));
 	builder.define(INaiveChunkingService, new SyncDescriptor(NaiveChunkingService));
 	builder.define(IWorkspaceFileIndex, new SyncDescriptor(WorkspaceFileIndex));
-	builder.define(IChunkingEndpointClient, new SyncDescriptor(ChunkingEndpointClientImpl));
+	// STACKCODE: Use LocalChunkingEndpointClient — all chunking + embeddings computed locally via NaiveChunker + ONNX
+	builder.define(IChunkingEndpointClient, new SyncDescriptor(LocalChunkingEndpointClient));
 	builder.define(ICommandService, new SyncDescriptor(CommandServiceImpl));
 	builder.define(IDocsSearchClient, new SyncDescriptor(DocsSearchClient));
 	builder.define(ISearchService, new SyncDescriptor(SearchServiceImpl));
