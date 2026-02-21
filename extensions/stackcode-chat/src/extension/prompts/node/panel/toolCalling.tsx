@@ -654,7 +654,9 @@ class PrimitiveToolResult<T extends IPrimitiveToolResultProps> extends PromptEle
 	}
 
 	protected async onImage(part: LanguageModelDataPart) {
-		const githubToken = (await this.authService.getGitHubSession('any', { silent: true }))?.accessToken;
+		const githubToken = this.authService
+			? (await this.authService.getGitHubSession('any', { silent: true }))?.accessToken
+			: undefined;
 		const uploadsEnabled = this.configurationService && this.experimentationService
 			? this.configurationService.getExperimentBasedConfig(ConfigKey.EnableChatImageUpload, this.experimentationService)
 			: false;
@@ -673,7 +675,7 @@ class PrimitiveToolResult<T extends IPrimitiveToolResultProps> extends PromptEle
 			}
 		}
 
-		return Promise.resolve(imageDataPartToTSX(part, uploadToken, this.endpoint.urlOrRequestMetadata, this.logService, this.imageService));
+		return Promise.resolve(imageDataPartToTSX(part, uploadToken, this.endpoint?.urlOrRequestMetadata, this.logService, this.imageService));
 	}
 
 	protected onTSX(part: JSONTree.PromptElementJSON) {

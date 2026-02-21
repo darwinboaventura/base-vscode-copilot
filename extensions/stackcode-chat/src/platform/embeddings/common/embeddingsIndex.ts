@@ -178,6 +178,8 @@ export interface IEmbeddingsCache {
 
 	getCache<T = EmbeddingCacheEntries>(): Promise<T | undefined>;
 	clearCache(): Promise<void>;
+	// STACKCODE: Expose updateCache so BaseEmbeddingsIndex can persist locally computed embeddings
+	updateCache<T = EmbeddingCacheEntries>(value: T | undefined): Promise<void>;
 }
 
 /**
@@ -188,8 +190,8 @@ export class LocalEmbeddingsCache implements IEmbeddingsCache {
 	private readonly _embeddingsCache: EmbeddingsCache;
 	constructor(
 		cacheType: EmbeddingCacheType,
-		private readonly cacheKey: string,
-		private readonly cacheVersion: string,
+		cacheKey: string,
+		cacheVersion: string,
 		public readonly embeddingType: EmbeddingType,
 		@IInstantiationService instantiationService: IInstantiationService
 	) {
@@ -202,15 +204,21 @@ export class LocalEmbeddingsCache implements IEmbeddingsCache {
 	}
 
 	public async getCache<T = EmbeddingCacheEntries>(): Promise<T | undefined> {
-		const cacheEntries: any = await this._embeddingsCache.getCache();
-		if (cacheEntries === undefined) {
-			throw new Error(`Failed to get cache for ${this.cacheKey}, version ${this.cacheVersion}`);
-		}
-		return cacheEntries;
+		// STACKCODE: Return undefined instead of throwing when cache is empty.
+		// LocalEmbeddingsCache replaces RemoteEmbeddingsCache (which fetched from CDN).
+		// On first run there is no local cache — returning undefined lets
+		// BaseEmbeddingsIndex._calculateEmbeddings() proceed to compute embeddings
+		// locally via the ONNX model instead of crashing.
+		return await this._embeddingsCache.getCache();
 	}
 
 	clearCache(): Promise<void> {
 		return this._embeddingsCache.clearCache();
+	}
+
+	// STACKCODE: Delegate to inner EmbeddingsCache to persist locally computed embeddings
+	public async updateCache<T = EmbeddingCacheEntries>(value: T | undefined): Promise<void> {
+		return this._embeddingsCache.updateCache(value);
 	}
 }
 
@@ -246,6 +254,10 @@ export class RemoteEmbeddingsCache implements IEmbeddingsCache {
 
 	async clearCache(): Promise<void> {
 		await this.embeddingsCache.clearCache();
+	}
+
+	public async updateCache<T = EmbeddingCacheEntries>(value: T | undefined): Promise<void> {
+		return this.embeddingsCache.updateCache(value);
 	}
 
 	protected async getRemoteContainer(): Promise<RemoteEmbeddingsContainer> {
@@ -532,6 +544,8 @@ export abstract class BaseEmbeddingsIndex<V extends { key: string; embedding?: E
 		const cachedEmbeddings = await this._embeddingsCache.getCache();
 		// check that the cached embeddings is of flattened format, if not, we need to construct it
 		const latestEmbeddingsIndex = new Map<string, V>();
+		const itemsNeedingEmbedding: { item: V; queryString: string }[] = [];
+
 		for (const item of allItems) {
 			let newItem = item;
 			const oldItem = this._items.get(item.key);
@@ -542,9 +556,47 @@ export abstract class BaseEmbeddingsIndex<V extends { key: string; embedding?: E
 			} else if (cachedEmbeddings && cachedEmbeddings[key]) {
 				// We have it in our cache
 				newItem = { ...item, ...cachedEmbeddings[key] };
+			} else {
+				// STACKCODE: Collect items without embeddings for local computation
+				itemsNeedingEmbedding.push({ item, queryString: this.getEmbeddingQueryString(item) });
 			}
 
 			latestEmbeddingsIndex.set(key, newItem);
+		}
+
+		// STACKCODE: Compute embeddings locally for items not found in cache.
+		// This replaces the upstream flow where embeddings were pre-computed and
+		// downloaded from a CDN (RemoteEmbeddingsCache). The local ONNX model
+		// (all-MiniLM-L6-v2, 384 dims) computes equivalent embeddings on-device.
+		if (itemsNeedingEmbedding.length > 0) {
+			try {
+				const inputs = itemsNeedingEmbedding.map(x => x.queryString);
+				const result = await this.embeddingsComputer.computeEmbeddings(
+					this.embeddingType, inputs
+				);
+				if (result?.values) {
+					for (let i = 0; i < itemsNeedingEmbedding.length; i++) {
+						const { item } = itemsNeedingEmbedding[i];
+						const embedding = result.values[i]?.value;
+						if (embedding) {
+							const updatedItem = { ...item, embedding } as V;
+							latestEmbeddingsIndex.set(item.key, updatedItem);
+						}
+					}
+
+					// Persist computed embeddings to local cache for next startup
+					const cacheEntries: { [key: string]: { embedding: EmbeddingVector } } = {};
+					for (const [key, item] of latestEmbeddingsIndex) {
+						if (item.embedding) {
+							cacheEntries[key] = { embedding: item.embedding };
+						}
+					}
+					await this._embeddingsCache.updateCache(cacheEntries);
+				}
+				this.logService.info(`[stackcode] Computed ${itemsNeedingEmbedding.length} embeddings locally for ${this.cacheKey} in ${Date.now() - startTime}ms`);
+			} catch (e) {
+				this.logService.warn(`[stackcode] Failed to compute local embeddings for ${this.cacheKey}: ${e instanceof Error ? e.message : String(e)}`);
+			}
 		}
 
 		this._items = latestEmbeddingsIndex;

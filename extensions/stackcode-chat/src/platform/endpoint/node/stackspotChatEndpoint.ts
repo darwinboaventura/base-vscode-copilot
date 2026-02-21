@@ -36,7 +36,7 @@ import { IDomainService } from '../common/domainService';
 import { IChatModelInformation } from '../common/endpointProvider';
 import { ChatEndpoint } from './chatEndpoint';
 import { StackspotAuthService } from '../../stackspot/auth';
-import { StackspotSSEResponse } from '../../stackspot/types';
+import { StackspotSSEResponse, StackspotUploadFormResponse } from '../../stackspot/types';
 import {
 	StreamingToolCallParser,
 	ToolCallParserEventKind,
@@ -70,6 +70,12 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 	 * request types (e.g. editingSession/speculate).
 	 */
 	private _lastRequestDebugName: string | undefined;
+
+	/**
+	 * Stores upload_ids from image uploads performed in makeChatRequest2().
+	 * Consumed by createRequestBody() and cleared after use.
+	 */
+	private _pendingUploadIds: string[] | undefined;
 
 	/**
 	 * Debug names that indicate a "passthrough" prompt — the message content
@@ -229,6 +235,13 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 			use_conversation: false,
 			stackspot_knowledge: false,
 		};
+
+		// Include upload_ids from images uploaded in makeChatRequest2()
+		if (this._pendingUploadIds && this._pendingUploadIds.length > 0) {
+			body.upload_ids = this._pendingUploadIds;
+			this._stackspotLogService.info(`[stackcode] Including ${this._pendingUploadIds.length} upload_id(s) in request body`);
+			this._pendingUploadIds = undefined; // Clear after use
+		}
 
 		return body as unknown as IEndpointBody;
 	}
@@ -643,9 +656,17 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 
 	/**
 	 * Override makeChatRequest2 to refresh the Stackspot access token
-	 * before every request. This ensures the token is always fresh,
-	 * even for endpoints created outside StackspotEndpointProvider
-	 * (e.g. xtab/NES endpoints where no one refreshes the token).
+	 * before every request and upload any images found in the messages.
+	 *
+	 * Stackspot AI does NOT support inline base64 images. Instead, images
+	 * must be uploaded via the 2-step file-upload API (pre-signed S3 form)
+	 * and referenced by upload_ids in the chat request body.
+	 *
+	 * This method:
+	 * 1. Refreshes the OAuth2 access token
+	 * 2. Extracts image parts from the messages
+	 * 3. Uploads each image to Stackspot via the file-upload API
+	 * 4. Stores the resulting upload_ids so createRequestBody() can include them
 	 */
 	public override async makeChatRequest2(options: IMakeChatRequestOptions, token: CancellationToken): Promise<ChatResponse> {
 		try {
@@ -654,7 +675,157 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 		} catch (e) {
 			this._stackspotLogService.warn(`[stackcode] Failed to refresh token before request: ${e}`);
 		}
+
+		// Extract and upload images from messages
+		const images = this._extractImagesFromMessages(options.messages);
+		if (images.length > 0) {
+			this._stackspotLogService.info(`[stackcode] Found ${images.length} image(s) in messages, uploading to Stackspot...`);
+			const uploadIds: string[] = [];
+			for (const img of images) {
+				try {
+					const uploadId = await this._uploadImageToStackspot(img.data, img.mimeType, img.name);
+					uploadIds.push(uploadId);
+					this._stackspotLogService.info(`[stackcode] Uploaded image '${img.name}' → upload_id=${uploadId}`);
+				} catch (e) {
+					this._stackspotLogService.warn(`[stackcode] Failed to upload image '${img.name}': ${e instanceof Error ? e.message : String(e)}`);
+				}
+			}
+			if (uploadIds.length > 0) {
+				this._pendingUploadIds = uploadIds;
+			}
+		}
+
 		return super.makeChatRequest2(options, token);
+	}
+
+	/**
+	 * Extracts image data from Raw.ChatMessage[] content parts.
+	 * Images appear as ChatCompletionContentPart with type=Image and
+	 * imageUrl.url containing a data: URI (base64-encoded).
+	 */
+	private _extractImagesFromMessages(messages: Raw.ChatMessage[]): Array<{ data: Uint8Array; mimeType: string; name: string }> {
+		const images: Array<{ data: Uint8Array; mimeType: string; name: string }> = [];
+		let imageIndex = 0;
+
+		for (const message of messages) {
+			const content = message.content;
+			if (!content || typeof content === 'string') {
+				continue;
+			}
+			const parts = Array.isArray(content) ? content : [content];
+			for (const part of parts) {
+				if (part.type === Raw.ChatCompletionContentPartKind.Image && part.imageUrl?.url) {
+					const url = part.imageUrl.url;
+					// Parse data URI: data:image/png;base64,<data>
+					const match = url.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,(.+)$/);
+					if (match) {
+						const mimeType = match[1];
+						const base64Data = match[2];
+						try {
+							const binaryData = Buffer.from(base64Data, 'base64');
+							const ext = mimeType.split('/')[1]?.replace(/[^a-zA-Z0-9]/g, '') ?? 'png';
+							images.push({
+								data: new Uint8Array(binaryData),
+								mimeType,
+								name: `image-${imageIndex++}.${ext}`,
+							});
+						} catch {
+							// Skip malformed base64 data
+						}
+					} else if (url.startsWith('http://') || url.startsWith('https://')) {
+						// URL-based image — cannot upload, skip
+						this._stackspotLogService.trace(`[stackcode] Skipping URL-based image: ${url.substring(0, 100)}`);
+					}
+				}
+			}
+		}
+
+		return images;
+	}
+
+	/**
+	 * Uploads a single image to Stackspot AI using the 2-step file-upload API.
+	 *
+	 * Step 1: POST to https://data-integration-api.stackspot.com/v2/file-upload/form
+	 *         to get a pre-signed S3 form and upload ID.
+	 * Step 2: POST multipart/form-data to the S3 pre-signed URL with the form
+	 *         fields and the file data.
+	 *
+	 * @returns The upload_id to reference this file in the chat request.
+	 */
+	private async _uploadImageToStackspot(data: Uint8Array, mimeType: string, fileName: string): Promise<string> {
+		const accessToken = await this._stackspotAuth.getAccessToken();
+
+		// Step 1: Get pre-signed form
+		const formResponse = await fetch('https://data-integration-api.stackspot.com/v2/file-upload/form', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				'Authorization': `Bearer ${accessToken}`,
+			},
+			body: JSON.stringify({
+				file_name: fileName,
+				target_type: 'CONTEXT',
+				expiration: 60,
+			}),
+		});
+
+		if (!formResponse.ok) {
+			const errorText = await formResponse.text();
+			throw new Error(`Pre-signed form request failed: ${formResponse.status} ${errorText}`);
+		}
+
+		const formData = await formResponse.json() as StackspotUploadFormResponse;
+		const uploadId = formData.id;
+
+		// Step 2: Upload file to S3 using the pre-signed form
+		const boundary = `----StackCodeUpload${Date.now()}`;
+		const formFields: Record<string, string> = {
+			key: formData.form.key,
+			'x-amz-algorithm': formData.form['x-amz-algorithm'],
+			'x-amz-credential': formData.form['x-amz-credential'],
+			'x-amz-date': formData.form['x-amz-date'],
+			'x-amz-security-token': formData.form['x-amz-security-token'],
+			policy: formData.form.policy,
+			'x-amz-signature': formData.form['x-amz-signature'],
+		};
+
+		// Build multipart/form-data body manually
+		const parts: Uint8Array[] = [];
+		const encoder = new TextEncoder();
+
+		for (const [key, value] of Object.entries(formFields)) {
+			parts.push(encoder.encode(`--${boundary}\r\nContent-Disposition: form-data; name="${key}"\r\n\r\n${value}\r\n`));
+		}
+
+		// File part
+		parts.push(encoder.encode(`--${boundary}\r\nContent-Disposition: form-data; name="file"; filename="${fileName}"\r\nContent-Type: ${mimeType}\r\n\r\n`));
+		parts.push(data);
+		parts.push(encoder.encode(`\r\n--${boundary}--\r\n`));
+
+		// Concatenate all parts
+		const totalLength = parts.reduce((sum, p) => sum + p.length, 0);
+		const body = new Uint8Array(totalLength);
+		let offset = 0;
+		for (const part of parts) {
+			body.set(part, offset);
+			offset += part.length;
+		}
+
+		const s3Response = await fetch(formData.url, {
+			method: 'POST',
+			headers: {
+				'Content-Type': `multipart/form-data; boundary=${boundary}`,
+			},
+			body,
+		});
+
+		if (!s3Response.ok) {
+			const errorText = await s3Response.text();
+			throw new Error(`S3 upload failed: ${s3Response.status} ${errorText}`);
+		}
+
+		return uploadId;
 	}
 
 	/**

@@ -46,6 +46,29 @@ export interface StackspotChatRequest {
 	stackspot_knowledge?: boolean;
 	return_ks_in_response?: boolean;
 	deep_search_ks?: boolean;
+	/** IDs of files previously uploaded via the Stackspot file-upload API */
+	upload_ids?: string[];
+}
+
+/**
+ * Response from the Stackspot file-upload pre-signed form endpoint.
+ * POST https://data-integration-api.stackspot.com/v2/file-upload/form
+ */
+export interface StackspotUploadFormResponse {
+	/** The S3 pre-signed upload URL */
+	url: string;
+	/** The unique ID for this upload (used in chat request upload_ids) */
+	id: string;
+	/** S3 pre-signed form fields */
+	form: {
+		key: string;
+		'x-amz-algorithm': string;
+		'x-amz-credential': string;
+		'x-amz-date': string;
+		'x-amz-security-token': string;
+		policy: string;
+		'x-amz-signature': string;
+	};
 }
 
 export interface StackspotSSEResponse {

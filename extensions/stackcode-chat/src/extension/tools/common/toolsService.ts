@@ -229,7 +229,13 @@ export abstract class BaseToolsService extends Disposable implements IToolsServi
 		let fn = this.schemaCache.get(tool.name);
 		if (fn === undefined) {
 			try {
-				fn = this.ajv.compile(tool.inputSchema);
+				// STACKCODE: Strip $schema before Ajv compilation. MCP servers (e.g. Playwright)
+				// often declare "$schema": "https://json-schema.org/draft/2020-12/schema" which
+				// Ajv v8 cannot resolve (only supports draft-07). The $schema declaration is not
+				// needed for input validation — it only declares which draft the schema follows.
+				const schemaToCompile = { ...tool.inputSchema };
+				delete (schemaToCompile as Record<string, unknown>)['$schema'];
+				fn = this.ajv.compile(schemaToCompile);
 			} catch (e) {
 				if (!this.didWarnAboutValidationError?.has(tool.name)) {
 					this.didWarnAboutValidationError ??= new Set();
