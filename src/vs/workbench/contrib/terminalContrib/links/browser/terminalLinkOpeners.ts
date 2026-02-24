@@ -280,18 +280,38 @@ interface IResourceMatch {
 	isDirectory?: boolean;
 }
 
+const localhostHosts = new Set<string>([
+	'localhost',
+	'127.0.0.1',
+	'[0:0:0:0:0:0:0:1]',
+	'[::1]',
+	'0.0.0.0',
+	'[0:0:0:0:0:0:0:0]',
+	'[::]'
+]);
+
+function isLocalhostUrl(url: string): boolean {
+	try {
+		const parsedUrl = new URL(url);
+		return localhostHosts.has(parsedUrl.hostname);
+	} catch {
+		return false;
+	}
+}
+
 export class TerminalUrlLinkOpener implements ITerminalLinkOpener {
 	constructor(
 		private readonly _isRemote: boolean,
 		private readonly _localFileOpener: TerminalLocalFileLinkOpener,
 		private readonly _localFolderInWorkspaceOpener: TerminalLocalFolderInWorkspaceLinkOpener,
-		private readonly _localFolderOutsideWorkspaceOpener: TerminalLocalFolderOutsideWorkspaceLinkOpener,
+		private readonly _localFolderOutsideWorkspaceLinkOpener: TerminalLocalFolderOutsideWorkspaceLinkOpener,
 		@IOpenerService private readonly _openerService: IOpenerService,
 		@IConfigurationService private readonly _configurationService: IConfigurationService,
 		@IFileService private readonly _fileService: IFileService,
 		@IUriIdentityService private readonly _uriIdentityService: IUriIdentityService,
 		@IWorkspaceContextService private readonly _workspaceContextService: IWorkspaceContextService,
 		@ITerminalLogService private readonly _logService: ITerminalLogService,
+		@ICommandService private readonly _commandService: ICommandService,
 	) {
 	}
 
@@ -303,6 +323,12 @@ export class TerminalUrlLinkOpener implements ITerminalLinkOpener {
 		if (link.uri.scheme === Schemas.file) {
 			return this._openFileSchemeLink(link);
 		}
+
+		// Open localhost URLs in Simple Browser
+		if (isLocalhostUrl(link.text)) {
+			return this._commandService.executeCommand('simpleBrowser.show', link.text);
+		}
+
 		// It's important to use the raw string value here to avoid converting pre-encoded values
 		// from the URL like `%2B` -> `+`.
 		this._openerService.open(link.text, {
@@ -335,9 +361,9 @@ export class TerminalUrlLinkOpener implements ITerminalLinkOpener {
 				case TerminalBuiltinLinkType.LocalFolderInWorkspace:
 					await this._localFolderInWorkspaceOpener.open(link);
 					return;
-				case TerminalBuiltinLinkType.LocalFolderOutsideWorkspace:
-					await this._localFolderOutsideWorkspaceOpener.open(link);
-					return;
+			case TerminalBuiltinLinkType.LocalFolderOutsideWorkspace:
+				await this._localFolderOutsideWorkspaceLinkOpener.open(link);
+				return;
 				case TerminalBuiltinLinkType.Url:
 					await this.open(link);
 					return;
