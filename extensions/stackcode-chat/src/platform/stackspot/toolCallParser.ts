@@ -253,6 +253,19 @@ export class StreamingToolCallParser {
 		return this._parseErrorCount > 0;
 	}
 
+	/**
+	 * Returns the accumulated text that was found OUTSIDE any XML tags.
+	 * Used by the structured extractor to attempt tool call recovery from
+	 * raw text when the LLM ignores the required XML format.
+	 *
+	 * Note: After flush(), the _outsideAccumulator is cleared (emitted as Text
+	 * event). This getter captures it BEFORE flush for the endpoint to pass
+	 * to the extractor.
+	 */
+	public get outsideAccumulatorText(): string {
+		return this._outsideAccumulator;
+	}
+
 	// =========================================================================
 	// Internal — Main loop
 	// =========================================================================

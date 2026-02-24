@@ -44,6 +44,7 @@ import {
 	getToolCallingSystemPrompt,
 	FORMAT_REMINDER_INSTRUCTION,
 } from '../../stackspot/toolCallParser';
+import { extractToolCalls } from '../../stackspot/structuredExtractor';
 
 /**
  * Chat endpoint that routes all requests to Stackspot AI.
@@ -387,11 +388,20 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 								}
 
 								// STACKCODE: Detect malformed responses — LLM did not follow XML format
+								// Try structured extraction before falling back to retry
 								if (self._isMalformedResponse(parser, allTokens, debugName, logService)) {
-									const fullText = buildFullText() || allTokens.join('');
-									self._emitMalformedCompletion(emitter, fullText, allTokens, inputTokens, outputTokens, requestId, telemetryData);
-									emittedCompletion = true;
-									continue;
+									const rawText = allTokens.join('');
+									const rescued = self._tryStructuredExtraction(rawText, debugName, logService);
+									if (rescued) {
+										// Structured extraction succeeded — treat as normal tool calls
+										completedToolCalls.push(...rescued);
+									} else {
+										// No tool calls found — fall back to retry mechanism
+										const fullText = buildFullText() || rawText;
+										self._emitMalformedCompletion(emitter, fullText, allTokens, inputTokens, outputTokens, requestId, telemetryData);
+										emittedCompletion = true;
+										continue;
+									}
 								}
 
 								// Determine finish reason based on whether tool calls were detected
@@ -492,12 +502,20 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 												await self._handleParserEvent(event, finishCallback, allTokens, completedToolCalls, plainTextParts, (t) => { thinkingText += t; }, toolCallArgsAccumulator);
 											}
 
-											// STACKCODE: Detect malformed responses
+											// STACKCODE: Detect malformed responses — try structured extraction first
 											if (self._isMalformedResponse(parser, allTokens, debugName, logService)) {
-												const fullText = buildFullText() || allTokens.join('');
-												self._emitMalformedCompletion(emitter, fullText, allTokens, inputTokens, outputTokens, requestId, telemetryData);
-												emittedCompletion = true;
-											} else {
+												const rawText = allTokens.join('');
+												const rescued = self._tryStructuredExtraction(rawText, debugName, logService);
+												if (rescued) {
+													completedToolCalls.push(...rescued);
+												} else {
+													const fullText = buildFullText() || rawText;
+													self._emitMalformedCompletion(emitter, fullText, allTokens, inputTokens, outputTokens, requestId, telemetryData);
+													emittedCompletion = true;
+												}
+											}
+
+											if (!emittedCompletion) {
 												const hasDetectedToolCalls = completedToolCalls.length > 0;
 												const finishReason = hasDetectedToolCalls
 													? FinishedCompletionReason.ToolCalls
@@ -549,11 +567,20 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 							await self._handleParserEvent(event, finishCallback, allTokens, completedToolCalls, plainTextParts, (t) => { thinkingText += t; }, toolCallArgsAccumulator);
 						}
 
-						// STACKCODE: Detect malformed responses
+						// STACKCODE: Detect malformed responses — try structured extraction first
 						if (self._isMalformedResponse(parser, allTokens, debugName, logService)) {
-							const fullText = buildFullText() || allTokens.join('');
-							self._emitMalformedCompletion(emitter, fullText, allTokens, inputTokens, outputTokens, requestId, telemetryData);
-						} else {
+							const rawText = allTokens.join('');
+							const rescued = self._tryStructuredExtraction(rawText, debugName, logService);
+							if (rescued) {
+								completedToolCalls.push(...rescued);
+							} else {
+								const fullText = buildFullText() || rawText;
+								self._emitMalformedCompletion(emitter, fullText, allTokens, inputTokens, outputTokens, requestId, telemetryData);
+								emittedCompletion = true;
+							}
+						}
+
+						if (!emittedCompletion) {
 							const hasDetectedToolCalls = completedToolCalls.length > 0;
 							const finishReason = hasDetectedToolCalls
 								? FinishedCompletionReason.ToolCalls
@@ -642,8 +669,14 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 			}
 
 			case ToolCallParserEventKind.ToolCallBegin: {
-				// Tool call started — emit beginToolCalls delta
+				// Tool call started — emit beginToolCalls delta.
+				// Pre-seed the arguments accumulator with the JSON prefix so the
+				// accumulated string is always valid partial JSON (e.g. {"name":"list_dir", ...)
+				// instead of starting mid-object (e.g. , "parameters": {...}).
+				// The toolCallParser emits argumentsDeltas starting *after* the name
+				// was extracted (_toolUseDeltaOffset), so we reconstruct the prefix here.
 				this._stackspotLogService.info(`[stackcode] Parser event: ToolCallBegin name=${event.name} id=${event.id}`);
+				toolCallArgsAccumulator.set(event.id, `{"name":${JSON.stringify(event.name)}`);
 				await finishCallback(plainTextParts.join(''), 0, {
 					text: '',
 					beginToolCalls: [{ name: event.name, id: event.id }],
@@ -799,6 +832,29 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 			filterReason: FilterReason.MalformedFormat,
 			telemetryData,
 		});
+	}
+
+	/**
+	 * Attempts structured extraction of tool calls from raw text when the LLM
+	 * ignored the required XML format. Returns extracted tool calls if any were
+	 * found, or null to signal fallback to the retry mechanism.
+	 *
+	 * This is the "rescue layer" between XML parsing (Layer 1) and retry (Layer 5).
+	 */
+	private _tryStructuredExtraction(
+		rawText: string,
+		debugName: string,
+		logService: ILogService,
+	): Array<{ name: string; arguments: string; id: string }> | null {
+		const rescued = extractToolCalls(rawText);
+		if (rescued.length === 0) {
+			logService.info(`[stackcode] Structured extraction (${debugName}): no tool calls found in raw text (${rawText.length} chars). Falling back to retry.`);
+			return null;
+		}
+		logService.info(
+			`[stackcode] Structured extraction RESCUED (${debugName}): ${rescued.length} tool call(s) extracted from malformed response: ${rescued.map(tc => `${tc.name}(id=${tc.id})`).join(', ')}`,
+		);
+		return rescued;
 	}
 
 	/**

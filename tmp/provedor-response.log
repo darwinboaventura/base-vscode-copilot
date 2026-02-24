@@ -1,0 +1,668 @@
+HTTP/1.1 200 OK
+Content-Type: text/event-stream; charset=utf-8
+Transfer-Encoding: chunked
+Connection: keep-alive
+Server: CloudFront
+Date: Tue, 24 Feb 2026 05:08:11 GMT
+Cache-Control: no-cache
+X-Envoy-Upstream-Service-Time: 328
+Strict-Transport-Security: max-age=31536000; includeSubdomains
+Via: 1.1 adefb9d8f127d135c77c36e328df10a8.cloudfront.net (CloudFront)
+X-Cache: Miss from cloudfront
+X-Amz-Cf-Pop: GRU3-P10
+X-Amz-Cf-Id: iNbX7vecBpIxIIuG9bSfrggRYw6JseCgEfoxfncveJdh0n8Mnffg7w==
+
+: ping - 2026-02-24 05:08:26.623106+00:00
+
+: ping - 2026-02-24 05:08:41.623085+00:00
+
+: ping - 2026-02-24 05:08:56.622793+00:00
+
+data: {"message": "", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "<th", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "inking", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": ">", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "Vou", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " iniciar", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " criando", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " o", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " projeto", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " V", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "ite", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " React", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "+", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "TS", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " na", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " raiz", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": ",", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " instalar", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " Tail", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "wind", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " v", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "3", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": ",", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " Luc", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "ide", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " e", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " Re", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "charts", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": ",", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " depois", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " estrut", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "urar", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " context", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "os", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " e", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " componentes", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " do", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " dashboard", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": ".</", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "thinking", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": ">\n", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "<", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "progress", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": ">", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "Configur", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "ando", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " plano", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " de", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " tarefas", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " e", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " inici", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "ando", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " scaff", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "olding", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " do", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " projeto", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " V", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "ite", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " na", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " raiz", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " do", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " workspace", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": ".</", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "progress", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": ">\n", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "<", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "tool", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "_use", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": ">{\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "name", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\":\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "manage", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "_t", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "odo", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "_list", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\",\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "parameters", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\":{\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "todo", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "List", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\":[", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "{\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "id", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\":", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "1", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": ",\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "title", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\":\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "Inicial", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "izar", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " projeto", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " V", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "ite", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " React", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "+", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "TS", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\",\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "status", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\":\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "in", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "-progress", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\"},{\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "id", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\":", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "2", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": ",\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "title", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\":\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "Inst", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "alar", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " e", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " configurar", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " Tail", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "wind", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " v", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "3", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\",\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "status", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\":\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "not", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "-start", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "ed", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\"},{\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "id", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\":", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "3", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": ",\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "title", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\":\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "Inst", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "alar", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " Luc", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "ide", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " e", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " Re", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "charts", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\",\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "status", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\":\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "not", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "-start", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "ed", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\"},{\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "id", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\":", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "4", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": ",\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "title", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\":\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "Cri", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "ar", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " context", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "os", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": ",", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " hooks", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " e", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " tipos", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\",\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "status", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\":\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "not", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "-start", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "ed", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\"},{\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "id", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\":", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "5", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": ",\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "title", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\":\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "Implement", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "ar", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " layout", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " e", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " componentes", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " de", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " dashboard", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\",\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "status", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\":\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "not", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "-start", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "ed", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\"},{\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "id", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\":", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "6", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": ",\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "title", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\":\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "Integr", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "ar", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " tema", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": ",", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " persist", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\u00eancia", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " e", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " valida", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\u00e7\u00f5es", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\",\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "status", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\":\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "not", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "-start", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "ed", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\"},{\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "id", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\":", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "7", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": ",\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "title", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\":\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "Rod", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "ar", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " build", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " e", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " ajustar", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " event", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "uais", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " erros", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\",\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "status", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\":\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "not", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "-start", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "ed", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\"}", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "]", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "}}</", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "tool", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "_use", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": ">\n", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "<", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "tool", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "_use", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": ">{\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "name", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\":\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "run", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "_in", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "_terminal", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\",\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "parameters", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\":{\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "command", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\":\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "cd", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " /", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "Users", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "/d", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "ar", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "win", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "/Desktop", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "/tests", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "-ai", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "-c", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "oding", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "-agent", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "/test", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "05", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " &&", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " npm", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " create", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " vite", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "@", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "latest", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " .", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " --", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " --", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "template", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " react", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "-ts", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\",\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "ex", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "planation", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\":\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "Cr", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "ia", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " um", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " novo", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " projeto", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " V", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "ite", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " com", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " template", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " React", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " Type", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "Script", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " na", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " raiz", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " do", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " workspace", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": ".\",\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "goal", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\":\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "Inicial", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "izar", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " projeto", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " base", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": " React", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "+", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "V", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "ite", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "+", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "TS", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\",\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "is", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "Background", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\":", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "false", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": ",\"", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "timeout", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "\":", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "600", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "000", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "}}</", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "tool", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "_use", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": ">", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"message": "", "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "agent_info": []}
+
+data: {"stop_reason": "stop", "tokens": {"input": 31729, "output": 3091}, "upload_ids": {}, "knowledge_source_id": [], "source": [], "cross_account_source": [], "tools_id": [], "message_id": "01KJ70RDXFZJXKV1FZ8D4KGKG5", "agent_info": []}
+

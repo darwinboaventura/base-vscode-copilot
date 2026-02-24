@@ -230,11 +230,24 @@ export function reportCitations(delta: IResponseDelta, progress: ChatResponseStr
 /**
  * Attempts to parse partial JSON using best-effort parsing.
  * For streaming tool call arguments, the JSON arrives incrementally.
+ *
+ * The parser may throw on certain malformed fragments (e.g. strings starting
+ * with ':' or other non-JSON-start characters) that arrive during early
+ * streaming stages. Since this function is only used for UI preview of
+ * partial tool input, we catch and return undefined on failure instead of
+ * letting the error propagate as an unhandled promise rejection.
  */
 function tryParsePartialToolInput(raw: string | undefined): unknown {
 	if (!raw) {
 		return raw;
 	}
 
-	return parsePartialJson(raw);
+	try {
+		return parsePartialJson(raw);
+	} catch {
+		// Partial JSON fragment that the parser cannot handle yet.
+		// This is expected during early streaming of tool call arguments
+		// where the accumulated string may not start at a JSON boundary.
+		return undefined;
+	}
 }

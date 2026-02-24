@@ -244,7 +244,17 @@ export class ChatMLFetcherImpl extends AbstractChatMLFetcher {
 										`Your rejected response started with: "${preview}..."\n` +
 										`Please respond again using the correct XML format.\n\n`;
 								} else if (result.category === FilterReason.EmptyResponse) {
-									retryMessage = `Your previous response was empty — the API returned no content, only empty chunks. Please try again and provide a complete response.\n\n`;
+									if (requestBody.tools?.length) {
+										retryMessage = `Your previous response was REJECTED because it was completely empty — no XML tags were received.\n` +
+											`You MUST respond using the required XML format. ALL content MUST be inside XML tags:\n` +
+											`- <thinking>reasoning</thinking>\n` +
+											`- <tool_use>{"name":"...","parameters":{...}}</tool_use>\n` +
+											`- <text>response text</text>\n` +
+											`Your response was not accepted. Correct this immediately and provide a complete response using the XML format above.\n\n`;
+									} else {
+										retryMessage = `Your previous response was REJECTED because it was completely empty — no content was received.\n` +
+											`Your response was not accepted. Correct this immediately and provide a complete response.\n\n`;
+									}
 								} else {
 									retryMessage = `The previous response (copied below) was filtered due to triggering our content safety filters, which looks for hateful, self-harm, sexual, or violent content. Please suggest something similar in content that does not trigger these filters. Here's the previous response: ${filteredContent}\n\n`;
 								}
