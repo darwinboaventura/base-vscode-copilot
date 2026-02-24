@@ -180,6 +180,10 @@ export class PseudoStopStartResponseProcessor implements IResponseProcessor {
 				progress.clearToPreviousToolInvocation(ChatResponseClearToPreviousToolInvocationReason.NoReason);
 			} else if (delta.retryReason === FilterReason.Copyright) {
 				progress.clearToPreviousToolInvocation(ChatResponseClearToPreviousToolInvocationReason.CopyrightContentRetry);
+			} else if (delta.retryReason === FilterReason.MalformedFormat || delta.retryReason === FilterReason.EmptyResponse) {
+				// STACKCODE: Malformed format and empty responses are not content safety issues —
+				// they are format/API issues. Use NoReason to avoid showing "content safety filters" warning.
+				progress.clearToPreviousToolInvocation(ChatResponseClearToPreviousToolInvocationReason.NoReason);
 			} else {
 				progress.clearToPreviousToolInvocation(ChatResponseClearToPreviousToolInvocationReason.FilteredContentRetry);
 			}

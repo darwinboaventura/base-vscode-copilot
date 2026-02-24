@@ -395,6 +395,8 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 									if (rescued) {
 										// Structured extraction succeeded — treat as normal tool calls
 										completedToolCalls.push(...rescued);
+										// Clear accumulated text parts to prevent raw JSON from appearing in chat
+										plainTextParts.length = 0;
 									} else {
 										// No tool calls found — fall back to retry mechanism
 										const fullText = buildFullText() || rawText;
@@ -502,18 +504,20 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 												await self._handleParserEvent(event, finishCallback, allTokens, completedToolCalls, plainTextParts, (t) => { thinkingText += t; }, toolCallArgsAccumulator);
 											}
 
-											// STACKCODE: Detect malformed responses — try structured extraction first
-											if (self._isMalformedResponse(parser, allTokens, debugName, logService)) {
-												const rawText = allTokens.join('');
-												const rescued = self._tryStructuredExtraction(rawText, debugName, logService);
-												if (rescued) {
-													completedToolCalls.push(...rescued);
-												} else {
-													const fullText = buildFullText() || rawText;
-													self._emitMalformedCompletion(emitter, fullText, allTokens, inputTokens, outputTokens, requestId, telemetryData);
-													emittedCompletion = true;
-												}
+										// STACKCODE: Detect malformed responses — try structured extraction first
+										if (self._isMalformedResponse(parser, allTokens, debugName, logService)) {
+											const rawText = allTokens.join('');
+											const rescued = self._tryStructuredExtraction(rawText, debugName, logService);
+											if (rescued) {
+												completedToolCalls.push(...rescued);
+												// Clear accumulated text parts to prevent raw JSON from appearing in chat
+												plainTextParts.length = 0;
+											} else {
+												const fullText = buildFullText() || rawText;
+												self._emitMalformedCompletion(emitter, fullText, allTokens, inputTokens, outputTokens, requestId, telemetryData);
+												emittedCompletion = true;
 											}
+										}
 
 											if (!emittedCompletion) {
 												const hasDetectedToolCalls = completedToolCalls.length > 0;
@@ -573,6 +577,8 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 							const rescued = self._tryStructuredExtraction(rawText, debugName, logService);
 							if (rescued) {
 								completedToolCalls.push(...rescued);
+								// Clear accumulated text parts to prevent raw JSON from appearing in chat
+								plainTextParts.length = 0;
 							} else {
 								const fullText = buildFullText() || rawText;
 								self._emitMalformedCompletion(emitter, fullText, allTokens, inputTokens, outputTokens, requestId, telemetryData);
