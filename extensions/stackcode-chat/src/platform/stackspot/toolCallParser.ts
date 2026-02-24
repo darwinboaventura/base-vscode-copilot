@@ -37,7 +37,7 @@ export const enum ToolCallParserEventKind {
 	ToolCallComplete,
 	/** A tool call has started — emitted when we enter <tool_use> */
 	ToolCallBegin,
-	/** Tool call arguments are being streamed (not used in new format — tool_use is accumulated) */
+	/** Tool call arguments are being streamed incrementally */
 	ToolCallArgumentsDelta,
 	/** Thinking text (inside <thinking> block) */
 	Thinking,
@@ -90,7 +90,8 @@ const KNOWN_TAGS = new Set(['thinking', 'text', 'tool_use', 'code', 'progress'])
  * Key behaviors:
  * - <thinking> content is streamed chunk-by-chunk immediately
  * - <text> content is streamed chunk-by-chunk immediately
- * - <tool_use> content is accumulated silently, validated on close, then emitted
+ * - <tool_use> content emits ToolCallBegin as soon as the tool name is detected,
+ *   then streams ToolCallArgumentsDelta incrementally, and emits ToolCallComplete on close
  * - <code> content is streamed immediately
  * - <progress> content is streamed immediately
  * - Text outside XML tags is accumulated for raw JSON fallback recovery
@@ -112,6 +113,13 @@ export class StreamingToolCallParser {
 	private _outsideAccumulator = '';
 	private _toolCallIdCounter = 0;
 	private _detectedToolCalls = false;
+
+	// Incremental tool_use streaming state
+	private _toolUseBeginEmitted = false;
+	private _toolUseName = '';
+	private _toolUseId = '';
+	/** Number of bytes from _currentBuffer already emitted as ArgumentsDelta */
+	private _toolUseDeltaOffset = 0;
 
 	/**
 	 * Feed a chunk of text into the parser.
@@ -159,15 +167,28 @@ export class StreamingToolCallParser {
 				if (this._currentBuffer) {
 					const toolCall = this._safeParseToolUse(this._currentBuffer);
 					if (toolCall) {
-						const id = this._nextToolCallId();
-						events.push({
-							kind: ToolCallParserEventKind.ToolCallBegin,
-							name: toolCall.name,
-							id,
-						});
+						// If Begin was already emitted during streaming, reuse the same ID
+						if (!this._toolUseBeginEmitted) {
+							this._toolUseId = this._nextToolCallId();
+							events.push({
+								kind: ToolCallParserEventKind.ToolCallBegin,
+								name: toolCall.name,
+								id: this._toolUseId,
+							});
+						}
+						// Emit any remaining arguments delta
+						const remainingDelta = this._currentBuffer.substring(this._toolUseDeltaOffset);
+						if (remainingDelta && this._toolUseBeginEmitted) {
+							events.push({
+								kind: ToolCallParserEventKind.ToolCallArgumentsDelta,
+								name: this._toolUseName || toolCall.name,
+								id: this._toolUseId,
+								argumentsDelta: remainingDelta,
+							});
+						}
 						events.push({
 							kind: ToolCallParserEventKind.ToolCallComplete,
-							toolCall: { name: toolCall.name, arguments: JSON.stringify(toolCall.parameters), id },
+							toolCall: { name: toolCall.name, arguments: JSON.stringify(toolCall.parameters), id: this._toolUseId },
 						});
 						this._detectedToolCalls = true;
 					} else {
@@ -175,6 +196,7 @@ export class StreamingToolCallParser {
 						console.warn(`[StreamingToolCallParser] Failed to parse unclosed <tool_use> content on flush: ${preview}${this._currentBuffer.length > 200 ? '...' : ''}`);
 					}
 				}
+				this._resetToolUseState();
 				break;
 			case ParserState.InCode:
 			case ParserState.InProgress:
@@ -414,8 +436,12 @@ export class StreamingToolCallParser {
 	}
 
 	/**
-	 * Accumulates tool_use content silently until closing tag.
-	 * On close: parses JSON, validates, generates local toolCallId, emits events.
+	 * Incrementally processes tool_use content:
+	 * 1. Emits ToolCallBegin as soon as the tool name is detected
+	 * 2. Emits ToolCallArgumentsDelta for each new chunk of content
+	 * 3. Emits ToolCallComplete when </tool_use> closes
+	 *
+	 * This keeps the progress spinner active throughout tool call generation.
 	 */
 	private _consumeToolUse(events: ToolCallParserEvent[]): boolean {
 		const pending = this._inputBuffer.join('');
@@ -423,7 +449,7 @@ export class StreamingToolCallParser {
 		const closeIndex = pending.indexOf(closeTag);
 
 		if (closeIndex === -1) {
-			// Accumulate silently
+			// Closing tag not found — accumulate what's safe (keep guard for partial close tag)
 			if (pending) {
 				const guardLength = Math.max(closeTag.length - 1, 0);
 				const cutoff = Math.max(0, pending.length - guardLength);
@@ -438,9 +464,17 @@ export class StreamingToolCallParser {
 					this._inputBuffer.push(leftover);
 				}
 			}
+
+			// Try to detect tool name and emit Begin early
+			this._tryEmitToolUseBegin(events);
+
+			// Emit incremental argument deltas if Begin was already emitted
+			this._emitToolUseDelta(events);
+
 			return false;
 		}
 
+		// Closing tag found — finalize
 		this._currentBuffer += pending.substring(0, closeIndex);
 		const remainder = pending.substring(closeIndex + closeTag.length);
 		this._inputBuffer.length = 0;
@@ -448,23 +482,36 @@ export class StreamingToolCallParser {
 			this._inputBuffer.push(remainder);
 		}
 
+		// Ensure Begin was emitted (might not have been if name came in the final chunk)
+		this._tryEmitToolUseBegin(events);
+
+		// Emit any remaining delta
+		this._emitToolUseDelta(events);
+
+		// Parse full content and emit Complete
 		const rawContent = this._currentBuffer;
 		const payload = this._safeParseToolUse(rawContent);
-		this._resetState();
 
 		if (payload) {
-			const id = this._nextToolCallId();
-			events.push({
-				kind: ToolCallParserEventKind.ToolCallBegin,
-				name: payload.name,
-				id,
-			});
+			// If Begin was never emitted (e.g., name extraction failed during streaming
+			// but full parse succeeds), emit it now before Complete
+			if (!this._toolUseBeginEmitted) {
+				this._toolUseId = this._nextToolCallId();
+				this._toolUseName = payload.name;
+				events.push({
+					kind: ToolCallParserEventKind.ToolCallBegin,
+					name: payload.name,
+					id: this._toolUseId,
+				});
+				this._toolUseBeginEmitted = true;
+			}
+
 			events.push({
 				kind: ToolCallParserEventKind.ToolCallComplete,
 				toolCall: {
 					name: payload.name,
 					arguments: JSON.stringify(payload.parameters),
-					id,
+					id: this._toolUseId,
 				},
 			});
 			this._detectedToolCalls = true;
@@ -475,7 +522,93 @@ export class StreamingToolCallParser {
 			console.warn(`[StreamingToolCallParser] Failed to parse <tool_use> content: ${preview}${rawContent.length > 200 ? '...' : ''}`);
 		}
 
+		this._resetToolUseState();
+		this._resetState();
 		return true;
+	}
+
+	/**
+	 * Tries to extract the tool name from the accumulated _currentBuffer.
+	 * When found, emits ToolCallBegin and sets _toolUseBeginEmitted = true.
+	 *
+	 * The JSON format is: {"name":"tool_name","parameters":{...}}
+	 * We look for the pattern "name" followed by a colon and a quoted string.
+	 */
+	private _tryEmitToolUseBegin(events: ToolCallParserEvent[]): void {
+		if (this._toolUseBeginEmitted) {
+			return;
+		}
+
+		const name = this._extractToolName(this._currentBuffer);
+		if (!name) {
+			return;
+		}
+
+		this._toolUseId = this._nextToolCallId();
+		this._toolUseName = name;
+		this._toolUseBeginEmitted = true;
+		// Mark the current buffer position so we start deltas from here
+		this._toolUseDeltaOffset = this._currentBuffer.length;
+
+		events.push({
+			kind: ToolCallParserEventKind.ToolCallBegin,
+			name,
+			id: this._toolUseId,
+		});
+	}
+
+	/**
+	 * Emits any new content in _currentBuffer as ToolCallArgumentsDelta.
+	 * Only emits after ToolCallBegin has been sent.
+	 */
+	private _emitToolUseDelta(events: ToolCallParserEvent[]): void {
+		if (!this._toolUseBeginEmitted) {
+			return;
+		}
+
+		const newContent = this._currentBuffer.substring(this._toolUseDeltaOffset);
+		if (!newContent) {
+			return;
+		}
+
+		this._toolUseDeltaOffset = this._currentBuffer.length;
+		events.push({
+			kind: ToolCallParserEventKind.ToolCallArgumentsDelta,
+			name: this._toolUseName,
+			id: this._toolUseId,
+			argumentsDelta: newContent,
+		});
+	}
+
+	/**
+	 * Extracts the tool name from a partial JSON buffer.
+	 * Looks for the pattern: "name" : "value"
+	 * Returns the value if found and valid, undefined otherwise.
+	 */
+	private _extractToolName(buffer: string): string | undefined {
+		// Match "name" followed by optional whitespace, colon, optional whitespace, and a quoted string
+		const match = buffer.match(/"name"\s*:\s*"([^"]+)"/);
+		if (!match) {
+			return undefined;
+		}
+
+		const name = match[1].trim();
+		// Validate tool name: must be alphanumeric with underscores, hyphens, dots, slashes
+		if (!name || !/^[a-zA-Z0-9_\-./]+$/.test(name)) {
+			return undefined;
+		}
+
+		return name;
+	}
+
+	/**
+	 * Resets the incremental tool_use streaming state.
+	 */
+	private _resetToolUseState(): void {
+		this._toolUseBeginEmitted = false;
+		this._toolUseName = '';
+		this._toolUseId = '';
+		this._toolUseDeltaOffset = 0;
 	}
 
 	// =========================================================================

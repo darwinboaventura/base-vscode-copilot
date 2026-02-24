@@ -6,6 +6,11 @@
 
 import { StackspotSSEResponse, OpenAIChunk } from './types.js';
 
+export interface SSEProcessResult {
+	chunks: OpenAIChunk[];
+	isEmpty: boolean;
+}
+
 export class StackspotSSEHandler {
 	private buffer: string = '';
 	private conversationId: string = '';
@@ -23,25 +28,29 @@ export class StackspotSSEHandler {
 
 	/**
 	 * Processa uma linha SSE e retorna chunks OpenAI se disponíveis
+	 * Também indica se a linha continha um chunk vazio (message vazio)
 	 */
-	processLine(line: string): OpenAIChunk[] {
+	processLine(line: string): SSEProcessResult {
 		this.buffer += line;
 
 		if (!line.startsWith('data: ')) {
-			return [];
+			return { chunks: [], isEmpty: false };
 		}
 
 		const data = line.slice(6).trim();
 		
 		if (data === '[DONE]') {
-			return this.createFinalChunk();
+			return { chunks: this.createFinalChunk(), isEmpty: false };
 		}
 
 		try {
 			const response: StackspotSSEResponse = JSON.parse(data);
-			return this.processResponse(response);
+			const chunks = this.processResponse(response);
+			// Considera vazio se tem message mas está vazio, ou se não tem message
+			const isEmpty = response.message === '' || (!response.message && !response.stop_reason);
+			return { chunks, isEmpty };
 		} catch {
-			return [];
+			return { chunks: [], isEmpty: false };
 		}
 	}
 

@@ -11,8 +11,8 @@ import { sanitizeVSCodeVersion } from '../../../../util/common/vscodeVersion';
 import { IInstantiationService } from '../../../../util/vs/platform/instantiation/common/instantiation';
 import { IToolEmbeddingsCache } from './toolEmbeddingsComputer';
 
-// STACKCODE: Use local embedding type for tool grouping (384-dim local ONNX model)
-export const EMBEDDING_TYPE_FOR_TOOL_GROUPING = EmbeddingType.local_minilm_384;
+// STACKCODE: Use local embedding type for tool grouping (128-dim local ONNX model)
+export const EMBEDDING_TYPE_FOR_TOOL_GROUPING = EmbeddingType.local_minilm_128;
 
 export class PreComputedToolEmbeddingsCache implements IToolEmbeddingsCache {
 	private readonly cache: IEmbeddingsCache;

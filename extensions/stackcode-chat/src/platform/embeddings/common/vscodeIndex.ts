@@ -107,7 +107,7 @@ abstract class RelatedInformationProviderEmbeddingsIndex<V extends { key: string
 			return [];
 		}
 		const startOfEmbeddingRequest = Date.now();
-		const embeddingResult = await this.embeddingsComputer.computeEmbeddings(EmbeddingType.local_minilm_384, [query], {}, new TelemetryCorrelationId('RelatedInformationProviderEmbeddingsIndex::provideRelatedInformation'), token);
+		const embeddingResult = await this.embeddingsComputer.computeEmbeddings(EmbeddingType.local_minilm_128, [query], {}, new TelemetryCorrelationId('RelatedInformationProviderEmbeddingsIndex::provideRelatedInformation'), token);
 		this._logService.debug(`Related Information: Remote similarly request took ${Date.now() - startOfEmbeddingRequest}ms`);
 		if (token.isCancellationRequested) {
 			// return an array of 0s the same length as comparisons
@@ -122,7 +122,7 @@ abstract class RelatedInformationProviderEmbeddingsIndex<V extends { key: string
 				break;
 			}
 			if (item.embedding) {
-				const score = distance(embeddingResult.values[0], { value: item.embedding, type: EmbeddingType.local_minilm_384 }).value;
+				const score = distance(embeddingResult.values[0], { value: item.embedding, type: EmbeddingType.local_minilm_128 }).value;
 				if (score > this.relatedInformationConfig.threshold) {
 					results.push(this.toRelatedInformation(item, score));
 				}
@@ -156,7 +156,7 @@ class CommandIdIndex extends RelatedInformationProviderEmbeddingsIndex<CommandLi
 	) {
 		super(
 			'CommandIdIndex',
-			EmbeddingType.local_minilm_384,
+			EmbeddingType.local_minilm_128,
 			'commandEmbeddings',
 			embeddingsFetcher,
 			embeddingscache,
@@ -217,7 +217,7 @@ class SettingsIndex extends RelatedInformationProviderEmbeddingsIndex<SettingLis
 	) {
 		super(
 			'SettingsIndex',
-			EmbeddingType.local_minilm_384,
+			EmbeddingType.local_minilm_128,
 			'settingEmbeddings',
 			embeddingsFetcher,
 			embeddingsCache,
@@ -287,9 +287,9 @@ export class VSCodeCombinedIndexImpl implements ICombinedEmbeddingIndex {
 		// STACKCODE: Always use local cache — remote CDN caches are incompatible (512-dim vs 384-dim)
 		// and would leak data to embeddings.vscode-cdn.net
 		const settingsEmbeddingsCache =
-			instantiationService.createInstance(LocalEmbeddingsCache, EmbeddingCacheType.GLOBAL, 'settingEmbeddings', '1.98', EmbeddingType.local_minilm_384);
+			instantiationService.createInstance(LocalEmbeddingsCache, EmbeddingCacheType.GLOBAL, 'settingEmbeddings', '1.98', EmbeddingType.local_minilm_128);
 		const commandsEmbeddingsCache =
-			instantiationService.createInstance(LocalEmbeddingsCache, EmbeddingCacheType.GLOBAL, 'commandEmbeddings', '1.98', EmbeddingType.local_minilm_384);
+			instantiationService.createInstance(LocalEmbeddingsCache, EmbeddingCacheType.GLOBAL, 'commandEmbeddings', '1.98', EmbeddingType.local_minilm_128);
 
 		this.settingsIndex = instantiationService.createInstance(SettingsIndex, settingsEmbeddingsCache);
 		this.commandIdIndex = instantiationService.createInstance(CommandIdIndex, commandsEmbeddingsCache);

@@ -105,7 +105,7 @@ export class NewWorkspacePrompt extends PromptElement<NewWorkspacePromptProps, N
 			}
 			else if (instruction.intent === 'Project') {
 				if (this.props.useTemplates) {
-					const result = await this.embeddingsComputer.computeEmbeddings(EmbeddingType.local_minilm_384, [instruction.question], {}, undefined);
+					const result = await this.embeddingsComputer.computeEmbeddings(EmbeddingType.local_minilm_128, [instruction.question], {}, undefined);
 					progress.report(new ChatResponseProgressPart(l10n.t('Searching project template index...')));
 					const similarProjects = await this.projectTemplatesIndex.nClosestValues(result.values[0], 1);
 					if (similarProjects.length > 0) {

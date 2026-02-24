@@ -306,6 +306,29 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 			const plainTextParts: string[] = [];
 			let thinkingText = '';
 
+			/**
+			 * STACKCODE FIX: Build the full response text including thinking/reasoning.
+			 *
+			 * The upstream Copilot preserves the assistant's reasoning text in the
+			 * conversation history so the LLM can see WHY it made previous tool calls.
+			 * Without this, `ToolCallRound.response` is empty when tool calls are present,
+			 * causing the LLM to operate "blind" in subsequent turns — it sees that it
+			 * made tool calls but not the reasoning that led to them.
+			 *
+			 * When tool calls are detected, we prepend `thinkingText` (the LLM's
+			 * reasoning/thinking emitted before the tool calls) to the plain text parts.
+			 * This text flows into `ChatCompletion.message.content` → `fetchResult.value`
+			 * → `ToolCallRound.response` → `_convertMessagesToUserPrompt()` where it is
+			 * serialized as text inside the `<assistant>` tag alongside `<tool_call>` tags.
+			 */
+			function buildFullText(): string {
+				const plainText = plainTextParts.join('');
+				if (thinkingText && completedToolCalls.length > 0) {
+					return thinkingText + (plainText ? '\n' + plainText : '');
+				}
+				return plainText;
+			}
+
 			try {
 				for await (const chunk of textDecoder) {
 					if (cancellationToken?.isCancellationRequested || truncated) {
@@ -363,8 +386,8 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 
 								if (hasDetectedToolCalls) {
 									// Emit final delta with all completed tool calls
-									const fullText = plainTextParts.join('');
-									logService.info(`[stackcode] SSE complete (${debugName}): ${completedToolCalls.length} tool calls detected: ${completedToolCalls.map(tc => `${tc.name}(id=${tc.id}, args=${tc.arguments.substring(0, 100)})`).join(', ')}`);
+									const fullText = buildFullText();
+									logService.info(`[stackcode] SSE complete (${debugName}): ${completedToolCalls.length} tool calls detected, text length=${fullText.length}: ${completedToolCalls.map(tc => `${tc.name}(id=${tc.id}, args=${tc.arguments.substring(0, 100)})`).join(', ')}`);
 									await finishCallback(fullText, 0, {
 										text: '',
 										copilotToolCalls: completedToolCalls.map(tc => ({
@@ -376,7 +399,7 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 									self._emitCompletion(emitter, fullText, allTokens, inputTokens, outputTokens, requestId, finishReason, telemetryData);
 								} else {
 									// No tool calls — emit as plain text
-									const fullText = plainTextParts.join('');
+									const fullText = buildFullText();
 									logService.info(`[stackcode] SSE complete (${debugName}): NO tool calls detected, text length=${fullText.length}`);
 									await finishCallback(fullText, 0, { text: '' });
 									self._emitCompletion(emitter, fullText, allTokens, inputTokens, outputTokens, requestId, finishReason, telemetryData);
@@ -448,7 +471,7 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 												? FinishedCompletionReason.ToolCalls
 												: FinishedCompletionReason.Stop;
 
-											const fullText = plainTextParts.join('');
+											const fullText = buildFullText();
 											if (hasDetectedToolCalls) {
 												await finishCallback(fullText, 0, {
 													text: '',
@@ -497,7 +520,7 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 							? FinishedCompletionReason.ToolCalls
 							: (truncated ? FinishedCompletionReason.Length : FinishedCompletionReason.Stop);
 
-						const fullText = plainTextParts.join('');
+						const fullText = buildFullText();
 						if (hasDetectedToolCalls) {
 							await finishCallback(fullText, 0, {
 								text: '',

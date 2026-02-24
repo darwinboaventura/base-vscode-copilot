@@ -239,12 +239,12 @@ export class MockGithubAvailableEmbeddingTypesService implements IGithubAvailabl
 	}
 }
 
-// STACKCODE: Local-only implementation that always returns local_minilm_384.
+// STACKCODE: Local-only implementation that always returns local_minilm_128.
 // Replaces GithubAvailableEmbeddingTypesService which requires HTTP calls to api.githubcopilot.com.
 export class LocalAvailableEmbeddingTypesService implements IGithubAvailableEmbeddingTypesService {
 	declare readonly _serviceBrand: undefined;
 
 	async getPreferredType(_silent: boolean): Promise<EmbeddingType | undefined> {
-		return EmbeddingType.local_minilm_384;
+		return EmbeddingType.local_minilm_128;
 	}
 }

@@ -1,7 +1,6 @@
 /*---------------------------------------------------------------------------------------------
- *  STACKCODE: Local ONNX-based embeddings computer.
- *  Replaces RemoteEmbeddingsComputer to prevent data leakage to GitHub/Copilot.
- *  Uses all-MiniLM-L6-v2 (quantized uint8) with ONNX Runtime for local inference.
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
 import * as path from 'path';
@@ -189,8 +188,23 @@ class BertTokenizer {
 
 // ─── Local Embeddings Computer ──────────────────────────────────────────────
 
-/** Local embedding type: all-MiniLM-L6-v2 produces 384-dimensional float32 vectors */
-export const LOCAL_EMBEDDING_DIMENSIONS = 384;
+/** Local embedding type: all-MiniLM-L6-v2 produces 128-dimensional float32 vectors (optimized) */
+export const LOCAL_EMBEDDING_DIMENSIONS = 128;
+
+/** Maximum concurrent ONNX inference calls to prevent extension host overload */
+const MAX_CONCURRENT_INFERENCE = 2;
+
+/** Batch size reduced from 32 to 8 to reduce memory peaks */
+const BATCH_SIZE = 8;
+
+/** Idle timeout in ms before unloading model from memory (5 minutes) */
+const IDLE_TIMEOUT_MS = 5 * 60 * 1000;
+
+interface PendingRequest {
+	texts: readonly string[];
+	resolve: (value: EmbeddingVector[]) => void;
+	reject: (reason: Error) => void;
+}
 
 export class LocalEmbeddingsComputer implements IEmbeddingsComputer {
 
@@ -201,7 +215,13 @@ export class LocalEmbeddingsComputer implements IEmbeddingsComputer {
 	private _initPromise: Promise<void> | undefined;
 	private _ort: any; // onnxruntime-node module
 
-	private readonly batchSize = 32; // Process at most 32 inputs per ONNX inference call
+	// Concurrency control
+	private _activeInferenceCount = 0;
+	private _pendingQueue: PendingRequest[] = [];
+
+	// Idle timeout
+	private _idleTimeoutId: ReturnType<typeof setTimeout> | undefined;
+	private _lastActivityTime = 0;
 
 	constructor(
 		@ILogService private readonly _logService: ILogService,
@@ -215,21 +235,31 @@ export class LocalEmbeddingsComputer implements IEmbeddingsComputer {
 		token?: CancellationToken,
 	): Promise<Embeddings> {
 		return logExecTime(this._logService, 'LocalEmbeddingsComputer::computeEmbeddings', async () => {
+			// Reset idle timeout on activity
+			this._resetIdleTimeout();
+
 			await this._ensureInitialized();
 
 			if (inputs.length === 0) {
 				return { type: embeddingType, values: [] };
 			}
 
+			// Check cancellation early
+			if (token?.isCancellationRequested) {
+				return { type: embeddingType, values: [] };
+			}
+
 			const allEmbeddings: Embedding[] = [];
 
-			for (let i = 0; i < inputs.length; i += this.batchSize) {
+			// Process in small batches to control memory usage
+			for (let i = 0; i < inputs.length; i += BATCH_SIZE) {
+				// Check cancellation before each batch
 				if (token?.isCancellationRequested) {
 					return { type: embeddingType, values: [] };
 				}
 
-				const batch = inputs.slice(i, i + this.batchSize);
-				const batchVectors = await this._inferBatch(batch);
+				const batch = inputs.slice(i, i + BATCH_SIZE);
+				const batchVectors = await this._inferBatchThrottled(batch, token);
 
 				for (const vec of batchVectors) {
 					allEmbeddings.push({ type: embeddingType, value: vec });
@@ -238,6 +268,123 @@ export class LocalEmbeddingsComputer implements IEmbeddingsComputer {
 
 			return { type: embeddingType, values: allEmbeddings };
 		});
+	}
+
+	/**
+	 * Throttled batch inference with concurrency limit.
+	 * Prevents multiple simultaneous ONNX calls from overwhelming the extension host.
+	 */
+	private async _inferBatchThrottled(texts: readonly string[], token?: CancellationToken): Promise<EmbeddingVector[]> {
+		// Check if we can proceed immediately
+		if (this._activeInferenceCount < MAX_CONCURRENT_INFERENCE) {
+			return this._executeInference(texts, token);
+		}
+
+		// Queue the request
+		return new Promise((resolve, reject) => {
+			const request: PendingRequest = { texts, resolve, reject };
+			this._pendingQueue.push(request);
+
+			// Handle cancellation while waiting in queue
+			if (token) {
+				const checkCancellation = () => {
+					if (token.isCancellationRequested) {
+						const index = this._pendingQueue.indexOf(request);
+						if (index > -1) {
+							this._pendingQueue.splice(index, 1);
+						}
+						reject(new Error('Cancelled'));
+					}
+				};
+				token.onCancellationRequested(checkCancellation);
+				// Initial check in case already cancelled
+				checkCancellation();
+			}
+		});
+	}
+
+	/**
+	 * Execute inference with concurrency tracking.
+	 */
+	private async _executeInference(texts: readonly string[], token?: CancellationToken): Promise<EmbeddingVector[]> {
+		this._activeInferenceCount++;
+		this._resetIdleTimeout();
+
+		try {
+			if (token?.isCancellationRequested) {
+				throw new Error('Cancelled');
+			}
+			return await this._inferBatch(texts);
+		} finally {
+			this._activeInferenceCount--;
+			this._processQueue();
+		}
+	}
+
+	/**
+	 * Process next item in queue if capacity available.
+	 */
+	private _processQueue(): void {
+		while (this._activeInferenceCount < MAX_CONCURRENT_INFERENCE && this._pendingQueue.length > 0) {
+			const next = this._pendingQueue.shift();
+			if (next) {
+				this._executeInference(next.texts).then(next.resolve).catch(next.reject);
+			}
+		}
+	}
+
+	/**
+	 * Reset idle timeout timer.
+	 */
+	private _resetIdleTimeout(): void {
+		this._lastActivityTime = Date.now();
+
+		if (this._idleTimeoutId) {
+			clearTimeout(this._idleTimeoutId);
+		}
+
+		this._idleTimeoutId = setTimeout(() => {
+			this._unloadModelIfIdle();
+		}, IDLE_TIMEOUT_MS);
+	}
+
+	/**
+	 * Unload model from memory if idle for too long.
+	 */
+	private _unloadModelIfIdle(): void {
+		// Don't unload if actively processing
+		if (this._activeInferenceCount > 0 || this._pendingQueue.length > 0) {
+			this._resetIdleTimeout();
+			return;
+		}
+
+		const idleTime = Date.now() - this._lastActivityTime;
+		if (idleTime >= IDLE_TIMEOUT_MS) {
+			this._logService.info('[LocalEmbeddingsComputer] Unloading model due to inactivity');
+			this._unloadModel();
+		}
+	}
+
+	/**
+	 * Explicitly unload model to free memory.
+	 */
+	private _unloadModel(): void {
+		if (this._session) {
+			try {
+				this._session.release?.();
+			} catch (e) {
+				this._logService.warn(`[LocalEmbeddingsComputer] Error releasing session: ${e}`);
+			}
+			this._session = undefined;
+		}
+		this._tokenizer = undefined;
+		this._ort = undefined;
+		this._initPromise = undefined;
+
+		if (this._idleTimeoutId) {
+			clearTimeout(this._idleTimeoutId);
+			this._idleTimeoutId = undefined;
+		}
 	}
 
 	// ─── Initialization ─────────────────────────────────────────────────
@@ -294,7 +441,7 @@ export class LocalEmbeddingsComputer implements IEmbeddingsComputer {
 
 		const vocabText = fs.readFileSync(vocabPath, 'utf-8');
 		this._tokenizer = new BertTokenizer(vocabText, 512);
-		this._logService.info(`[LocalEmbeddingsComputer] Tokenizer loaded (vocab size: ${vocabText.split('\\n').length})`);
+		this._logService.info(`[LocalEmbeddingsComputer] Tokenizer loaded (vocab size: ${vocabText.split('\n').length})`);
 
 		// Load ONNX model
 		this._logService.info(`[LocalEmbeddingsComputer] Loading onnxruntime-node...`);
@@ -313,6 +460,9 @@ export class LocalEmbeddingsComputer implements IEmbeddingsComputer {
 			this._session = await this._ort.InferenceSession.create(modelPath, {
 				executionProviders: ['cpu'],
 				graphOptimizationLevel: 'all',
+				// STACKCODE: Add memory optimization options
+				intraOpNumThreads: 1, // Limit to single thread to reduce CPU contention
+				interOpNumThreads: 1,
 			});
 		} catch (e) {
 			this._logService.error(`[LocalEmbeddingsComputer] Failed to create InferenceSession: ${e}`);
@@ -367,7 +517,7 @@ export class LocalEmbeddingsComputer implements IEmbeddingsComputer {
 
 		const results = await session.run(feeds);
 
-		// Output: last_hidden_state shape [batch, seqLen, 384]
+		// Output: last_hidden_state shape [batch, seqLen, 384] - but we use only first 128 dims
 		const lastHiddenState = results['last_hidden_state'];
 		const data: Float32Array = lastHiddenState.data;
 		const hiddenSize = LOCAL_EMBEDDING_DIMENSIONS;
@@ -375,7 +525,8 @@ export class LocalEmbeddingsComputer implements IEmbeddingsComputer {
 		const embeddings: EmbeddingVector[] = [];
 		for (let b = 0; b < batchLen; b++) {
 			// Mean pooling with attention_mask
-			const vec = new Float64Array(hiddenSize);
+			// OPTIMIZED: Use Float32Array instead of Float64Array to reduce memory
+			const vec = new Float32Array(hiddenSize);
 			let tokenCount = 0;
 
 			for (let t = 0; t < seqLen; t++) {

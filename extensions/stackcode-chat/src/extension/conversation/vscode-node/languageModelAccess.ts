@@ -401,7 +401,7 @@ export class LanguageModelAccess extends Disposable implements IExtensionContrib
 
 		const embeddingsComputer = this._embeddingsComputer;
 		// STACKCODE: Use local MiniLM embedding type instead of remote text3small
-		const embeddingType = EmbeddingType.local_minilm_384;
+		const embeddingType = EmbeddingType.local_minilm_128;
 		const model = getWellKnownEmbeddingTypeInfo(embeddingType)?.model;
 			if (!model) {
 				throw new Error(`No model found for embedding type ${embeddingType.id}`);

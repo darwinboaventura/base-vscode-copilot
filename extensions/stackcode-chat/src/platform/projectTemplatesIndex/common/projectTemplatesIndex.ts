@@ -36,9 +36,9 @@ export class ProjectTemplatesIndex implements IProjectTemplatesIndex {
 		@IInstantiationService instantiationService: IInstantiationService
 	) {
 		const cacheVersion = sanitizeVSCodeVersion(envService.getEditorInfo().version);
-		// STACKCODE: Always use local cache — remote CDN caches are incompatible (512-dim vs 384-dim)
+		// STACKCODE: Always use local cache — remote CDN caches are incompatible (512-dim vs 128-dim)
 		this.embeddingsCache =
-			instantiationService.createInstance(LocalEmbeddingsCache, EmbeddingCacheType.GLOBAL, 'projectTemplateEmbeddings', cacheVersion, EmbeddingType.local_minilm_384);
+			instantiationService.createInstance(LocalEmbeddingsCache, EmbeddingCacheType.GLOBAL, 'projectTemplateEmbeddings', cacheVersion, EmbeddingType.local_minilm_128);
 	}
 
 	async updateIndex(): Promise<void> {

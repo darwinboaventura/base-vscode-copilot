@@ -15,8 +15,8 @@ import { TelemetryCorrelationId } from '../../../util/common/telemetryCorrelatio
 export class EmbeddingType {
 	public static readonly text3small_512 = new EmbeddingType('text-embedding-3-small-512');
 	public static readonly metis_1024_I16_Binary = new EmbeddingType('metis-1024-I16-Binary');
-	// STACKCODE: Local ONNX model (all-MiniLM-L6-v2, quantized uint8, 384 dimensions)
-	public static readonly local_minilm_384 = new EmbeddingType('local-all-MiniLM-L6-v2-384');
+	// STACKCODE: Local ONNX model (all-MiniLM-L6-v2, optimized 128 dimensions)
+	public static readonly local_minilm_128 = new EmbeddingType('local-all-MiniLM-L6-v2-128');
 
 	constructor(
 		public readonly id: string
@@ -36,8 +36,8 @@ export class EmbeddingType {
 export const enum LEGACY_EMBEDDING_MODEL_ID {
 	TEXT3SMALL = 'text-embedding-3-small',
 	Metis_I16_Binary = 'metis-I16-Binary',
-	// STACKCODE: Local ONNX model identifier
-	LOCAL_MINILM = 'all-MiniLM-L6-v2'
+	// STACKCODE: Local ONNX model identifier (optimized 128-dim version)
+	LOCAL_MINILM = 'all-MiniLM-L6-v2-v2'
 }
 
 type EmbeddingQuantization = 'float32' | 'float16' | 'binary';
@@ -68,10 +68,10 @@ const wellKnownEmbeddingMetadata = Object.freeze<Record<string, EmbeddingTypeInf
 			document: 'binary'
 		},
 	},
-	// STACKCODE: Local ONNX model (all-MiniLM-L6-v2, 384 dimensions, float32)
-	[EmbeddingType.local_minilm_384.id]: {
+	// STACKCODE: Local ONNX model (all-MiniLM-L6-v2, 128 dimensions, float32)
+	[EmbeddingType.local_minilm_128.id]: {
 		model: LEGACY_EMBEDDING_MODEL_ID.LOCAL_MINILM,
-		dimensions: 384,
+		dimensions: 128,
 		quantization: {
 			query: 'float32',
 			document: 'float32'

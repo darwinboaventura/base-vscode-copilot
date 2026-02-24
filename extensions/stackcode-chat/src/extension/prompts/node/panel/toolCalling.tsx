@@ -106,6 +106,15 @@ export class ChatToolCalls extends PromptElement<ChatToolCallsProps, void> {
 			return [];
 		}
 
+		// STACKCODE: When any tool in this round mutates the workspace
+		// (creates files, runs commands, etc.), force ALL tools in the round
+		// to execute sequentially. This prevents read-before-write races
+		// where e.g. read_file is dispatched eagerly before run_in_terminal
+		// has finished creating the file it needs to read.
+		const roundHasMutatingTool = fixedNameToolCalls.some(
+			tc => toolsMutating.has(tc.name as ToolName)
+		);
+
 		const assistantToolCalls: Required<ToolCall>[] = fixedNameToolCalls.map(tc => ({
 			type: 'function',
 			function: { name: tc.name, arguments: tc.arguments },
@@ -150,6 +159,7 @@ export class ChatToolCalls extends PromptElement<ChatToolCallsProps, void> {
 						truncateAt: this.props.truncateAt,
 						sessionId: this.props.promptContext.request?.sessionId,
 						token: token ?? CancellationToken.None,
+						forceSequential: roundHasMutatingTool,
 					})}
 				</KeepWith>,
 			);
@@ -177,6 +187,13 @@ interface ToolResultOpts {
 	readonly truncateAt?: number;
 	readonly sessionId: string | undefined;
 	readonly token: CancellationToken;
+	/**
+	 * When true, force this tool to execute sequentially (lazy path) even
+	 * if it is normally in the {@link toolsCalledInParallel} set. This is
+	 * set when the round contains any mutating tool to prevent
+	 * read-before-write races.
+	 */
+	readonly forceSequential?: boolean;
 }
 
 const toolErrorSuffix = '\nPlease check your input and try again.';
@@ -309,7 +326,7 @@ function buildToolResultElement(accessor: ServicesAccessor, props: ToolResultOpt
 	}
 
 	let call: IToolResultElementActualProps['call'];
-	if (tool?.source instanceof LanguageModelToolMCPSource || tool?.name && toolsCalledInParallel.has(tool.name as ToolName)) {
+	if (!props.forceSequential && (tool?.source instanceof LanguageModelToolMCPSource || tool?.name && toolsCalledInParallel.has(tool.name as ToolName))) {
 		const promise = getToolResult({ tokenBudget: 1, countTokens: () => 1, endpoint: { modelMaxPromptTokens: 1 } });
 		call = () => promise;
 	} else {
@@ -339,6 +356,29 @@ const toolsCalledInParallel = new Set<ToolName>([
 	ToolName.ReadCellOutput,
 	ToolName.InstallExtension,
 	ToolName.FetchWebPage,
+]);
+
+/**
+ * Tools that mutate the workspace (create/edit files, run commands).
+ * When ANY tool in a round is mutating, ALL tools in that round must
+ * execute sequentially to avoid read-before-write races — e.g. a
+ * read_file dispatched eagerly before run_in_terminal has finished
+ * creating the file it needs to read.
+ */
+const toolsMutating = new Set<ToolName>([
+	ToolName.ApplyPatch,
+	ToolName.CreateFile,
+	ToolName.EditFile,
+	ToolName.ReplaceString,
+	ToolName.MultiReplaceString,
+	ToolName.CoreRunInTerminal,
+	ToolName.CreateDirectory,
+	ToolName.EditFilesPlaceholder,
+	ToolName.EditNotebook,
+	ToolName.RunNotebookCell,
+	ToolName.CoreCreateAndRunTask,
+	ToolName.CoreRunTask,
+	ToolName.CoreRunTest,
 ]);
 
 async function sendToolCallTelemetry(props: ToolResultOpts, promptContext: IBuildPromptContext, invokeOutcome: ToolInvocationOutcome, validateOutcome: ToolValidationOutcome, endpointProvider: IEndpointProvider, telemetryService: ITelemetryService) {

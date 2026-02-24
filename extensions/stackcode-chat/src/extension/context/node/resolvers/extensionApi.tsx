@@ -31,9 +31,9 @@ export class ApiEmbeddingsIndex implements IApiEmbeddingsIndex {
 		@IInstantiationService instantiationService: IInstantiationService
 	) {
 		const cacheVersion = sanitizeVSCodeVersion(envService.getEditorInfo().version);
-		// STACKCODE: Always use local cache — remote CDN caches are incompatible (512-dim vs 384-dim)
+		// STACKCODE: Always use local cache — remote CDN caches are incompatible (512-dim vs 128-dim)
 		this.embeddingsCache =
-			instantiationService.createInstance(LocalEmbeddingsCache, EmbeddingCacheType.GLOBAL, 'api', cacheVersion, EmbeddingType.local_minilm_384);
+			instantiationService.createInstance(LocalEmbeddingsCache, EmbeddingCacheType.GLOBAL, 'api', cacheVersion, EmbeddingType.local_minilm_128);
 	}
 
 	async updateIndex(): Promise<void> {
@@ -95,7 +95,7 @@ export class VSCodeAPIContextElement extends PromptElement<VSCodeAPIContextProps
 			return [];
 		}
 
-		const embeddingResult = await this.embeddingsComputer.computeEmbeddings(EmbeddingType.local_minilm_384, [this.props.query], {}, new TelemetryCorrelationId('VSCodeAPIContextElement::getSnippets'), token);
+		const embeddingResult = await this.embeddingsComputer.computeEmbeddings(EmbeddingType.local_minilm_128, [this.props.query], {}, new TelemetryCorrelationId('VSCodeAPIContextElement::getSnippets'), token);
 		return this.apiEmbeddingsIndex.nClosestValues(embeddingResult.values[0], 5);
 	}
 
