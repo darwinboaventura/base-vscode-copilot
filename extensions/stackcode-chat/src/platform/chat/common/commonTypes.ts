@@ -343,6 +343,10 @@ export function getFilteredMessage(category: FilterReason, supportsMarkdown: boo
 			} else {
 				return l10n.t(`Sorry, your prompt was filtered by the Responsible AI Service. Please rephrase your prompt and try again.`);
 			}
+		case FilterReason.EmptyResponse:
+			return l10n.t(`Sorry, StackSpot AI returned an empty response. Please try again.`);
+		case FilterReason.MalformedFormat:
+			return l10n.t(`Sorry, StackSpot AI returned a malformed response. Please try again.`);
 		default:
 			if (supportsMarkdown) {
 				return l10n.t({

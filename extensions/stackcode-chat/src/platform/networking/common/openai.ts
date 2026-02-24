@@ -272,7 +272,17 @@ export enum FilterReason {
 	/**
 	 * The prompt was filtered, the reason was not provided
 	 */
-	Prompt = 'prompt'
+	Prompt = 'prompt',
+	/**
+	 * STACKCODE: The LLM response did not follow the required XML format.
+	 * Used to trigger a retry with a correction message.
+	 */
+	MalformedFormat = 'malformed_format',
+	/**
+	 * STACKCODE: The API returned only empty chunks with no actual content.
+	 * Used to trigger a retry when the stream is alive but producing nothing.
+	 */
+	EmptyResponse = 'empty_response',
 }
 
 export interface ChatCompletion {

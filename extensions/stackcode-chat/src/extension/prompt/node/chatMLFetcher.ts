@@ -230,9 +230,24 @@ export class ChatMLFetcherImpl extends AbstractChatMLFetcher {
 
 							const filteredContent = result.value[0];
 							if (filteredContent) {
-								const retryMessage = (result.category === FilterReason.Copyright) ?
-									`The previous response (copied below) was filtered due to being too similar to existing public code. Please suggest something similar in function that does not match public code. Here's the previous response: ${filteredContent}\n\n` :
-									`The previous response (copied below) was filtered due to triggering our content safety filters, which looks for hateful, self-harm, sexual, or violent content. Please suggest something similar in content that does not trigger these filters. Here's the previous response: ${filteredContent}\n\n`;
+								let retryMessage: string;
+								if (result.category === FilterReason.Copyright) {
+									retryMessage = `The previous response (copied below) was filtered due to being too similar to existing public code. Please suggest something similar in function that does not match public code. Here's the previous response: ${filteredContent}\n\n`;
+								} else if (result.category === FilterReason.MalformedFormat) {
+									const preview = filteredContent.substring(0, 500);
+									retryMessage = `Your previous response was REJECTED because it did NOT follow the required XML format.\n` +
+										`You sent raw text/JSON without XML tags. This is INVALID.\n` +
+										`REQUIRED FORMAT: ALL content MUST be inside XML tags:\n` +
+										`- <thinking>reasoning</thinking>\n` +
+										`- <tool_use>{"name":"...","parameters":{...}}</tool_use>\n` +
+										`- <text>response text</text>\n` +
+										`Your rejected response started with: "${preview}..."\n` +
+										`Please respond again using the correct XML format.\n\n`;
+								} else if (result.category === FilterReason.EmptyResponse) {
+									retryMessage = `Your previous response was empty — the API returned no content, only empty chunks. Please try again and provide a complete response.\n\n`;
+								} else {
+									retryMessage = `The previous response (copied below) was filtered due to triggering our content safety filters, which looks for hateful, self-harm, sexual, or violent content. Please suggest something similar in content that does not trigger these filters. Here's the previous response: ${filteredContent}\n\n`;
+								}
 								const augmentedMessages: Raw.ChatMessage[] = [
 									...messages,
 									{
@@ -265,13 +280,17 @@ export class ChatMLFetcherImpl extends AbstractChatMLFetcher {
 							}
 						}
 
-						return {
-							type: ChatFetchResponseType.Filtered,
-							category: result.category,
-							reason: 'Response got filtered.',
-							requestId: result.requestId,
-							serverRequestId: result.serverRequestId
-						};
+					return {
+						type: ChatFetchResponseType.Filtered,
+						category: result.category,
+						reason: result.category === FilterReason.EmptyResponse
+							? 'StackSpot AI returned an empty response after retry.'
+							: result.category === FilterReason.MalformedFormat
+								? 'StackSpot AI returned a malformed response after retry.'
+								: 'Response got filtered.',
+						requestId: result.requestId,
+						serverRequestId: result.serverRequestId
+					};
 					}
 
 					pendingLoggedChatRequest?.resolve(result, streamRecorder.deltas);

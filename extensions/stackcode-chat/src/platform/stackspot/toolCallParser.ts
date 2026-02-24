@@ -114,6 +114,11 @@ export class StreamingToolCallParser {
 	private _toolCallIdCounter = 0;
 	private _detectedToolCalls = false;
 
+	/** Whether the parser has entered any XML block (thinking, text, tool_use, etc.) */
+	private _hasEnteredXmlBlock = false;
+	/** Number of tool_use blocks that failed to parse */
+	private _parseErrorCount = 0;
+
 	// Incremental tool_use streaming state
 	private _toolUseBeginEmitted = false;
 	private _toolUseName = '';
@@ -191,10 +196,11 @@ export class StreamingToolCallParser {
 							toolCall: { name: toolCall.name, arguments: JSON.stringify(toolCall.parameters), id: this._toolUseId },
 						});
 						this._detectedToolCalls = true;
-					} else {
-						const preview = this._currentBuffer.trim().substring(0, 200);
-						console.warn(`[StreamingToolCallParser] Failed to parse unclosed <tool_use> content on flush: ${preview}${this._currentBuffer.length > 200 ? '...' : ''}`);
-					}
+				} else {
+					const preview = this._currentBuffer.trim().substring(0, 200);
+					console.warn(`[StreamingToolCallParser] Failed to parse unclosed <tool_use> content on flush: ${preview}${this._currentBuffer.length > 200 ? '...' : ''}`);
+					this._parseErrorCount++;
+				}
 				}
 				this._resetToolUseState();
 				break;
@@ -211,21 +217,13 @@ export class StreamingToolCallParser {
 
 		this._resetState();
 
-		// Try to recover raw JSON tool calls from content outside XML tags
+		// Content outside XML tags is NOT recovered as tool calls.
+		// If the LLM did not use XML tags, this is a malformed response.
+		// The caller (StackspotChatEndpoint) checks hasAnyXmlContent/hasParseErrors
+		// and handles the retry with a correction message.
 		if (this._outsideAccumulator.trim()) {
-			const recovered = this._extractRawToolCalls(this._outsideAccumulator);
-			for (const tc of recovered) {
-				events.push({
-					kind: ToolCallParserEventKind.ToolCallBegin,
-					name: tc.name,
-					id: tc.id,
-				});
-				events.push({
-					kind: ToolCallParserEventKind.ToolCallComplete,
-					toolCall: tc,
-				});
-				this._detectedToolCalls = true;
-			}
+			// Emit outside text as plain Text so the caller can access the malformed content
+			events.push({ kind: ToolCallParserEventKind.Text, text: this._outsideAccumulator });
 			this._outsideAccumulator = '';
 		}
 
@@ -237,6 +235,22 @@ export class StreamingToolCallParser {
 	 */
 	public get hasToolCalls(): boolean {
 		return this._detectedToolCalls;
+	}
+
+	/**
+	 * Whether the parser encountered any valid XML tags in the response.
+	 * When false after flush(), the LLM response contained no XML structure at all.
+	 */
+	public get hasAnyXmlContent(): boolean {
+		return this._hasEnteredXmlBlock;
+	}
+
+	/**
+	 * Whether the parser encountered any tool_use blocks that failed to parse.
+	 * This indicates the LLM used XML tags but produced invalid JSON inside them.
+	 */
+	public get hasParseErrors(): boolean {
+		return this._parseErrorCount > 0;
 	}
 
 	// =========================================================================
@@ -377,6 +391,7 @@ export class StreamingToolCallParser {
 				return true;
 		}
 
+		this._hasEnteredXmlBlock = true;
 		this._currentBuffer = '';
 		return true;
 	}
@@ -520,6 +535,7 @@ export class StreamingToolCallParser {
 			// Truncate to avoid flooding logs with large payloads.
 			const preview = rawContent.trim().substring(0, 200);
 			console.warn(`[StreamingToolCallParser] Failed to parse <tool_use> content: ${preview}${rawContent.length > 200 ? '...' : ''}`);
+			this._parseErrorCount++;
 		}
 
 		this._resetToolUseState();
@@ -758,49 +774,6 @@ export class StreamingToolCallParser {
 		}
 
 		return undefined;
-	}
-
-	/**
-	 * Extracts tool call JSON objects from raw text that was not wrapped
-	 * in <tool_use> XML tags (fallback recovery).
-	 */
-	private _extractRawToolCalls(raw: string): ParsedToolCall[] {
-		// Strip markdown code blocks to avoid false positives
-		const cleaned = raw.replace(/```[\s\S]*?```/g, '');
-		const results: ParsedToolCall[] = [];
-		let pos = 0;
-
-		while (pos < cleaned.length) {
-			const braceIndex = cleaned.indexOf('{', pos);
-			if (braceIndex === -1) {
-				break;
-			}
-
-			const jsonStr = this._extractJsonObject(cleaned, braceIndex);
-			if (!jsonStr) {
-				pos = braceIndex + 1;
-				continue;
-			}
-
-			if (!jsonStr.includes('"name"')) {
-				pos = braceIndex + jsonStr.length;
-				continue;
-			}
-
-			const toolCall = this._safeParseToolUse(jsonStr);
-			if (toolCall) {
-				const id = this._nextToolCallId();
-				results.push({
-					name: toolCall.name,
-					arguments: JSON.stringify(toolCall.parameters),
-					id,
-				});
-			}
-
-			pos = braceIndex + jsonStr.length;
-		}
-
-		return results;
 	}
 }
 

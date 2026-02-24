@@ -27,7 +27,7 @@ import { ILogService } from '../../log/common/logService';
 import { FinishedCallback, OpenAiFunctionTool } from '../../networking/common/fetch';
 import { Response } from '../../networking/common/fetcherService';
 import { IChatEndpoint, ICreateEndpointBodyOptions, IEndpointBody, IMakeChatRequestOptions } from '../../networking/common/networking';
-import { ChatCompletion, FinishedCompletionReason } from '../../networking/common/openai';
+import { ChatCompletion, FilterReason, FinishedCompletionReason } from '../../networking/common/openai';
 import { IExperimentationService } from '../../telemetry/common/nullExperimentationService';
 import { ITelemetryService } from '../../telemetry/common/telemetry';
 import { TelemetryData } from '../../telemetry/common/telemetryData';
@@ -300,10 +300,18 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 			let emittedCompletion = false;
 			let truncated = false;
 
+			// STACKCODE: Counter for consecutive empty chunks from the API.
+			// When the API returns 10+ chunks in a row with message="" and no
+			// content, the stream is broken — abort and retry.
+			const MAX_CONSECUTIVE_EMPTY_CHUNKS = 10;
+			let consecutiveEmptyChunks = 0;
+
 			// Tool call parser — only active when tools are provided
 			const parser = hasTools ? new StreamingToolCallParser() : undefined;
 			const completedToolCalls: Array<{ name: string; arguments: string; id: string }> = [];
 			const plainTextParts: string[] = [];
+			/** Accumulated arguments per tool call ID for streaming updates */
+			const toolCallArgsAccumulator = new Map<string, string>();
 			let thinkingText = '';
 
 			/**
@@ -331,7 +339,7 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 
 			try {
 				for await (const chunk of textDecoder) {
-					if (cancellationToken?.isCancellationRequested || truncated) {
+					if (cancellationToken?.isCancellationRequested || truncated || consecutiveEmptyChunks >= MAX_CONSECUTIVE_EMPTY_CHUNKS) {
 						break;
 					}
 
@@ -375,7 +383,15 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 								// Flush the parser to get any remaining events
 								const flushEvents = parser.flush();
 								for (const event of flushEvents) {
-									await self._handleParserEvent(event, finishCallback, allTokens, completedToolCalls, plainTextParts, (t) => { thinkingText += t; });
+									await self._handleParserEvent(event, finishCallback, allTokens, completedToolCalls, plainTextParts, (t) => { thinkingText += t; }, toolCallArgsAccumulator);
+								}
+
+								// STACKCODE: Detect malformed responses — LLM did not follow XML format
+								if (self._isMalformedResponse(parser, allTokens, debugName, logService)) {
+									const fullText = buildFullText() || allTokens.join('');
+									self._emitMalformedCompletion(emitter, fullText, allTokens, inputTokens, outputTokens, requestId, telemetryData);
+									emittedCompletion = true;
+									continue;
 								}
 
 								// Determine finish reason based on whether tool calls were detected
@@ -418,6 +434,7 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 						if (parsed.message !== undefined && parsed.message !== null) {
 							const token = parsed.message;
 							if (token.length > 0) {
+								consecutiveEmptyChunks = 0; // Reset on real content
 								allTokens.push(token);
 
 								if (parser) {
@@ -426,7 +443,7 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 									for (const event of events) {
 										const shouldTruncate = await self._handleParserEvent(
 											event, finishCallback, allTokens, completedToolCalls, plainTextParts,
-											(t) => { thinkingText += t; },
+											(t) => { thinkingText += t; }, toolCallArgsAccumulator,
 										);
 										if (shouldTruncate) {
 											truncated = true;
@@ -441,6 +458,15 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 										truncated = true;
 										break;
 									}
+								}
+							} else {
+								// STACKCODE: Empty message chunk — count consecutive empties.
+								// The Stackspot API sometimes returns streams of {"message":""}
+								// chunks with no stop_reason, causing the chat to hang forever.
+								consecutiveEmptyChunks++;
+								if (consecutiveEmptyChunks >= MAX_CONSECUTIVE_EMPTY_CHUNKS) {
+									logService.warn(`[stackcode] Aborting SSE stream (${debugName}): received ${consecutiveEmptyChunks} consecutive empty chunks with no content.`);
+									break;
 								}
 							}
 						}
@@ -463,37 +489,45 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 										if (parser) {
 											const flushEvents = parser.flush();
 											for (const event of flushEvents) {
-												await self._handleParserEvent(event, finishCallback, allTokens, completedToolCalls, plainTextParts, (t) => { thinkingText += t; });
+												await self._handleParserEvent(event, finishCallback, allTokens, completedToolCalls, plainTextParts, (t) => { thinkingText += t; }, toolCallArgsAccumulator);
 											}
 
-											const hasDetectedToolCalls = completedToolCalls.length > 0;
-											const finishReason = hasDetectedToolCalls
-												? FinishedCompletionReason.ToolCalls
-												: FinishedCompletionReason.Stop;
-
-											const fullText = buildFullText();
-											if (hasDetectedToolCalls) {
-												await finishCallback(fullText, 0, {
-													text: '',
-													copilotToolCalls: completedToolCalls,
-												});
+											// STACKCODE: Detect malformed responses
+											if (self._isMalformedResponse(parser, allTokens, debugName, logService)) {
+												const fullText = buildFullText() || allTokens.join('');
+												self._emitMalformedCompletion(emitter, fullText, allTokens, inputTokens, outputTokens, requestId, telemetryData);
+												emittedCompletion = true;
 											} else {
-												await finishCallback(fullText, 0, { text: '' });
+												const hasDetectedToolCalls = completedToolCalls.length > 0;
+												const finishReason = hasDetectedToolCalls
+													? FinishedCompletionReason.ToolCalls
+													: FinishedCompletionReason.Stop;
+
+												const fullText = buildFullText();
+												if (hasDetectedToolCalls) {
+													await finishCallback(fullText, 0, {
+														text: '',
+														copilotToolCalls: completedToolCalls,
+													});
+												} else {
+													await finishCallback(fullText, 0, { text: '' });
+												}
+												self._emitCompletion(emitter, fullText, allTokens, inputTokens, outputTokens, requestId, finishReason, telemetryData);
+												emittedCompletion = true;
 											}
-											self._emitCompletion(emitter, fullText, allTokens, inputTokens, outputTokens, requestId, finishReason, telemetryData);
 										} else {
 											const fullText = allTokens.join('');
 											await finishCallback(fullText, 0, { text: '' });
 											self._emitCompletion(emitter, fullText, allTokens, inputTokens, outputTokens, requestId, FinishedCompletionReason.Stop, telemetryData);
+											emittedCompletion = true;
 										}
-										emittedCompletion = true;
 									}
 								} else if (parsed.message) {
 									allTokens.push(parsed.message);
 									if (parser) {
 										const events = parser.feed(parsed.message);
 										for (const event of events) {
-											await self._handleParserEvent(event, finishCallback, allTokens, completedToolCalls, plainTextParts, (t) => { thinkingText += t; });
+											await self._handleParserEvent(event, finishCallback, allTokens, completedToolCalls, plainTextParts, (t) => { thinkingText += t; }, toolCallArgsAccumulator);
 										}
 									} else {
 										const fullText = allTokens.join('');
@@ -512,27 +546,41 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 					if (parser) {
 						const flushEvents = parser.flush();
 						for (const event of flushEvents) {
-							await self._handleParserEvent(event, finishCallback, allTokens, completedToolCalls, plainTextParts, (t) => { thinkingText += t; });
+							await self._handleParserEvent(event, finishCallback, allTokens, completedToolCalls, plainTextParts, (t) => { thinkingText += t; }, toolCallArgsAccumulator);
 						}
 
-						const hasDetectedToolCalls = completedToolCalls.length > 0;
-						const finishReason = hasDetectedToolCalls
-							? FinishedCompletionReason.ToolCalls
-							: (truncated ? FinishedCompletionReason.Length : FinishedCompletionReason.Stop);
+						// STACKCODE: Detect malformed responses
+						if (self._isMalformedResponse(parser, allTokens, debugName, logService)) {
+							const fullText = buildFullText() || allTokens.join('');
+							self._emitMalformedCompletion(emitter, fullText, allTokens, inputTokens, outputTokens, requestId, telemetryData);
+						} else {
+							const hasDetectedToolCalls = completedToolCalls.length > 0;
+							const finishReason = hasDetectedToolCalls
+								? FinishedCompletionReason.ToolCalls
+								: (truncated ? FinishedCompletionReason.Length : FinishedCompletionReason.Stop);
 
-						const fullText = buildFullText();
-						if (hasDetectedToolCalls) {
-							await finishCallback(fullText, 0, {
-								text: '',
-								copilotToolCalls: completedToolCalls,
-							});
+							const fullText = buildFullText();
+							if (hasDetectedToolCalls) {
+								await finishCallback(fullText, 0, {
+									text: '',
+									copilotToolCalls: completedToolCalls,
+								});
+							}
+							self._emitCompletion(emitter, fullText, allTokens, inputTokens, outputTokens, requestId, finishReason, telemetryData);
 						}
-						self._emitCompletion(emitter, fullText, allTokens, inputTokens, outputTokens, requestId, finishReason, telemetryData);
 					} else {
 						const fullText = allTokens.join('');
 						const reason = truncated ? FinishedCompletionReason.Length : FinishedCompletionReason.Stop;
 						self._emitCompletion(emitter, fullText, allTokens, inputTokens, outputTokens, requestId, reason, telemetryData);
 					}
+					emittedCompletion = true;
+				}
+
+				// STACKCODE: Empty response — API returned only empty chunks with no content.
+				// Emit as ContentFilter + EmptyResponse so the upstream FilteredRetry
+				// mechanism in chatMLFetcher can retry the request automatically.
+				if (!emittedCompletion && consecutiveEmptyChunks >= MAX_CONSECUTIVE_EMPTY_CHUNKS) {
+					self._emitEmptyResponseCompletion(emitter, allTokens, requestId, telemetryData);
 					emittedCompletion = true;
 				}
 
@@ -577,6 +625,7 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 		completedToolCalls: Array<{ name: string; arguments: string; id: string }>,
 		plainTextParts: string[],
 		addThinking: (text: string) => void,
+		toolCallArgsAccumulator: Map<string, string>,
 	): Promise<boolean> {
 		switch (event.kind) {
 			case ToolCallParserEventKind.Text: {
@@ -603,12 +652,18 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 			}
 
 			case ToolCallParserEventKind.ToolCallArgumentsDelta: {
-				// Tool call arguments streaming — emit copilotToolCallStreamUpdates delta
+				// Tool call arguments streaming — accumulate and emit full accumulated args
+				// The downstream consumer (tryParsePartialToolInput) expects the full
+				// accumulated JSON, not just the delta fragment.
+				const id = event.id;
+				const prev = toolCallArgsAccumulator.get(id) ?? '';
+				const accumulated = prev + event.argumentsDelta;
+				toolCallArgsAccumulator.set(id, accumulated);
 				await finishCallback(plainTextParts.join(''), 0, {
 					text: '',
 					copilotToolCallStreamUpdates: [{
 						name: event.name,
-						arguments: event.argumentsDelta,
+						arguments: accumulated,
 						id: event.id,
 					}],
 				});
@@ -673,6 +728,108 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 			model: this.model,
 			blockFinished: false,
 			finishReason,
+			telemetryData,
+		});
+	}
+
+	/**
+	 * Checks whether a response from the LLM is malformed (no XML tags or XML parse errors)
+	 * when tools were expected. Only applies to Group B requests (hasTools=true, parser exists).
+	 *
+	 * @returns true if the response should be rejected and retried
+	 */
+	private _isMalformedResponse(
+		parser: StreamingToolCallParser,
+		allTokens: string[],
+		debugName: string,
+		logService: ILogService,
+	): boolean {
+		if (allTokens.length === 0) {
+			return false; // Empty response — not a format issue
+		}
+
+		if (!parser.hasAnyXmlContent) {
+			logService.warn(`[stackcode] Malformed response detected (${debugName}): LLM returned ${allTokens.length} tokens with NO XML tags. Response will be rejected for retry.`);
+			return true;
+		}
+
+		if (parser.hasParseErrors) {
+			logService.warn(`[stackcode] Malformed response detected (${debugName}): XML content found but tool_use JSON failed to parse. Response will be rejected for retry.`);
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Emits a ChatCompletion with ContentFilter finish reason and MalformedFormat filter reason.
+	 * This triggers the upstream FilteredRetry mechanism in chatMLFetcher, which appends a
+	 * correction message and retries the request once.
+	 *
+	 * The malformed response text is included in message.content so chatMLFetcher can
+	 * access it via result.value[0] to include in the correction message.
+	 */
+	private _emitMalformedCompletion(
+		emitter: { emitOne: (value: ChatCompletion) => void },
+		fullText: string,
+		allTokens: string[],
+		inputTokens: number,
+		outputTokens: number,
+		requestId: ChatCompletion['requestId'],
+		telemetryData: TelemetryData,
+	): void {
+		const message: Raw.ChatMessage = {
+			role: Raw.ChatRole.Assistant,
+			content: toTextParts(fullText),
+		};
+
+		emitter.emitOne({
+			message,
+			choiceIndex: 0,
+			requestId,
+			tokens: allTokens,
+			usage: inputTokens || outputTokens ? {
+				prompt_tokens: inputTokens,
+				completion_tokens: outputTokens,
+				total_tokens: inputTokens + outputTokens,
+			} : undefined,
+			model: this.model,
+			blockFinished: false,
+			finishReason: FinishedCompletionReason.ContentFilter,
+			filterReason: FilterReason.MalformedFormat,
+			telemetryData,
+		});
+	}
+
+	/**
+	 * Emits a ChatCompletion for an empty API response (all chunks had message="").
+	 * Uses ContentFilter + EmptyResponse to trigger the upstream FilteredRetry mechanism
+	 * in chatMLFetcher, which will retry the request once automatically.
+	 *
+	 * A placeholder message is included in content so that chatMLFetcher's
+	 * `if (filteredContent)` check passes and the retry branch executes.
+	 */
+	private _emitEmptyResponseCompletion(
+		emitter: { emitOne: (value: ChatCompletion) => void },
+		allTokens: string[],
+		requestId: ChatCompletion['requestId'],
+		telemetryData: TelemetryData,
+	): void {
+		const message: Raw.ChatMessage = {
+			role: Raw.ChatRole.Assistant,
+			content: toTextParts('[empty response - API returned only empty chunks]'),
+		};
+
+		emitter.emitOne({
+			message,
+			choiceIndex: 0,
+			requestId,
+			tokens: allTokens,
+			usage: undefined,
+			model: this.model,
+			blockFinished: false,
+			finishReason: FinishedCompletionReason.ContentFilter,
+			filterReason: FilterReason.EmptyResponse,
 			telemetryData,
 		});
 	}
