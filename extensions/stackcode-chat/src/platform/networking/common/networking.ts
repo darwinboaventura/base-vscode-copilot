@@ -182,6 +182,12 @@ export interface IMakeChatRequestOptions {
 	canRetryOnceWithoutRollback?: boolean;
 	/** Custom metadata to be displayed in the log document */
 	customMetadata?: Record<string, string | number | boolean | undefined>;
+	/**
+	 * Tracks the number of MalformedFormat retries already attempted.
+	 * Used internally by the retry mechanism to allow up to MAX_MALFORMED_RETRIES
+	 * attempts before giving up. Do not set externally.
+	 */
+	_malformedRetryCount?: number;
 }
 
 export type IChatRequestTelemetryProperties = {

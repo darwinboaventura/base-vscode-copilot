@@ -854,3 +854,14 @@ export const FORMAT_REMINDER_INSTRUCTION =
 	'Tool calls MUST use: <tool_use>{"name":"...","parameters":{...}}</tool_use>\n' +
 	'If you have tools to call: respond with <thinking> + <tool_use> only (NO <text>).\n' +
 	'If no tools to call: respond with <thinking> + <text>.';
+
+/**
+ * Compact inline format reminder injected before the last user message in the
+ * conversation history ("sandwich prompting"). This counteracts the "lost in
+ * the middle" effect for models that degrade on long contexts by placing a
+ * short reminder close to the point where the model starts generating.
+ *
+ * Kept deliberately short (~120 chars) to minimize token overhead.
+ */
+export const INLINE_FORMAT_REMINDER =
+	'[FORMAT] Respond using XML tags: <thinking>, <tool_use>, <text>. Raw text outside tags is DISCARDED.';

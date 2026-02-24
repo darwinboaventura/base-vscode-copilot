@@ -21,6 +21,7 @@ import { ElectronFetchErrorChromiumDetails, ILogService } from '../../../../plat
 import { FinishedCallback } from '../../../../platform/networking/common/fetch';
 import { IFetcherService, IHeaders, Response } from '../../../../platform/networking/common/fetcherService';
 import { IChatEndpoint } from '../../../../platform/networking/common/networking';
+import { FilterReason, FinishedCompletionReason } from '../../../../platform/networking/common/openai';
 import { NullRequestLogger } from '../../../../platform/requestLogger/node/nullRequestLogger';
 import { NullExperimentationService } from '../../../../platform/telemetry/common/nullExperimentationService';
 import { NullTelemetryService } from '../../../../platform/telemetry/common/nullTelemetryService';
@@ -347,6 +348,114 @@ describe('ChatMLFetcherImpl retry logic', () => {
 			}
 		});
 	});
+
+	describe('MalformedFormat retry logic', () => {
+		it('retries up to MAX_MALFORMED_RETRIES=2 times for MalformedFormat errors', async () => {
+			// Use a custom endpoint that returns MalformedFormat on first 2 attempts, then success
+			const malformedEndpoint = createMalformedEndpoint([
+				{ finishReason: 'content_filter', filterReason: 'malformed_format', text: 'I will help you.' },
+				{ finishReason: 'content_filter', filterReason: 'malformed_format', text: 'Sure thing!' },
+				{ finishReason: 'stop', text: '<thinking>ok</thinking>' },
+			]);
+
+			// Queue 3 fetch responses (initial + 2 retries)
+			mockFetcherService.queueResponse(createSuccessResponse('malformed1'));
+			mockFetcherService.queueResponse(createSuccessResponse('malformed2'));
+			mockFetcherService.queueResponse(createSuccessResponse('success'));
+
+			const opts = createBaseOpts();
+			opts.endpoint = malformedEndpoint;
+			opts.enableRetryOnFilter = true;
+
+			const result = await fetcher.fetchMany(opts, cancellationTokenSource.token);
+
+			expect(result.type).toBe(ChatFetchResponseType.Success);
+			// 3 fetch calls: initial + 2 retries
+			expect(mockFetcherService.fetchCallCount).toBe(3);
+		});
+
+		it('gives up after MAX_MALFORMED_RETRIES=2 if all attempts return MalformedFormat', async () => {
+			const malformedEndpoint = createMalformedEndpoint([
+				{ finishReason: 'content_filter', filterReason: 'malformed_format', text: 'I will help.' },
+				{ finishReason: 'content_filter', filterReason: 'malformed_format', text: 'Sure thing!' },
+				{ finishReason: 'content_filter', filterReason: 'malformed_format', text: 'Let me do that.' },
+			]);
+
+			mockFetcherService.queueResponse(createSuccessResponse('malformed1'));
+			mockFetcherService.queueResponse(createSuccessResponse('malformed2'));
+			mockFetcherService.queueResponse(createSuccessResponse('malformed3'));
+
+			const opts = createBaseOpts();
+			opts.endpoint = malformedEndpoint;
+			opts.enableRetryOnFilter = true;
+
+			const result = await fetcher.fetchMany(opts, cancellationTokenSource.token);
+
+			expect(result.type).toBe(ChatFetchResponseType.Filtered);
+			if (result.type === ChatFetchResponseType.Filtered) {
+				expect(result.reason).toContain('malformed response');
+			}
+		});
+
+		it('does not retry MalformedFormat when _malformedRetryCount already at max', async () => {
+			const malformedEndpoint = createMalformedEndpoint([
+				{ finishReason: 'content_filter', filterReason: 'malformed_format', text: 'Bad response' },
+			]);
+
+			mockFetcherService.queueResponse(createSuccessResponse('malformed'));
+
+			const opts = createBaseOpts();
+			opts.endpoint = malformedEndpoint;
+			opts.enableRetryOnFilter = true;
+			opts._malformedRetryCount = 2; // Already at max
+
+			const result = await fetcher.fetchMany(opts, cancellationTokenSource.token);
+
+			expect(result.type).toBe(ChatFetchResponseType.Filtered);
+			// Should NOT retry — only 1 fetch call
+			expect(mockFetcherService.fetchCallCount).toBe(1);
+		});
+
+		it('includes escalating correction messages in retry', async () => {
+			const capturedMessages: Raw.ChatMessage[][] = [];
+			const malformedEndpoint = createMalformedEndpoint([
+				{ finishReason: 'content_filter', filterReason: 'malformed_format', text: 'No XML here' },
+				{ finishReason: 'content_filter', filterReason: 'malformed_format', text: 'Still no XML' },
+				{ finishReason: 'content_filter', filterReason: 'malformed_format', text: 'Third failure' },
+			], capturedMessages);
+
+			mockFetcherService.queueResponse(createSuccessResponse('m1'));
+			mockFetcherService.queueResponse(createSuccessResponse('m2'));
+			mockFetcherService.queueResponse(createSuccessResponse('m3'));
+
+			const opts = createBaseOpts();
+			opts.endpoint = malformedEndpoint;
+			opts.enableRetryOnFilter = true;
+
+			await fetcher.fetchMany(opts, cancellationTokenSource.token);
+
+			// First retry should include standard correction (not "CRITICAL ERROR")
+			// Second retry should include escalating message with "CRITICAL ERROR"
+			expect(capturedMessages.length).toBeGreaterThanOrEqual(2);
+
+			// Check second retry messages (index 1) contain the correction
+			if (capturedMessages.length >= 2) {
+				const firstRetryMsgs = capturedMessages[1];
+				const lastMsg = firstRetryMsgs[firstRetryMsgs.length - 1];
+				const text = lastMsg.content?.[0] && 'text' in lastMsg.content[0] ? lastMsg.content[0].text : '';
+				expect(text).toContain('REJECTED');
+			}
+
+			// Check third retry messages (index 2) contain the escalating correction
+			if (capturedMessages.length >= 3) {
+				const secondRetryMsgs = capturedMessages[2];
+				const lastMsg = secondRetryMsgs[secondRetryMsgs.length - 1];
+				const text = lastMsg.content?.[0] && 'text' in lastMsg.content[0] ? lastMsg.content[0].text : '';
+				expect(text).toContain('CRITICAL ERROR');
+				expect(text).toContain('SECOND failed attempt');
+			}
+		});
+	});
 });
 
 // --- Test Helpers ---
@@ -598,4 +707,84 @@ function createNetworkProcessCrashedError(): Error & { code: string; chromiumDet
 	error.code = 'ERR_FAILED';
 	error.chromiumDetails = { is_request_error: true, network_process_crashed: true } satisfies ElectronFetchErrorChromiumDetails;
 	return error;
+}
+
+/**
+ * Describes a single response that createMalformedEndpoint will return.
+ */
+interface MalformedEndpointResponse {
+	finishReason: string;
+	filterReason?: string;
+	text: string;
+}
+
+/**
+ * Creates a mock endpoint that returns sequential responses with configurable
+ * finish reasons and filter reasons. This allows testing the MalformedFormat
+ * retry logic end-to-end through chatMLFetcher.
+ *
+ * @param responses - Ordered list of responses to return on each call
+ * @param capturedMessages - If provided, captures the messages array for each call
+ */
+function createMalformedEndpoint(
+	responses: MalformedEndpointResponse[],
+	capturedMessages?: Raw.ChatMessage[][],
+): IChatEndpoint {
+	let callIndex = 0;
+	const base = createMockEndpoint();
+
+	return {
+		...base,
+		processResponseFromChatEndpoint: async (
+			_telemetryService: ITelemetryService,
+			_logService: ILogService,
+			_response: Response,
+			_expectedNumChoices: number,
+			finishedCb: FinishedCallback,
+			telemetryData: TelemetryData,
+			_cancellationToken?: CancellationToken,
+		) => {
+			const current = responses[callIndex] ?? responses[responses.length - 1];
+			callIndex++;
+
+			const text = current.text;
+			if (finishedCb) {
+				await finishedCb(text, 0, { text });
+			}
+
+			return {
+				[Symbol.asyncIterator]: async function* () {
+					yield {
+						message: {
+							role: Raw.ChatRole.Assistant,
+							content: [{ type: Raw.ChatCompletionContentPartKind.Text, text }],
+						},
+						choiceIndex: 0,
+						requestId: {
+							headerRequestId: 'test-request-id',
+							gitHubRequestId: '',
+							completionId: '',
+							created: 0,
+							serverExperiments: '',
+							deploymentId: '',
+						},
+						tokens: [],
+						usage: undefined,
+						model: 'test-model',
+						blockFinished: true,
+						finishReason: current.finishReason as FinishedCompletionReason,
+						filterReason: current.filterReason as FilterReason | undefined,
+						telemetryData: telemetryData,
+					};
+				},
+			};
+		},
+		// Override createRequestBody to capture messages for assertion
+		createRequestBody: (options: any) => {
+			if (capturedMessages) {
+				capturedMessages.push([...options.messages]);
+			}
+			return base.createRequestBody(options);
+		},
+	} as unknown as IChatEndpoint;
 }

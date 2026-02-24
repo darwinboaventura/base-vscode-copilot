@@ -225,7 +225,17 @@ export class ChatMLFetcherImpl extends AbstractChatMLFetcher {
 					// Handle FilteredRetry case with augmented messages
 					if (result.type === ChatFetchResponseType.FilteredRetry) {
 
-						if (opts.enableRetryOnFilter) {
+						// Maximum number of retries for MalformedFormat errors.
+						// Other filter categories still get a single retry.
+						const MAX_MALFORMED_RETRIES = 2;
+						const currentMalformedRetryCount = opts._malformedRetryCount ?? 0;
+
+						const canRetryMalformed = result.category === FilterReason.MalformedFormat
+							&& currentMalformedRetryCount < MAX_MALFORMED_RETRIES;
+						const canRetryOther = result.category !== FilterReason.MalformedFormat
+							&& opts.enableRetryOnFilter;
+
+						if (canRetryMalformed || canRetryOther) {
 							streamRecorder.callback('', 0, { text: '', retryReason: result.category });
 
 							const filteredContent = result.value[0];
@@ -235,14 +245,31 @@ export class ChatMLFetcherImpl extends AbstractChatMLFetcher {
 									retryMessage = `The previous response (copied below) was filtered due to being too similar to existing public code. Please suggest something similar in function that does not match public code. Here's the previous response: ${filteredContent}\n\n`;
 								} else if (result.category === FilterReason.MalformedFormat) {
 									const preview = filteredContent.substring(0, 500);
-									retryMessage = `Your previous response was REJECTED because it did NOT follow the required XML format.\n` +
-										`You sent raw text/JSON without XML tags. This is INVALID.\n` +
-										`REQUIRED FORMAT: ALL content MUST be inside XML tags:\n` +
-										`- <thinking>reasoning</thinking>\n` +
-										`- <tool_use>{"name":"...","parameters":{...}}</tool_use>\n` +
-										`- <text>response text</text>\n` +
-										`Your rejected response started with: "${preview}..."\n` +
-										`Please respond again using the correct XML format.\n\n`;
+									const isSecondRetry = currentMalformedRetryCount >= 1;
+
+									if (isSecondRetry) {
+										// Second retry: even stronger correction with explicit example
+										retryMessage = `CRITICAL ERROR: This is your SECOND failed attempt. Your response was REJECTED AGAIN.\n` +
+											`You are NOT following instructions. Your response MUST start with <thinking> and use XML tags.\n\n` +
+											`CORRECT EXAMPLE:\n` +
+											`<thinking>I will now execute the requested action.</thinking>\n` +
+											`<tool_use>{"name":"tool_name","parameters":{"key":"value"}}</tool_use>\n\n` +
+											`WRONG (what you sent): "${preview}..."\n\n` +
+											`This is your LAST chance. Start your response with <thinking> RIGHT NOW.\n\n`;
+									} else {
+										// First retry: standard correction with example
+										retryMessage = `Your previous response was REJECTED because it did NOT follow the required XML format.\n` +
+											`You sent raw text/JSON without XML tags. This is INVALID.\n` +
+											`REQUIRED FORMAT: ALL content MUST be inside XML tags:\n` +
+											`- <thinking>reasoning</thinking>\n` +
+											`- <tool_use>{"name":"...","parameters":{...}}</tool_use>\n` +
+											`- <text>response text</text>\n\n` +
+											`EXAMPLE of a correct response:\n` +
+											`<thinking>I need to perform the requested action.</thinking>\n` +
+											`<tool_use>{"name":"browser_navigate","parameters":{"url":"http://localhost:3000"}}</tool_use>\n\n` +
+											`Your rejected response started with: "${preview}..."\n` +
+											`Respond again NOW using the correct XML format. Start with <thinking>.\n\n`;
+									}
 								} else if (result.category === FilterReason.EmptyResponse) {
 									if (requestBody.tools?.length) {
 										retryMessage = `Your previous response was REJECTED because it was completely empty — no XML tags were received.\n` +
@@ -266,6 +293,19 @@ export class ChatMLFetcherImpl extends AbstractChatMLFetcher {
 									}
 								];
 
+								// Add a small delay between retries to avoid hitting rate limits
+								// and to give the model provider time to recover from any transient issues.
+								const retryDelay = result.category === FilterReason.MalformedFormat ? 500 : 0;
+								if (retryDelay > 0) {
+									await new Promise<void>(resolve => setTimeout(resolve, retryDelay));
+								}
+
+								// For MalformedFormat, allow further retries up to MAX_MALFORMED_RETRIES.
+								// For other categories, disable retry to prevent infinite recursion.
+								const nextRetryOnFilter = result.category === FilterReason.MalformedFormat
+									? canRetryMalformed
+									: false;
+
 								// Retry with augmented messages
 								const retryResult = await this.fetchMany({
 									...opts,
@@ -278,9 +318,12 @@ export class ChatMLFetcherImpl extends AbstractChatMLFetcher {
 									requestOptions,
 									userInitiatedRequest: false, // do not mark the retry as user initiated
 									telemetryProperties: { ...telemetryProperties, retryAfterFilterCategory: result.category ?? 'uncategorized' },
-									enableRetryOnFilter: false,
+									enableRetryOnFilter: nextRetryOnFilter,
 									canRetryOnceWithoutRollback: false,
 									enableRetryOnError,
+									_malformedRetryCount: result.category === FilterReason.MalformedFormat
+										? currentMalformedRetryCount + 1
+										: opts._malformedRetryCount,
 								}, token);
 
 								pendingLoggedChatRequest?.resolve(retryResult, streamRecorder.deltas);
@@ -296,7 +339,7 @@ export class ChatMLFetcherImpl extends AbstractChatMLFetcher {
 						reason: result.category === FilterReason.EmptyResponse
 							? 'StackSpot AI returned an empty response after retry.'
 							: result.category === FilterReason.MalformedFormat
-								? 'StackSpot AI returned a malformed response after retry.'
+								? `StackSpot AI returned a malformed response after ${(opts._malformedRetryCount ?? 0) + 1} retries.`
 								: 'Response got filtered.',
 						requestId: result.requestId,
 						serverRequestId: result.serverRequestId

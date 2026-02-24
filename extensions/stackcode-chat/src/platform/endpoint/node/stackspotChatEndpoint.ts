@@ -43,6 +43,7 @@ import {
 	formatToolDefinitionsForPrompt,
 	getToolCallingSystemPrompt,
 	FORMAT_REMINDER_INSTRUCTION,
+	INLINE_FORMAT_REMINDER,
 } from '../../stackspot/toolCallParser';
 import { extractToolCalls } from '../../stackspot/structuredExtractor';
 
@@ -60,17 +61,26 @@ import { extractToolCalls } from '../../stackspot/structuredExtractor';
 export class StackspotChatEndpoint extends ChatEndpoint {
 
 	/**
-	 * Stores the tools from the last createRequestBody() call so that
-	 * processResponseFromChatEndpoint() knows whether to parse for tool calls.
+	 * Per-request context stored by createRequestBody() and consumed by
+	 * processResponseFromChatEndpoint(). This replaces the former singleton
+	 * fields `_lastRequestTools` and `_lastRequestDebugName` which suffered
+	 * from a race condition: when concurrent requests were in flight, the
+	 * second createRequestBody() call would overwrite the singleton state
+	 * before the first request's processResponseFromChatEndpoint() could
+	 * read it, causing the parser to be skipped for tool-bearing requests.
+	 *
+	 * Keyed by requestId (from ICreateEndpointBodyOptions.requestId).
+	 * Consumed (deleted) by processResponseFromChatEndpoint() via
+	 * telemetryData.properties.requestId / messageId / messageSource.
 	 */
-	private _lastRequestTools: OpenAiFunctionTool[] | undefined;
+	private readonly _requestContextMap = new Map<string, { tools: OpenAiFunctionTool[] | undefined; debugName: string }>();
 
 	/**
-	 * Stores the debugName from the last createRequestBody() call so that
-	 * processResponseFromChatEndpoint() can adjust behavior for special
-	 * request types (e.g. editingSession/speculate).
+	 * Secondary index: maps debugName → requestId[] to allow fallback
+	 * lookup in processResponseFromChatEndpoint() when the telemetryData
+	 * does not carry requestId/messageId directly.
 	 */
-	private _lastRequestDebugName: string | undefined;
+	private readonly _debugNameToRequestIds = new Map<string, string[]>();
 
 	/**
 	 * Stores upload_ids from image uploads performed in makeChatRequest2().
@@ -194,8 +204,18 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 
 		// When tool_choice is 'none', suppress all tools so the LLM won't attempt tool calls
 		const tools = isToolChoiceNone ? undefined : rawTools;
-		this._lastRequestTools = tools;
-		this._lastRequestDebugName = options.debugName;
+
+		// Store per-request context for processResponseFromChatEndpoint().
+		// Uses requestId as primary key (unique per request), with debugName
+		// as a secondary index for fallback lookup.
+		const reqId = options.requestId;
+		this._requestContextMap.set(reqId, { tools, debugName: options.debugName });
+		const ids = this._debugNameToRequestIds.get(options.debugName);
+		if (ids) {
+			ids.push(reqId);
+		} else {
+			this._debugNameToRequestIds.set(options.debugName, [reqId]);
+		}
 
 		const isPassthrough = StackspotChatEndpoint._passthroughDebugNames.has(options.debugName);
 
@@ -281,8 +301,16 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 		cancellationToken?: CancellationToken | undefined,
 	): Promise<AsyncIterableObject<ChatCompletion>> {
 		const self = this;
-		const hasTools = !!this._lastRequestTools && this._lastRequestTools.length > 0;
-		const debugName = this._lastRequestDebugName ?? 'unknown';
+
+		// ── Per-request context lookup ────────────────────────────────
+		// Correlate this response with its createRequestBody() context.
+		// Strategy:
+		//   1. Try requestId / messageId from telemetryData (exact match)
+		//   2. Fallback: use messageSource (== debugName) with FIFO queue
+		//   3. Last resort: no context found → assume no tools (safe default)
+		const reqContext = this._resolveRequestContext(telemetryData);
+		const hasTools = !!reqContext?.tools && reqContext.tools.length > 0;
+		const debugName = reqContext?.debugName ?? telemetryData.properties.messageSource ?? 'unknown';
 
 		return new AsyncIterableObject<ChatCompletion>(async (emitter) => {
 			const textDecoder = response.body.pipeThrough(new TextDecoderStream());
@@ -648,6 +676,64 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 	}
 
 	/**
+	 * Resolves per-request context from the _requestContextMap using telemetry
+	 * data to correlate with the createRequestBody() call.
+	 *
+	 * Lookup strategy:
+	 *   1. Try requestId or messageId from telemetryData.properties (exact match)
+	 *   2. Fallback: use messageSource (== debugName) with FIFO queue
+	 *   3. Last resort: undefined (caller should assume no tools)
+	 *
+	 * The matched entry is CONSUMED (deleted) to prevent memory leaks and
+	 * to ensure each response is matched exactly once.
+	 */
+	private _resolveRequestContext(telemetryData: TelemetryData): { tools: OpenAiFunctionTool[] | undefined; debugName: string } | undefined {
+		const props = telemetryData.properties;
+
+		// Strategy 1: exact match by requestId or messageId
+		const directKey = props.requestId ?? props.messageId;
+		if (directKey && this._requestContextMap.has(directKey)) {
+			const ctx = this._requestContextMap.get(directKey)!;
+			this._requestContextMap.delete(directKey);
+			// Clean up secondary index
+			const ids = this._debugNameToRequestIds.get(ctx.debugName);
+			if (ids) {
+				const idx = ids.indexOf(directKey);
+				if (idx !== -1) {
+					ids.splice(idx, 1);
+				}
+				if (ids.length === 0) {
+					this._debugNameToRequestIds.delete(ctx.debugName);
+				}
+			}
+			this._stackspotLogService.trace(`[stackcode] _resolveRequestContext: matched by requestId=${directKey}, debugName=${ctx.debugName}, hasTools=${!!ctx.tools && ctx.tools.length > 0}`);
+			return ctx;
+		}
+
+		// Strategy 2: fallback by messageSource (debugName) with FIFO
+		const messageSource = props.messageSource;
+		if (messageSource) {
+			const ids = this._debugNameToRequestIds.get(messageSource);
+			if (ids && ids.length > 0) {
+				const reqId = ids.shift()!; // FIFO — consume the oldest
+				if (ids.length === 0) {
+					this._debugNameToRequestIds.delete(messageSource);
+				}
+				const ctx = this._requestContextMap.get(reqId);
+				this._requestContextMap.delete(reqId);
+				if (ctx) {
+					this._stackspotLogService.trace(`[stackcode] _resolveRequestContext: matched by messageSource=${messageSource}, requestId=${reqId}, hasTools=${!!ctx.tools && ctx.tools.length > 0}`);
+					return ctx;
+				}
+			}
+		}
+
+		// Strategy 3: no match found
+		this._stackspotLogService.warn(`[stackcode] _resolveRequestContext: no context found (requestId=${directKey}, messageSource=${messageSource}). Defaulting to no tools.`);
+		return undefined;
+	}
+
+	/**
 	 * Handles a parser event and emits appropriate FinishedCallback deltas.
 	 * Returns true if truncation was requested.
 	 */
@@ -788,7 +874,13 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 		}
 
 		if (!parser.hasAnyXmlContent) {
-			logService.warn(`[stackcode] Malformed response detected (${debugName}): LLM returned ${allTokens.length} tokens with NO XML tags. Response will be rejected for retry.`);
+			const rawText = allTokens.join('');
+			const isNarrative = !rawText.includes('{') && rawText.trim().length < 200;
+			if (isNarrative) {
+				logService.warn(`[stackcode] Malformed response detected (${debugName}): LLM returned short narrative text (${rawText.trim().length} chars) with NO XML tags and NO tool calls. Likely a conversational reply instead of tool use. Response will be rejected for retry.`);
+			} else {
+				logService.warn(`[stackcode] Malformed response detected (${debugName}): LLM returned ${allTokens.length} tokens with NO XML tags. Response will be rejected for retry.`);
+			}
 			return true;
 		}
 
@@ -1234,6 +1326,109 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 			}
 
 			if (historyParts.length > 0) {
+				// ── History compression for long conversations ──────────
+				// When the total history size exceeds a threshold, truncate
+				// older tool results to reduce context size. This prevents
+				// "lost in the middle" degradation and reduces the chance of
+				// malformed responses caused by the model losing track of
+				// format instructions in very long prompts.
+				//
+				// Strategy: keep the most recent PRESERVE_RECENT_COUNT tool
+				// results intact (they are most relevant for the current turn).
+				// Older tool results that exceed TOOL_RESULT_TRUNCATE_THRESHOLD
+				// chars are replaced with a short summary.
+				if (hasTools) {
+					const MAX_HISTORY_CHARS = 80 * 1024; // 80 KB
+					const PRESERVE_RECENT_COUNT = 5;
+					const TOOL_RESULT_TRUNCATE_THRESHOLD = 500; // chars
+
+					const totalChars = historyParts.reduce((sum, p) => sum + p.length, 0);
+					if (totalChars > MAX_HISTORY_CHARS) {
+						// Find all <tool> entries and count from the end
+						let toolBlockCount = 0;
+						for (let i = historyParts.length - 1; i >= 0; i--) {
+							if (historyParts[i].startsWith('<tool>')) {
+								toolBlockCount++;
+							}
+						}
+
+						// Truncate older tool results (skip the most recent ones)
+						let recentToolsSeen = 0;
+						for (let i = historyParts.length - 1; i >= 0; i--) {
+							if (historyParts[i].startsWith('<tool>')) {
+								recentToolsSeen++;
+							}
+						}
+
+						// Now iterate forward and truncate old tool blocks
+						recentToolsSeen = 0;
+						let truncatedCount = 0;
+						let savedChars = 0;
+
+						// Count backwards to find which are "recent"
+						const toolIndices: number[] = [];
+						for (let i = 0; i < historyParts.length; i++) {
+							if (historyParts[i].startsWith('<tool>')) {
+								toolIndices.push(i);
+							}
+						}
+
+						// The last PRESERVE_RECENT_COUNT tool blocks are preserved
+						const truncatableToolIndices = toolIndices.length > PRESERVE_RECENT_COUNT
+							? toolIndices.slice(0, toolIndices.length - PRESERVE_RECENT_COUNT)
+							: [];
+
+						for (const idx of truncatableToolIndices) {
+							const part = historyParts[idx];
+							if (part.length > TOOL_RESULT_TRUNCATE_THRESHOLD) {
+								// Extract the tool_result id and error status
+								const idMatch = part.match(/id="([^"]*)"/);
+								const errorMatch = part.match(/error="([^"]*)"/);
+								const toolId = idMatch?.[1] ?? 'unknown';
+								const isError = errorMatch?.[1] ?? 'false';
+
+								const originalLen = part.length;
+								historyParts[idx] = `<tool>\n<tool_result id="${toolId}" error="${isError}">\n[Tool result truncated for context management — original ${Math.round(originalLen / 1024)}KB]\n</tool_result>\n</tool>`;
+								savedChars += originalLen - historyParts[idx].length;
+								truncatedCount++;
+							}
+
+							// Stop truncating once we're under the threshold
+							const currentTotal = historyParts.reduce((sum, p) => sum + p.length, 0);
+							if (currentTotal <= MAX_HISTORY_CHARS) {
+								break;
+							}
+						}
+
+						if (truncatedCount > 0) {
+							// Log is only available via the caller's logService, but we can
+							// use console.log here since this is a data-preparation method.
+							// The caller logs the final prompt size anyway.
+							console.log(`[stackcode] History compression: truncated ${truncatedCount} old tool results, saved ~${Math.round(savedChars / 1024)}KB (total was ${Math.round(totalChars / 1024)}KB)`);
+						}
+					}
+				}
+
+				// ── Sandwich prompting: inject inline format reminder ────
+				// When tools are present and the history is long enough that
+				// "lost in the middle" degradation is likely, inject a compact
+				// format reminder right before the last <user> message. This
+				// places the reminder close to the generation point, improving
+				// format compliance for models that degrade on long contexts.
+				if (hasTools && historyParts.length >= 4) {
+					// Find the last <user> block in historyParts
+					let lastUserIdx = -1;
+					for (let i = historyParts.length - 1; i >= 0; i--) {
+						if (historyParts[i].startsWith('<user>')) {
+							lastUserIdx = i;
+							break;
+						}
+					}
+					if (lastUserIdx > 0) {
+						historyParts.splice(lastUserIdx, 0, `<system>\n${INLINE_FORMAT_REMINDER}\n</system>`);
+					}
+				}
+
 				promptSections.push(`<history>\n${historyParts.join('\n\n')}\n</history>`);
 			}
 		}
