@@ -1,9 +1,9 @@
 {
-	"github.copilot.badge.signUp": "Sign up for GitHub Copilot",
+	"github.copilot.badge.signUp": "Sign up for StackSpot AI",
 	"github.copilot.badge.star": "Star Copilot on GitHub",
 	"github.copilot.badge.youtube": "Check out GitHub on Youtube",
 	"github.copilot.badge.twitter": "Follow GitHub on Twitter",
-	"github.copilot.icon": "GitHub Copilot icon",
+	"github.copilot.icon": "StackSpot AI icon",
 	"github.copilot.command.enableEditTracing": "Enable Chat Edit Tracing",
 	"github.copilot.command.disableEditTracing": "Disable Chat Edit Tracing",
 	"github.copilot.command.compactConversation": "Compact Conversation",
@@ -37,7 +37,7 @@
 	"github.copilot.viewsWelcome.individual.expired": "Your Copilot subscription has expired.\n\n[Review Copilot Settings](https://github.com/settings/copilot?editor=vscode)",
 	"github.copilot.viewsWelcome.enterprise": "Contact your GitHub organization administrator to enable Copilot.",
 	"github.copilot.viewsWelcome.offline": {
-		"message": "GitHub Copilot servers could not be reached. Please check your internet connection and try again.\n\n[Retry Connection](command:github.copilot.refreshToken)\n\nSee also [Copilot log](command:github.copilot.debug.showOutputChannel.internal) and [run diagnostics](command:github.copilot.debug.collectDiagnostics.internal).",
+		"message": "StackSpot AI servers could not be reached. Please check your internet connection and try again.\n\n[Retry Connection](command:github.copilot.refreshToken)\n\nSee also [Copilot log](command:github.copilot.debug.showOutputChannel.internal) and [run diagnostics](command:github.copilot.debug.collectDiagnostics.internal).",
 		"comment": [
 			"{Locked='['}",
 			"{Locked='](command:github.copilot.refreshToken)'}",
@@ -79,14 +79,14 @@
 		]
 	},
 	"github.copilot.viewsWelcome.chatDisabled": {
-		"message": "GitHub Copilot Chat is currently disabled for your account by an organization administrator. Contact an organization administrator to enable chat.\n\n[Learn More](https://docs.github.com/en/copilot/managing-copilot/managing-github-copilot-in-your-organization/managing-github-copilot-features-in-your-organization/managing-policies-for-copilot-in-your-organization)",
+		"message": "StackSpot AI Chat is currently disabled for your account by an organization administrator. Contact an organization administrator to enable chat.\n\n[Learn More](https://docs.github.com/en/copilot/managing-copilot/managing-github-copilot-in-your-organization/managing-github-copilot-features-in-your-organization/managing-policies-for-copilot-in-your-organization)",
 		"comment": [
 			"{Locked='['}",
 			"{Locked='](https://docs.github.com/en/copilot/managing-copilot/managing-github-copilot-in-your-organization/managing-github-copilot-features-in-your-organization/managing-policies-for-copilot-in-your-organization)'}"
 		]
 	},
 	"github.copilot.viewsWelcome.switchToReleaseChannel": {
-		"message": "The Pre-Release version of the GitHub Copilot Chat extension is not currently supported in the stable version of StackCode. Please switch to the release version for GitHub Copilot Chat or try StackCode Insiders.\n\n[Switch to Release Version and Reload](command:runCommands?%7B%22commands%22%3A%5B%7B%22command%22%3A%22workbench.extensions.action.switchToRelease%22%2C%22args%22%3A%5B%22GitHub.copilot-chat%22%5D%7D%2C%22workbench.action.reloadWindow%22%5D%7D)\n\n[Switch to StackCode Insiders](https://aka.ms/vscode-insiders)",
+		"message": "The Pre-Release version of the StackSpot AI Chat extension is not currently supported in the stable version of StackCode. Please switch to the release version for StackSpot AI Chat or try StackCode Insiders.\n\n[Switch to Release Version and Reload](command:runCommands?%7B%22commands%22%3A%5B%7B%22command%22%3A%22workbench.extensions.action.switchToRelease%22%2C%22args%22%3A%5B%22GitHub.copilot-chat%22%5D%7D%2C%22workbench.action.reloadWindow%22%5D%7D)\n\n[Switch to StackCode Insiders](https://aka.ms/vscode-insiders)",
 		"comment": [
 			"{Locked='['}",
 			"{Locked='](command:runCommands?%7B%22commands%22%3A%5B%7B%22command%22%3A%22workbench.extensions.action.switchToRelease%22%2C%22args%22%3A%5B%22GitHub.copilot-chat%22%5D%7D%2C%22workbench.action.reloadWindow%22%5D%7D)'}",
@@ -218,7 +218,7 @@
 	"github.copilot.command.generateSTest": "Generate STest From Last Chat Request",
 	"github.copilot.command.generateConfiguration": "Generate Debug Configuration",
 	"github.copilot.command.openWalkthrough": "Open Walkthrough",
-	"github.copilot.walkthrough.title": "GitHub Copilot",
+	"github.copilot.walkthrough.title": "StackSpot AI",
 	"github.copilot.walkthrough.description": "Your AI pair programmer to write code faster and smarter",
 	"github.copilot.walkthrough.signIn.title": "Sign in with GitHub",
 	"github.copilot.walkthrough.signIn.description": "To get started with Copilot, sign in with your GitHub account.\nMake sure you're using the correct GitHub account. You can also sign in later using the account menu.\n\n[Sign In](command:github.copilot.signIn)",
@@ -245,7 +245,7 @@
 	"github.copilot.walkthrough.edits.media.altText": "The video shows the user dragging and dropping files into the Copilot Edits input box located in the secondary sidebar. Copilot then updates the file according to the user’s request",
 	"github.copilot.walkthrough.sparkle.title": "Look out for smart actions",
 	"github.copilot.walkthrough.sparkle.description": "Copilot enhances your coding experience with AI-powered smart actions throughout the VS Code interface.\nLook for $(sparkle) icons, such as in the [Source Control view](command:workbench.view.scm), where Copilot generates commit messages and PR descriptions based on code changes.\n\n[Discover Tips and Tricks](https://code.visualstudio.com/docs/copilot/copilot-vscode-features)",
-	"github.copilot.walkthrough.sparkle.media.altText": "The video shows the sparkle icon in the source control input box being clicked, triggering GitHub Copilot to generate a commit message automatically",
+	"github.copilot.walkthrough.sparkle.media.altText": "The video shows the sparkle icon in the source control input box being clicked, triggering StackSpot AI to generate a commit message automatically",
 	"github.copilot.chat.completionContext.typescript.mode": "The execution mode of the TypeScript Copilot context provider.",
 	"github.copilot.chat.languageContext.typescript.enabled": "Enables the TypeScript language context provider for inline suggestions",
 	"github.copilot.chat.languageContext.typescript.items": "Controls which kind of items are included in the TypeScript language context provider.",
@@ -404,7 +404,7 @@
 	"github.copilot.config.cli.sessionController.enabled": "Enable the new session controller API for Background Agents. Requires VS Code reload.",
 	"github.copilot.config.backgroundAgent.enabled": "Enable the Background Agent. When disabled, the Background Agent will not be available in 'Continue In' context menus.",
 	"github.copilot.config.cloudAgent.enabled": "Enable the Cloud Agent. When disabled, the Cloud Agent will not be available in 'Continue In' context menus.",
-	"github.copilot.config.copilotMemory.enabled": "Enable agentic memory for GitHub Copilot. When enabled, Copilot can store repository-scoped facts about your codebase conventions, structure, and preferences remotely on GitHub, and recall them in future conversations to provide more contextually relevant assistance. [Learn more](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/copilot-memory).",
+	"github.copilot.config.copilotMemory.enabled": "Enable agentic memory for StackSpot AI. When enabled, StackSpot AI can store repository-scoped facts about your codebase conventions, structure, and preferences remotely on GitHub, and recall them in future conversations to provide more contextually relevant assistance. [Learn more](https://docs.github.com/en/copilot/how-tos/use-copilot-agents/copilot-memory).",
 	"github.copilot.config.tools.memory.enabled": "Enable the memory tool to let the agent save and recall notes during a conversation. Memories are stored locally in VS Code storage — user-scoped memories persist across workspaces and sessions, while session-scoped memories are cleared when the conversation ends.",
 	"github.copilot.config.gpt5AlternativePatch": "Enable GPT-5 alternative patch format.",
 	"github.copilot.config.inlineEdits.triggerOnEditorChangeAfterSeconds": "Trigger inline edits after editor has been idle for this many seconds.",
@@ -448,6 +448,6 @@
 	"github.copilot.config.searchSubagent.toolCallLimit": "Maximum number of tool calls the search subagent can make during exploration.",
 
 	"github.copilot.session.providerDescription.claude": "Delegate tasks to the Claude SDK running locally on your machine. The agent iterates via chat and works asynchronously to implement changes.",
-	"github.copilot.session.providerDescription.cloud": "Delegate tasks to the GitHub Copilot coding agent. The agent iterates via chat and works asynchronously in the cloud to implement changes and pull requests as needed.",
-	"github.copilot.session.providerDescription.background": "Delegate tasks to a background agent running locally on your machine. The agent iterates via chat and works asynchronously in a Git worktree to implement changes isolated from your main workspace using the GitHub Copilot CLI."
+	"github.copilot.session.providerDescription.cloud": "Delegate tasks to the StackSpot AI coding agent. The agent iterates via chat and works asynchronously in the cloud to implement changes and pull requests as needed.",
+	"github.copilot.session.providerDescription.background": "Delegate tasks to a background agent running locally on your machine. The agent iterates via chat and works asynchronously in a Git worktree to implement changes isolated from your main workspace using the StackSpot AI CLI."
 }

@@ -217,7 +217,7 @@ export namespace ILanguageModelChatMetadata {
 	}
 
 	export function matchesQualifiedName(name: string, metadata: ILanguageModelChatMetadata): boolean {
-		if (metadata.vendor === 'copilot' && name === metadata.name) {
+		if (metadata.vendor === 'stackspot' && name === metadata.name) {
 			return true;
 		}
 		return name === asQualifiedName(metadata);
@@ -639,7 +639,7 @@ export class LanguageModelsService implements ILanguageModelsService {
 				configuration: item.configuration,
 				managementCommand: item.managementCommand,
 				when: item.when,
-				isDefault: item.vendor === 'copilot'
+				isDefault: item.vendor === 'stackspot'
 			};
 			this._vendors.set(item.vendor, vendor);
 			addedVendorIds.push(item.vendor);

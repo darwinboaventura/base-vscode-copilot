@@ -85,8 +85,8 @@
 	],
 	"defaultChatAgent": {
 		"extensionId": "GitHub.copilot",
-		"chatExtensionId": "GitHub.copilot-chat",
-		"chatExtensionOutputId": "GitHub.copilot-chat.GitHub Copilot Chat.log",
+		"chatExtensionId": "StackSpot.copilot-chat",
+		"chatExtensionOutputId": "StackSpot.copilot-chat.StackSpot AI Chat.log",
 		"documentationUrl": "https://aka.ms/github-copilot-overview",
 		"termsStatementUrl": "https://aka.ms/github-copilot-terms-statement",
 		"privacyStatementUrl": "https://aka.ms/github-copilot-privacy-statement",
