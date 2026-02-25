@@ -434,6 +434,23 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 									}
 								}
 
+								// STACKCODE FIX: Handle "partial XML compliance" — LLM used some XML tags
+								// (e.g. <thinking>) but wrote tool calls as raw JSON outside XML tags.
+								// _isMalformedResponse() returns false in this case (hasAnyXmlContent=true),
+								// so the rescue block above was skipped. Try structured extraction on the
+								// plain text parts (content outside XML tags) before falling back to display.
+								if (completedToolCalls.length === 0 && plainTextParts.length > 0) {
+									const plainText = plainTextParts.join('');
+									if (plainText.includes('{')) {
+										const rescued = self._tryStructuredExtraction(plainText, debugName, logService);
+										if (rescued && rescued.length > 0) {
+											logService.info(`[stackcode] Partial XML compliance rescue (${debugName}): ${rescued.length} tool call(s) extracted from text outside XML tags`);
+											completedToolCalls.push(...rescued);
+											plainTextParts.length = 0;
+										}
+									}
+								}
+
 								// Determine finish reason based on whether tool calls were detected
 								const hasDetectedToolCalls = completedToolCalls.length > 0;
 								const finishReason = hasDetectedToolCalls

@@ -524,7 +524,7 @@ function _extractAllJsonObjects(text: string): string[] {
 	let searchFrom = 0;
 
 	// Safety limit to prevent infinite loops on pathological input
-	const MAX_EXTRACTIONS = 20;
+	const MAX_EXTRACTIONS = 50;
 
 	while (searchFrom < text.length && results.length < MAX_EXTRACTIONS) {
 		const braceIndex = text.indexOf('{', searchFrom);

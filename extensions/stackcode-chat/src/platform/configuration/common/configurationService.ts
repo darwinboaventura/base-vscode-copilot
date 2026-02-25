@@ -23,7 +23,7 @@ import { AlternativeNotebookFormat } from '../../notebook/common/alternativeCont
 import { IExperimentationService } from '../../telemetry/common/nullExperimentationService';
 import { IValidator, vBoolean, vNumber, vString } from './validator';
 
-export const CopilotConfigPrefix = 'github.copilot';
+export const CopilotConfigPrefix = 'stackcode';
 
 export const IConfigurationService = createServiceIdentifier<IConfigurationService>('IConfigurationService');
 
@@ -467,7 +467,7 @@ function toBaseConfig<T>(key: string, defaultValue: ConfigDefaultValue<T>, optio
 			throw new BugIndicatingError(`The expiration date for setting ${key} is not a valid date`);
 		}
 	}
-	const advancedSubKey = fullyQualifiedId.startsWith('github.copilot.advanced.') ? fullyQualifiedId.substring('github.copilot.advanced.'.length) : undefined;
+	const advancedSubKey = fullyQualifiedId.startsWith('stackcode.advanced.') ? fullyQualifiedId.substring('stackcode.advanced.'.length) : undefined;
 	return { id: key, oldId: options?.oldKey, isPublic, fullyQualifiedId, fullyQualifiedOldId, advancedSubKey, defaultValue, options };
 }
 
