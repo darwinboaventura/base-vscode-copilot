@@ -1,0 +1,2219 @@
+log.ts:450  WARN Creation of workbench contribution 'workbench.contrib.preferencesActions' took 22ms.
+warn @ log.ts:450
+warn @ log.ts:559
+warn @ logService.ts:47
+safeCreateContribution @ contributions.ts:400
+doInstantiateByPhase @ contributions.ts:311
+instantiateByPhase @ contributions.ts:287
+start @ contributions.ts:260
+(anonymous) @ workbench.ts:162
+invokeFunction @ instantiationService.ts:109
+startup @ workbench.ts:140
+open @ desktop.main.ts:138
+await in open
+main @ desktop.main.ts:422
+(anonymous) @ workbench.ts:544
+await in (anonymous)
+(anonymous) @ workbench.ts:545
+log.ts:440  INFO Started local extension host with pid 14890.
+  INFO Loading development extension at /Users/darwin/Desktop/stackcode-stackspot-extension/stackcode/extensions/stackcode-chat
+   ERR The vendor 'copilotcli' is already registered and cannot be registered twice
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+deltaLanguageModelChatProviderDescriptors @ languageModels.js:294
+(anonymous) @ languageModels.js:286
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR The vendor 'anthropic' is already registered and cannot be registered twice
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+deltaLanguageModelChatProviderDescriptors @ languageModels.js:294
+(anonymous) @ languageModels.js:286
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR The vendor 'xai' is already registered and cannot be registered twice
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+deltaLanguageModelChatProviderDescriptors @ languageModels.js:294
+(anonymous) @ languageModels.js:286
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR The vendor 'gemini' is already registered and cannot be registered twice
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+deltaLanguageModelChatProviderDescriptors @ languageModels.js:294
+(anonymous) @ languageModels.js:286
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR The vendor 'openrouter' is already registered and cannot be registered twice
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+deltaLanguageModelChatProviderDescriptors @ languageModels.js:294
+(anonymous) @ languageModels.js:286
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR The vendor 'openai' is already registered and cannot be registered twice
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+deltaLanguageModelChatProviderDescriptors @ languageModels.js:294
+(anonymous) @ languageModels.js:286
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR The vendor 'ollama' is already registered and cannot be registered twice
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+deltaLanguageModelChatProviderDescriptors @ languageModels.js:294
+(anonymous) @ languageModels.js:286
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR The vendor 'customoai' is already registered and cannot be registered twice
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+deltaLanguageModelChatProviderDescriptors @ languageModels.js:294
+(anonymous) @ languageModels.js:286
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR The vendor 'azure' is already registered and cannot be registered twice
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+deltaLanguageModelChatProviderDescriptors @ languageModels.js:294
+(anonymous) @ languageModels.js:286
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+ [StackSpot.copilot-chat]: Failed to register tool 'copilot_searchCodebase': Error: Tool "copilot_searchCodebase" is already registered.
+onDidChangeNotification @ notificationsAlerts.js:34
+(anonymous) @ notificationsAlerts.js:22
+_deliver @ event.js:998
+_deliverQueue @ event.js:1009
+fire @ event.js:1032
+addNotification @ notifications.js:123
+notify @ notificationService.js:186
+_handleExtensionPointMessage @ abstractExtensionService.js:1005
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR [StackSpot.copilot-chat]: Failed to register tool 'copilot_searchCodebase': Error: Tool "copilot_searchCodebase" is already registered.
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+_handleExtensionPointMessage @ abstractExtensionService.js:1007
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+ [StackSpot.copilot-chat]: Failed to register tool 'search_subagent': Error: Tool "search_subagent" is already registered.
+onDidChangeNotification @ notificationsAlerts.js:34
+(anonymous) @ notificationsAlerts.js:22
+_deliver @ event.js:998
+_deliverQueue @ event.js:1009
+fire @ event.js:1032
+addNotification @ notifications.js:123
+notify @ notificationService.js:186
+_handleExtensionPointMessage @ abstractExtensionService.js:1005
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR [StackSpot.copilot-chat]: Failed to register tool 'search_subagent': Error: Tool "search_subagent" is already registered.
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+_handleExtensionPointMessage @ abstractExtensionService.js:1007
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+ [StackSpot.copilot-chat]: Failed to register tool 'copilot_searchWorkspaceSymbols': Error: Tool "copilot_searchWorkspaceSymbols" is already registered.
+onDidChangeNotification @ notificationsAlerts.js:34
+(anonymous) @ notificationsAlerts.js:22
+_deliver @ event.js:998
+_deliverQueue @ event.js:1009
+fire @ event.js:1032
+addNotification @ notifications.js:123
+notify @ notificationService.js:186
+_handleExtensionPointMessage @ abstractExtensionService.js:1005
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR [StackSpot.copilot-chat]: Failed to register tool 'copilot_searchWorkspaceSymbols': Error: Tool "copilot_searchWorkspaceSymbols" is already registered.
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+_handleExtensionPointMessage @ abstractExtensionService.js:1007
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+ [StackSpot.copilot-chat]: Failed to register tool 'copilot_getVSCodeAPI': Error: Tool "copilot_getVSCodeAPI" is already registered.
+onDidChangeNotification @ notificationsAlerts.js:34
+(anonymous) @ notificationsAlerts.js:22
+_deliver @ event.js:998
+_deliverQueue @ event.js:1009
+fire @ event.js:1032
+addNotification @ notifications.js:123
+notify @ notificationService.js:186
+_handleExtensionPointMessage @ abstractExtensionService.js:1005
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR [StackSpot.copilot-chat]: Failed to register tool 'copilot_getVSCodeAPI': Error: Tool "copilot_getVSCodeAPI" is already registered.
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+_handleExtensionPointMessage @ abstractExtensionService.js:1007
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+ [StackSpot.copilot-chat]: Failed to register tool 'copilot_findFiles': Error: Tool "copilot_findFiles" is already registered.
+onDidChangeNotification @ notificationsAlerts.js:34
+(anonymous) @ notificationsAlerts.js:22
+_deliver @ event.js:998
+_deliverQueue @ event.js:1009
+fire @ event.js:1032
+addNotification @ notifications.js:123
+notify @ notificationService.js:186
+_handleExtensionPointMessage @ abstractExtensionService.js:1005
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR [StackSpot.copilot-chat]: Failed to register tool 'copilot_findFiles': Error: Tool "copilot_findFiles" is already registered.
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+_handleExtensionPointMessage @ abstractExtensionService.js:1007
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+ [StackSpot.copilot-chat]: Failed to register tool 'copilot_findTextInFiles': Error: Tool "copilot_findTextInFiles" is already registered.
+onDidChangeNotification @ notificationsAlerts.js:34
+(anonymous) @ notificationsAlerts.js:22
+_deliver @ event.js:998
+_deliverQueue @ event.js:1009
+fire @ event.js:1032
+addNotification @ notifications.js:123
+notify @ notificationService.js:186
+_handleExtensionPointMessage @ abstractExtensionService.js:1005
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR [StackSpot.copilot-chat]: Failed to register tool 'copilot_findTextInFiles': Error: Tool "copilot_findTextInFiles" is already registered.
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+_handleExtensionPointMessage @ abstractExtensionService.js:1007
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+ [StackSpot.copilot-chat]: Failed to register tool 'copilot_applyPatch': Error: Tool "copilot_applyPatch" is already registered.
+onDidChangeNotification @ notificationsAlerts.js:34
+(anonymous) @ notificationsAlerts.js:22
+_deliver @ event.js:998
+_deliverQueue @ event.js:1009
+fire @ event.js:1032
+addNotification @ notifications.js:123
+notify @ notificationService.js:186
+_handleExtensionPointMessage @ abstractExtensionService.js:1005
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR [StackSpot.copilot-chat]: Failed to register tool 'copilot_applyPatch': Error: Tool "copilot_applyPatch" is already registered.
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+_handleExtensionPointMessage @ abstractExtensionService.js:1007
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+ [StackSpot.copilot-chat]: Failed to register tool 'copilot_readFile': Error: Tool "copilot_readFile" is already registered.
+onDidChangeNotification @ notificationsAlerts.js:34
+(anonymous) @ notificationsAlerts.js:22
+_deliver @ event.js:998
+_deliverQueue @ event.js:1009
+fire @ event.js:1032
+addNotification @ notifications.js:123
+notify @ notificationService.js:186
+_handleExtensionPointMessage @ abstractExtensionService.js:1005
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR [StackSpot.copilot-chat]: Failed to register tool 'copilot_readFile': Error: Tool "copilot_readFile" is already registered.
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+_handleExtensionPointMessage @ abstractExtensionService.js:1007
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+ [StackSpot.copilot-chat]: Failed to register tool 'copilot_listDirectory': Error: Tool "copilot_listDirectory" is already registered.
+onDidChangeNotification @ notificationsAlerts.js:34
+(anonymous) @ notificationsAlerts.js:22
+_deliver @ event.js:998
+_deliverQueue @ event.js:1009
+fire @ event.js:1032
+addNotification @ notifications.js:123
+notify @ notificationService.js:186
+_handleExtensionPointMessage @ abstractExtensionService.js:1005
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR [StackSpot.copilot-chat]: Failed to register tool 'copilot_listDirectory': Error: Tool "copilot_listDirectory" is already registered.
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+_handleExtensionPointMessage @ abstractExtensionService.js:1007
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+ [StackSpot.copilot-chat]: Failed to register tool 'copilot_getErrors': Error: Tool "copilot_getErrors" is already registered.
+onDidChangeNotification @ notificationsAlerts.js:34
+(anonymous) @ notificationsAlerts.js:22
+_deliver @ event.js:998
+_deliverQueue @ event.js:1009
+fire @ event.js:1032
+addNotification @ notifications.js:123
+notify @ notificationService.js:186
+_handleExtensionPointMessage @ abstractExtensionService.js:1005
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR [StackSpot.copilot-chat]: Failed to register tool 'copilot_getErrors': Error: Tool "copilot_getErrors" is already registered.
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+_handleExtensionPointMessage @ abstractExtensionService.js:1007
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+ [StackSpot.copilot-chat]: Failed to register tool 'copilot_readProjectStructure': Error: Tool "copilot_readProjectStructure" is already registered.
+onDidChangeNotification @ notificationsAlerts.js:34
+(anonymous) @ notificationsAlerts.js:22
+_deliver @ event.js:998
+_deliverQueue @ event.js:1009
+fire @ event.js:1032
+addNotification @ notifications.js:123
+notify @ notificationService.js:186
+_handleExtensionPointMessage @ abstractExtensionService.js:1005
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR [StackSpot.copilot-chat]: Failed to register tool 'copilot_readProjectStructure': Error: Tool "copilot_readProjectStructure" is already registered.
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+_handleExtensionPointMessage @ abstractExtensionService.js:1007
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+ [StackSpot.copilot-chat]: Failed to register tool 'copilot_getChangedFiles': Error: Tool "copilot_getChangedFiles" is already registered.
+onDidChangeNotification @ notificationsAlerts.js:34
+(anonymous) @ notificationsAlerts.js:22
+_deliver @ event.js:998
+_deliverQueue @ event.js:1009
+fire @ event.js:1032
+addNotification @ notifications.js:123
+notify @ notificationService.js:186
+_handleExtensionPointMessage @ abstractExtensionService.js:1005
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR [StackSpot.copilot-chat]: Failed to register tool 'copilot_getChangedFiles': Error: Tool "copilot_getChangedFiles" is already registered.
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+_handleExtensionPointMessage @ abstractExtensionService.js:1007
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+ [StackSpot.copilot-chat]: Failed to register tool 'copilot_testFailure': Error: Tool "copilot_testFailure" is already registered.
+onDidChangeNotification @ notificationsAlerts.js:34
+(anonymous) @ notificationsAlerts.js:22
+_deliver @ event.js:998
+_deliverQueue @ event.js:1009
+fire @ event.js:1032
+addNotification @ notifications.js:123
+notify @ notificationService.js:186
+_handleExtensionPointMessage @ abstractExtensionService.js:1005
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR [StackSpot.copilot-chat]: Failed to register tool 'copilot_testFailure': Error: Tool "copilot_testFailure" is already registered.
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+_handleExtensionPointMessage @ abstractExtensionService.js:1007
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+ [StackSpot.copilot-chat]: Failed to register tool 'copilot_createNewWorkspace': Error: Tool "copilot_createNewWorkspace" is already registered.
+onDidChangeNotification @ notificationsAlerts.js:34
+(anonymous) @ notificationsAlerts.js:22
+_deliver @ event.js:998
+_deliverQueue @ event.js:1009
+fire @ event.js:1032
+addNotification @ notifications.js:123
+notify @ notificationService.js:186
+_handleExtensionPointMessage @ abstractExtensionService.js:1005
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR [StackSpot.copilot-chat]: Failed to register tool 'copilot_createNewWorkspace': Error: Tool "copilot_createNewWorkspace" is already registered.
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+_handleExtensionPointMessage @ abstractExtensionService.js:1007
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+ [StackSpot.copilot-chat]: Failed to register tool 'copilot_getProjectSetupInfo': Error: Tool "copilot_getProjectSetupInfo" is already registered.
+onDidChangeNotification @ notificationsAlerts.js:34
+(anonymous) @ notificationsAlerts.js:22
+_deliver @ event.js:998
+_deliverQueue @ event.js:1009
+fire @ event.js:1032
+addNotification @ notifications.js:123
+notify @ notificationService.js:186
+_handleExtensionPointMessage @ abstractExtensionService.js:1005
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR [StackSpot.copilot-chat]: Failed to register tool 'copilot_getProjectSetupInfo': Error: Tool "copilot_getProjectSetupInfo" is already registered.
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+_handleExtensionPointMessage @ abstractExtensionService.js:1007
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+ [StackSpot.copilot-chat]: Failed to register tool 'copilot_installExtension': Error: Tool "copilot_installExtension" is already registered.
+onDidChangeNotification @ notificationsAlerts.js:34
+(anonymous) @ notificationsAlerts.js:22
+_deliver @ event.js:998
+_deliverQueue @ event.js:1009
+fire @ event.js:1032
+addNotification @ notifications.js:123
+notify @ notificationService.js:186
+_handleExtensionPointMessage @ abstractExtensionService.js:1005
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR [StackSpot.copilot-chat]: Failed to register tool 'copilot_installExtension': Error: Tool "copilot_installExtension" is already registered.
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+_handleExtensionPointMessage @ abstractExtensionService.js:1007
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+ [StackSpot.copilot-chat]: Failed to register tool 'copilot_runVscodeCommand': Error: Tool "copilot_runVscodeCommand" is already registered.
+onDidChangeNotification @ notificationsAlerts.js:34
+(anonymous) @ notificationsAlerts.js:22
+_deliver @ event.js:998
+_deliverQueue @ event.js:1009
+fire @ event.js:1032
+addNotification @ notifications.js:123
+notify @ notificationService.js:186
+_handleExtensionPointMessage @ abstractExtensionService.js:1005
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR [StackSpot.copilot-chat]: Failed to register tool 'copilot_runVscodeCommand': Error: Tool "copilot_runVscodeCommand" is already registered.
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+_handleExtensionPointMessage @ abstractExtensionService.js:1007
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+ [StackSpot.copilot-chat]: Failed to register tool 'copilot_createNewJupyterNotebook': Error: Tool "copilot_createNewJupyterNotebook" is already registered.
+onDidChangeNotification @ notificationsAlerts.js:34
+(anonymous) @ notificationsAlerts.js:22
+_deliver @ event.js:998
+_deliverQueue @ event.js:1009
+fire @ event.js:1032
+addNotification @ notifications.js:123
+notify @ notificationService.js:186
+_handleExtensionPointMessage @ abstractExtensionService.js:1005
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR [StackSpot.copilot-chat]: Failed to register tool 'copilot_createNewJupyterNotebook': Error: Tool "copilot_createNewJupyterNotebook" is already registered.
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+_handleExtensionPointMessage @ abstractExtensionService.js:1007
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+ [StackSpot.copilot-chat]: Failed to register tool 'copilot_insertEdit': Error: Tool "copilot_insertEdit" is already registered.
+onDidChangeNotification @ notificationsAlerts.js:34
+(anonymous) @ notificationsAlerts.js:22
+_deliver @ event.js:998
+_deliverQueue @ event.js:1009
+fire @ event.js:1032
+addNotification @ notifications.js:123
+notify @ notificationService.js:186
+_handleExtensionPointMessage @ abstractExtensionService.js:1005
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR [StackSpot.copilot-chat]: Failed to register tool 'copilot_insertEdit': Error: Tool "copilot_insertEdit" is already registered.
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+_handleExtensionPointMessage @ abstractExtensionService.js:1007
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+ [StackSpot.copilot-chat]: Failed to register tool 'copilot_createFile': Error: Tool "copilot_createFile" is already registered.
+onDidChangeNotification @ notificationsAlerts.js:34
+(anonymous) @ notificationsAlerts.js:22
+_deliver @ event.js:998
+_deliverQueue @ event.js:1009
+fire @ event.js:1032
+addNotification @ notifications.js:123
+notify @ notificationService.js:186
+_handleExtensionPointMessage @ abstractExtensionService.js:1005
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR [StackSpot.copilot-chat]: Failed to register tool 'copilot_createFile': Error: Tool "copilot_createFile" is already registered.
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+_handleExtensionPointMessage @ abstractExtensionService.js:1007
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+ [StackSpot.copilot-chat]: Failed to register tool 'copilot_createDirectory': Error: Tool "copilot_createDirectory" is already registered.
+onDidChangeNotification @ notificationsAlerts.js:34
+(anonymous) @ notificationsAlerts.js:22
+_deliver @ event.js:998
+_deliverQueue @ event.js:1009
+fire @ event.js:1032
+addNotification @ notifications.js:123
+notify @ notificationService.js:186
+_handleExtensionPointMessage @ abstractExtensionService.js:1005
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR [StackSpot.copilot-chat]: Failed to register tool 'copilot_createDirectory': Error: Tool "copilot_createDirectory" is already registered.
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+_handleExtensionPointMessage @ abstractExtensionService.js:1007
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+ [StackSpot.copilot-chat]: Failed to register tool 'copilot_openSimpleBrowser': Error: Tool "copilot_openSimpleBrowser" is already registered.
+onDidChangeNotification @ notificationsAlerts.js:34
+(anonymous) @ notificationsAlerts.js:22
+_deliver @ event.js:998
+_deliverQueue @ event.js:1009
+fire @ event.js:1032
+addNotification @ notifications.js:123
+notify @ notificationService.js:186
+_handleExtensionPointMessage @ abstractExtensionService.js:1005
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR [StackSpot.copilot-chat]: Failed to register tool 'copilot_openSimpleBrowser': Error: Tool "copilot_openSimpleBrowser" is already registered.
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+_handleExtensionPointMessage @ abstractExtensionService.js:1007
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+ [StackSpot.copilot-chat]: Failed to register tool 'copilot_replaceString': Error: Tool "copilot_replaceString" is already registered.
+onDidChangeNotification @ notificationsAlerts.js:34
+(anonymous) @ notificationsAlerts.js:22
+_deliver @ event.js:998
+_deliverQueue @ event.js:1009
+fire @ event.js:1032
+addNotification @ notifications.js:123
+notify @ notificationService.js:186
+_handleExtensionPointMessage @ abstractExtensionService.js:1005
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR [StackSpot.copilot-chat]: Failed to register tool 'copilot_replaceString': Error: Tool "copilot_replaceString" is already registered.
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+_handleExtensionPointMessage @ abstractExtensionService.js:1007
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+ [StackSpot.copilot-chat]: Failed to register tool 'copilot_multiReplaceString': Error: Tool "copilot_multiReplaceString" is already registered.
+onDidChangeNotification @ notificationsAlerts.js:34
+(anonymous) @ notificationsAlerts.js:22
+_deliver @ event.js:998
+_deliverQueue @ event.js:1009
+fire @ event.js:1032
+addNotification @ notifications.js:123
+notify @ notificationService.js:186
+_handleExtensionPointMessage @ abstractExtensionService.js:1005
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR [StackSpot.copilot-chat]: Failed to register tool 'copilot_multiReplaceString': Error: Tool "copilot_multiReplaceString" is already registered.
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+_handleExtensionPointMessage @ abstractExtensionService.js:1007
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+ [StackSpot.copilot-chat]: Failed to register tool 'copilot_editNotebook': Error: Tool "copilot_editNotebook" is already registered.
+onDidChangeNotification @ notificationsAlerts.js:34
+(anonymous) @ notificationsAlerts.js:22
+_deliver @ event.js:998
+_deliverQueue @ event.js:1009
+fire @ event.js:1032
+addNotification @ notifications.js:123
+notify @ notificationService.js:186
+_handleExtensionPointMessage @ abstractExtensionService.js:1005
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR [StackSpot.copilot-chat]: Failed to register tool 'copilot_editNotebook': Error: Tool "copilot_editNotebook" is already registered.
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+_handleExtensionPointMessage @ abstractExtensionService.js:1007
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+ [StackSpot.copilot-chat]: Failed to register tool 'copilot_runNotebookCell': Error: Tool "copilot_runNotebookCell" is already registered.
+onDidChangeNotification @ notificationsAlerts.js:34
+(anonymous) @ notificationsAlerts.js:22
+_deliver @ event.js:998
+_deliverQueue @ event.js:1009
+fire @ event.js:1032
+addNotification @ notifications.js:123
+notify @ notificationService.js:186
+_handleExtensionPointMessage @ abstractExtensionService.js:1005
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR [StackSpot.copilot-chat]: Failed to register tool 'copilot_runNotebookCell': Error: Tool "copilot_runNotebookCell" is already registered.
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+_handleExtensionPointMessage @ abstractExtensionService.js:1007
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+ [StackSpot.copilot-chat]: Failed to register tool 'copilot_getNotebookSummary': Error: Tool "copilot_getNotebookSummary" is already registered.
+onDidChangeNotification @ notificationsAlerts.js:34
+(anonymous) @ notificationsAlerts.js:22
+_deliver @ event.js:998
+_deliverQueue @ event.js:1009
+fire @ event.js:1032
+addNotification @ notifications.js:123
+notify @ notificationService.js:186
+_handleExtensionPointMessage @ abstractExtensionService.js:1005
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR [StackSpot.copilot-chat]: Failed to register tool 'copilot_getNotebookSummary': Error: Tool "copilot_getNotebookSummary" is already registered.
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+_handleExtensionPointMessage @ abstractExtensionService.js:1007
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+ [StackSpot.copilot-chat]: Failed to register tool 'copilot_readNotebookCellOutput': Error: Tool "copilot_readNotebookCellOutput" is already registered.
+onDidChangeNotification @ notificationsAlerts.js:34
+(anonymous) @ notificationsAlerts.js:22
+_deliver @ event.js:998
+_deliverQueue @ event.js:1009
+fire @ event.js:1032
+addNotification @ notifications.js:123
+notify @ notificationService.js:186
+_handleExtensionPointMessage @ abstractExtensionService.js:1005
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR [StackSpot.copilot-chat]: Failed to register tool 'copilot_readNotebookCellOutput': Error: Tool "copilot_readNotebookCellOutput" is already registered.
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+_handleExtensionPointMessage @ abstractExtensionService.js:1007
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+ [StackSpot.copilot-chat]: Failed to register tool 'copilot_fetchWebPage': Error: Tool "copilot_fetchWebPage" is already registered.
+onDidChangeNotification @ notificationsAlerts.js:34
+(anonymous) @ notificationsAlerts.js:22
+_deliver @ event.js:998
+_deliverQueue @ event.js:1009
+fire @ event.js:1032
+addNotification @ notifications.js:123
+notify @ notificationService.js:186
+_handleExtensionPointMessage @ abstractExtensionService.js:1005
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR [StackSpot.copilot-chat]: Failed to register tool 'copilot_fetchWebPage': Error: Tool "copilot_fetchWebPage" is already registered.
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+_handleExtensionPointMessage @ abstractExtensionService.js:1007
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+ [StackSpot.copilot-chat]: Failed to register tool 'copilot_findTestFiles': Error: Tool "copilot_findTestFiles" is already registered.
+onDidChangeNotification @ notificationsAlerts.js:34
+(anonymous) @ notificationsAlerts.js:22
+_deliver @ event.js:998
+_deliverQueue @ event.js:1009
+fire @ event.js:1032
+addNotification @ notifications.js:123
+notify @ notificationService.js:186
+_handleExtensionPointMessage @ abstractExtensionService.js:1005
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR [StackSpot.copilot-chat]: Failed to register tool 'copilot_findTestFiles': Error: Tool "copilot_findTestFiles" is already registered.
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+_handleExtensionPointMessage @ abstractExtensionService.js:1007
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+ [StackSpot.copilot-chat]: Failed to register tool 'copilot_getDocInfo': Error: Tool "copilot_getDocInfo" is already registered.
+onDidChangeNotification @ notificationsAlerts.js:34
+(anonymous) @ notificationsAlerts.js:22
+_deliver @ event.js:998
+_deliverQueue @ event.js:1009
+fire @ event.js:1032
+addNotification @ notifications.js:123
+notify @ notificationService.js:186
+_handleExtensionPointMessage @ abstractExtensionService.js:1005
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+   ERR [StackSpot.copilot-chat]: Failed to register tool 'copilot_getDocInfo': Error: Tool "copilot_getDocInfo" is already registered.
+error @ log.js:253
+error @ log.js:341
+error @ logService.js:35
+_handleExtensionPointMessage @ abstractExtensionService.js:1007
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+ [StackSpot.copilot-chat]: Failed to register tool 'copilot_getSearchResults': Error: Tool "copilot_getSearchResults" is already registered.
+onDidChangeNotification @ notificationsAlerts.js:34
+(anonymous) @ notificationsAlerts.js:22
+_deliver @ event.js:998
+_deliverQueue @ event.js:1009
+fire @ event.js:1032
+addNotification @ notifications.js:123
+notify @ notificationService.js:186
+_handleExtensionPointMessage @ abstractExtensionService.js:1005
+messageHandler @ abstractExtensionService.js:978
+_msg @ extensionsRegistry.js:23
+error @ extensionsRegistry.js:31
+(anonymous) @ languageModelToolsContribution.js:243
+_handle @ extensionsRegistry.js:97
+acceptUsers @ extensionsRegistry.js:90
+_handleExtensionPoint @ abstractExtensionService.js:1037
+_doHandleExtensionPoints @ abstractExtensionService.js:985
+_resolveAndProcessExtensions @ abstractExtensionService.js:483
+log.ts:460   ERR [StackSpot.copilot-chat]: Failed to register tool 'copilot_getSearchResults': Error: Tool "copilot_getSearchResults" is already registered.
+error @ log.ts:460
+error @ log.ts:565
+error @ logService.ts:51
+_handleExtensionPointMessage @ abstractExtensionService.ts:1190
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+error @ extensionsRegistry.ts:49
+(anonymous) @ languageModelToolsContribution.ts:281
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+notificationsAlerts.ts:42 [StackSpot.copilot-chat]: Failed to register tool 'copilot_githubRepo': Error: Tool "copilot_githubRepo" is already registered.
+onDidChangeNotification @ notificationsAlerts.ts:42
+(anonymous) @ notificationsAlerts.ts:28
+_deliver @ event.ts:1295
+_deliverQueue @ event.ts:1306
+fire @ event.ts:1330
+addNotification @ notifications.ts:228
+notify @ notificationService.ts:234
+_handleExtensionPointMessage @ abstractExtensionService.ts:1188
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+error @ extensionsRegistry.ts:49
+(anonymous) @ languageModelToolsContribution.ts:281
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+log.ts:460   ERR [StackSpot.copilot-chat]: Failed to register tool 'copilot_githubRepo': Error: Tool "copilot_githubRepo" is already registered.
+error @ log.ts:460
+error @ log.ts:565
+error @ logService.ts:51
+_handleExtensionPointMessage @ abstractExtensionService.ts:1190
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+error @ extensionsRegistry.ts:49
+(anonymous) @ languageModelToolsContribution.ts:281
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+notificationsAlerts.ts:42 [StackSpot.copilot-chat]: Failed to register tool 'copilot_toolReplay': Error: Tool "copilot_toolReplay" is already registered.
+onDidChangeNotification @ notificationsAlerts.ts:42
+(anonymous) @ notificationsAlerts.ts:28
+_deliver @ event.ts:1295
+_deliverQueue @ event.ts:1306
+fire @ event.ts:1330
+addNotification @ notifications.ts:228
+notify @ notificationService.ts:234
+_handleExtensionPointMessage @ abstractExtensionService.ts:1188
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+error @ extensionsRegistry.ts:49
+(anonymous) @ languageModelToolsContribution.ts:281
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+log.ts:460   ERR [StackSpot.copilot-chat]: Failed to register tool 'copilot_toolReplay': Error: Tool "copilot_toolReplay" is already registered.
+error @ log.ts:460
+error @ log.ts:565
+error @ logService.ts:51
+_handleExtensionPointMessage @ abstractExtensionService.ts:1190
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+error @ extensionsRegistry.ts:49
+(anonymous) @ languageModelToolsContribution.ts:281
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+notificationsAlerts.ts:42 [StackSpot.copilot-chat]: Failed to register tool 'copilot_askQuestions': Error: Tool "copilot_askQuestions" is already registered.
+onDidChangeNotification @ notificationsAlerts.ts:42
+(anonymous) @ notificationsAlerts.ts:28
+_deliver @ event.ts:1295
+_deliverQueue @ event.ts:1306
+fire @ event.ts:1330
+addNotification @ notifications.ts:228
+notify @ notificationService.ts:234
+_handleExtensionPointMessage @ abstractExtensionService.ts:1188
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+error @ extensionsRegistry.ts:49
+(anonymous) @ languageModelToolsContribution.ts:281
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+log.ts:460   ERR [StackSpot.copilot-chat]: Failed to register tool 'copilot_askQuestions': Error: Tool "copilot_askQuestions" is already registered.
+error @ log.ts:460
+error @ log.ts:565
+error @ logService.ts:51
+_handleExtensionPointMessage @ abstractExtensionService.ts:1190
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+error @ extensionsRegistry.ts:49
+(anonymous) @ languageModelToolsContribution.ts:281
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+notificationsAlerts.ts:42 [StackSpot.copilot-chat]: Failed to register tool 'copilot_switchAgent': Error: Tool "copilot_switchAgent" is already registered.
+onDidChangeNotification @ notificationsAlerts.ts:42
+(anonymous) @ notificationsAlerts.ts:28
+_deliver @ event.ts:1295
+_deliverQueue @ event.ts:1306
+fire @ event.ts:1330
+addNotification @ notifications.ts:228
+notify @ notificationService.ts:234
+_handleExtensionPointMessage @ abstractExtensionService.ts:1188
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+error @ extensionsRegistry.ts:49
+(anonymous) @ languageModelToolsContribution.ts:281
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+log.ts:460   ERR [StackSpot.copilot-chat]: Failed to register tool 'copilot_switchAgent': Error: Tool "copilot_switchAgent" is already registered.
+error @ log.ts:460
+error @ log.ts:565
+error @ logService.ts:51
+_handleExtensionPointMessage @ abstractExtensionService.ts:1190
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+error @ extensionsRegistry.ts:49
+(anonymous) @ languageModelToolsContribution.ts:281
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+notificationsAlerts.ts:42 [StackSpot.copilot-chat]: Failed to register tool 'copilot_memory': Error: Tool "copilot_memory" is already registered.
+onDidChangeNotification @ notificationsAlerts.ts:42
+(anonymous) @ notificationsAlerts.ts:28
+_deliver @ event.ts:1295
+_deliverQueue @ event.ts:1306
+fire @ event.ts:1330
+addNotification @ notifications.ts:228
+notify @ notificationService.ts:234
+_handleExtensionPointMessage @ abstractExtensionService.ts:1188
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+error @ extensionsRegistry.ts:49
+(anonymous) @ languageModelToolsContribution.ts:281
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+log.ts:460   ERR [StackSpot.copilot-chat]: Failed to register tool 'copilot_memory': Error: Tool "copilot_memory" is already registered.
+error @ log.ts:460
+error @ log.ts:565
+error @ logService.ts:51
+_handleExtensionPointMessage @ abstractExtensionService.ts:1190
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+error @ extensionsRegistry.ts:49
+(anonymous) @ languageModelToolsContribution.ts:281
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+notificationsAlerts.ts:42 [StackSpot.copilot-chat]: Failed to register tool 'copilot_editFiles': Error: Tool "copilot_editFiles" is already registered.
+onDidChangeNotification @ notificationsAlerts.ts:42
+(anonymous) @ notificationsAlerts.ts:28
+_deliver @ event.ts:1295
+_deliverQueue @ event.ts:1306
+fire @ event.ts:1330
+addNotification @ notifications.ts:228
+notify @ notificationService.ts:234
+_handleExtensionPointMessage @ abstractExtensionService.ts:1188
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+error @ extensionsRegistry.ts:49
+(anonymous) @ languageModelToolsContribution.ts:281
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+log.ts:460   ERR [StackSpot.copilot-chat]: Failed to register tool 'copilot_editFiles': Error: Tool "copilot_editFiles" is already registered.
+error @ log.ts:460
+error @ log.ts:565
+error @ logService.ts:51
+_handleExtensionPointMessage @ abstractExtensionService.ts:1190
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+error @ extensionsRegistry.ts:49
+(anonymous) @ languageModelToolsContribution.ts:281
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `stackcode.login` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `stackcode.logout` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.triggerPermissiveSignIn` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `copilot.claude.agents` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `copilot.claude.hooks` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `copilot.claude.memory` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.cli.sessions.delete` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.cli.sessions.resumeInTerminal` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.cli.sessions.rename` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.cli.sessions.openRepository` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.cli.sessions.openWorktreeInNewWindow` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.cli.sessions.openWorktreeInTerminal` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.cli.sessions.commitToWorktree` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.cli.newSession` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.cli.newSessionToSide` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.replay` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.replay.enableWorkspaceEditTracing` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.replay.disableWorkspaceEditTracing` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.compact` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.explain` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.explain.palette` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.review` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.review.apply` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.review.applyAndNext` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.review.discard` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.review.discardAndNext` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.review.discardAll` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.review.stagedChanges` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.review.unstagedChanges` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.review.changes` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.review.stagedFileChange` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.review.unstagedFileChange` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.review.previous` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.review.next` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.review.continueInInlineChat` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.review.continueInChat` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.review.markHelpful` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.openUserPreferences` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.review.markUnhelpful` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.generate` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.generateDocs` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.generateTests` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.fix` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.interactiveSession.feedback` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.debug.workbenchState` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.debug.togglePowerSaveBlocker` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.debug.showChatLogView` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.debug.showOutputChannel` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.debug.showContextInspectorView` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.debug.validateNesRename` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.debug.resetVirtualToolGroups` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.tools.memory.showMemories` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.tools.memory.clearMemories` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.terminal.explainTerminalLastCommand` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.git.generateCommitMessage` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.git.resolveMergeConflicts` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.devcontainer.generateDevContainerConfig` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.tests.fixTestFailure` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.tests.fixTestFailure.fromInline` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.attachFile` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.attachSelection` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.debug.collectDiagnostics` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.debug.inlineEdit.clearCache` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.debug.inlineEdit.reportNotebookNESIssue` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.debug.generateSTest` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.open.walkthrough` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.debug.generateInlineEditTests` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.buildLocalWorkspaceIndex` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.buildRemoteWorkspaceIndex` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.deleteExternalIngestWorkspaceIndex` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.report` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.rerunWithCopilotDebug` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.startCopilotDebugCommand` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.clearTemporalContext` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.search.markHelpful` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.search.markUnhelpful` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.search.feedback` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.debug.showElements` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.debug.hideElements` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.debug.showTools` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.debug.hideTools` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.debug.showNesRequests` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.debug.hideNesRequests` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.debug.showGhostRequests` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.debug.hideGhostRequests` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.debug.showRawRequestBody` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.debug.exportLogItem` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.debug.exportPromptArchive` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.debug.exportPromptLogsAsJson` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.debug.exportAllPromptLogsAsJson` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.debug.exportTrajectories` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.debug.exportSingleTrajectory` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.nes.captureExpected.start` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.nes.captureExpected.confirm` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.nes.captureExpected.abort` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.nes.captureExpected.submit` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.showAsChatSession` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.debug.collectWorkspaceIndexDiagnostics` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.mcp.setup.check` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.mcp.setup.validatePackage` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.mcp.setup.flow` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.generateAltText` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.notebook.enableFollowCellExecution` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.notebook.disableFollowCellExecution` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.cloud.resetWorkspaceConfirmations` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.cloud.sessions.openInBrowser` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.cloud.sessions.proxy.closeChatSessionPullRequest` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.cloud.sessions.installPRExtension` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.openSuggestionsPanel` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.toggleStatusMenu` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.completions.disable` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.completions.enable` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.completions.toggle` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.openModelPicker` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.applyCopilotCLIAgentSessionChanges` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.applyCopilotCLIAgentSessionChanges.apply` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.copilotCLI.addFileReference` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.copilotCLI.addSelection` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.copilotCLI.acceptDiff` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.copilotCLI.rejectDiff` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.checkoutPullRequestReroute` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.cloudSessions.openRepository` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: Command `github.copilot.chat.cloudSessions.clearCaches` already registered by StackCode AI (GitHub.copilot-chat)
+log.ts:440  INFO [StackSpot.copilot-chat]: The `copilot/reviewComment/additionalActions/applyAndNext` submenu was already previously registered.
+log.ts:440  INFO [StackSpot.copilot-chat]: The `copilot/reviewComment/additionalActions/discardAndNext` submenu was already previously registered.
+log.ts:440  INFO [StackSpot.copilot-chat]: The `copilot/reviewComment/additionalActions/discard` submenu was already previously registered.
+log.ts:440  INFO [StackSpot.copilot-chat]: The `github.copilot.chat.debug.filter` submenu was already previously registered.
+log.ts:440  INFO [StackSpot.copilot-chat]: The `github.copilot.chat.debug.exportAllPromptLogsAsJson` submenu was already previously registered.
+log.ts:450  WARN [StackSpot.copilot-chat]: The `github.copilot.chat.debug.filter` submenu was already contributed to the `view/title` menu.
+warn @ log.ts:450
+warn @ log.ts:559
+warn @ logService.ts:47
+_handleExtensionPointMessage @ abstractExtensionService.ts:1196
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+warn @ extensionsRegistry.ts:53
+(anonymous) @ menusExtensionPoint.ts:1074
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+log.ts:450  WARN [StackSpot.copilot-chat]: The `copilot/reviewComment/additionalActions/applyAndNext` submenu was already contributed to the `comments/commentThread/additionalActions` menu.
+warn @ log.ts:450
+warn @ log.ts:559
+warn @ logService.ts:47
+_handleExtensionPointMessage @ abstractExtensionService.ts:1196
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+warn @ extensionsRegistry.ts:53
+(anonymous) @ menusExtensionPoint.ts:1074
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+log.ts:450  WARN [StackSpot.copilot-chat]: The `copilot/reviewComment/additionalActions/discardAndNext` submenu was already contributed to the `comments/commentThread/additionalActions` menu.
+warn @ log.ts:450
+warn @ log.ts:559
+warn @ logService.ts:47
+_handleExtensionPointMessage @ abstractExtensionService.ts:1196
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+warn @ extensionsRegistry.ts:53
+(anonymous) @ menusExtensionPoint.ts:1074
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+log.ts:450  WARN [StackSpot.copilot-chat]: The `copilot/reviewComment/additionalActions/discard` submenu was already contributed to the `comments/commentThread/additionalActions` menu.
+warn @ log.ts:450
+warn @ log.ts:559
+warn @ logService.ts:47
+_handleExtensionPointMessage @ abstractExtensionService.ts:1196
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+warn @ extensionsRegistry.ts:53
+(anonymous) @ menusExtensionPoint.ts:1074
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+notificationsAlerts.ts:42 [StackSpot.copilot-chat]: Cannot register multiple views with same id `copilot-chat`
+onDidChangeNotification @ notificationsAlerts.ts:42
+(anonymous) @ notificationsAlerts.ts:28
+_deliver @ event.ts:1295
+_deliverQueue @ event.ts:1306
+fire @ event.ts:1330
+addNotification @ notifications.ts:228
+notify @ notificationService.ts:234
+_handleExtensionPointMessage @ abstractExtensionService.ts:1188
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+error @ extensionsRegistry.ts:49
+(anonymous) @ viewsExtensionPoint.ts:475
+addViews @ viewsExtensionPoint.ts:449
+(anonymous) @ viewsExtensionPoint.ts:437
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+log.ts:460   ERR [StackSpot.copilot-chat]: Cannot register multiple views with same id `copilot-chat`
+error @ log.ts:460
+error @ log.ts:565
+error @ logService.ts:51
+_handleExtensionPointMessage @ abstractExtensionService.ts:1190
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+error @ extensionsRegistry.ts:49
+(anonymous) @ viewsExtensionPoint.ts:475
+addViews @ viewsExtensionPoint.ts:449
+(anonymous) @ viewsExtensionPoint.ts:437
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+notificationsAlerts.ts:42 [StackSpot.copilot-chat]: Cannot register multiple views with same id `context-inspector`
+onDidChangeNotification @ notificationsAlerts.ts:42
+(anonymous) @ notificationsAlerts.ts:28
+_deliver @ event.ts:1295
+_deliverQueue @ event.ts:1306
+fire @ event.ts:1330
+addNotification @ notifications.ts:228
+notify @ notificationService.ts:234
+_handleExtensionPointMessage @ abstractExtensionService.ts:1188
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+error @ extensionsRegistry.ts:49
+(anonymous) @ viewsExtensionPoint.ts:475
+addViews @ viewsExtensionPoint.ts:449
+(anonymous) @ viewsExtensionPoint.ts:437
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+log.ts:460   ERR [StackSpot.copilot-chat]: Cannot register multiple views with same id `context-inspector`
+error @ log.ts:460
+error @ log.ts:565
+error @ logService.ts:51
+_handleExtensionPointMessage @ abstractExtensionService.ts:1190
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+error @ extensionsRegistry.ts:49
+(anonymous) @ viewsExtensionPoint.ts:475
+addViews @ viewsExtensionPoint.ts:449
+(anonymous) @ viewsExtensionPoint.ts:437
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+notificationsAlerts.ts:42 [StackSpot.copilot-chat]: Notebook type 'copilot-chat-replay' already used
+onDidChangeNotification @ notificationsAlerts.ts:42
+(anonymous) @ notificationsAlerts.ts:28
+_deliver @ event.ts:1295
+_deliverQueue @ event.ts:1306
+fire @ event.ts:1330
+addNotification @ notifications.ts:228
+notify @ notificationService.ts:234
+_handleExtensionPointMessage @ abstractExtensionService.ts:1188
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+error @ extensionsRegistry.ts:49
+_setupHandler @ notebookServiceImpl.ts:134
+(anonymous) @ notebookServiceImpl.ts:101
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+log.ts:460   ERR [StackSpot.copilot-chat]: Notebook type 'copilot-chat-replay' already used
+error @ log.ts:460
+error @ log.ts:565
+error @ logService.ts:51
+_handleExtensionPointMessage @ abstractExtensionService.ts:1190
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+error @ extensionsRegistry.ts:49
+_setupHandler @ notebookServiceImpl.ts:134
+(anonymous) @ notebookServiceImpl.ts:101
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+notificationsAlerts.ts:42 [StackSpot.copilot-chat]: Failed to register participant github.copilot.default: Agent already registered: "github.copilot.default": Error: Agent already registered: "github.copilot.default"     at ChatAgentService.registerAgent (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/contrib/chat/common/participants/chatAgents.js:53:19)     at ExtensionPoint._handler (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/contrib/chat/browser/chatParticipant.contribution.js:248:58)     at ExtensionPoint._handle (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/extensionsRegistry.js:97:18)     at ExtensionPoint.acceptUsers (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/extensionsRegistry.js:90:14)     at AbstractExtensionService._handleExtensionPoint (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/commo...
+onDidChangeNotification @ notificationsAlerts.ts:42
+(anonymous) @ notificationsAlerts.ts:28
+_deliver @ event.ts:1295
+_deliverQueue @ event.ts:1306
+fire @ event.ts:1330
+addNotification @ notifications.ts:228
+notify @ notificationService.ts:234
+_handleExtensionPointMessage @ abstractExtensionService.ts:1188
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+error @ extensionsRegistry.ts:49
+(anonymous) @ chatParticipant.contribution.ts:304
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+log.ts:460   ERR [StackSpot.copilot-chat]: Failed to register participant github.copilot.default: Agent already registered: "github.copilot.default": Error: Agent already registered: "github.copilot.default"
+    at ChatAgentService.registerAgent (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/contrib/chat/common/participants/chatAgents.js:53:19)
+    at ExtensionPoint._handler (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/contrib/chat/browser/chatParticipant.contribution.js:248:58)
+    at ExtensionPoint._handle (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/extensionsRegistry.js:97:18)
+    at ExtensionPoint.acceptUsers (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/extensionsRegistry.js:90:14)
+    at AbstractExtensionService._handleExtensionPoint (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/abstractExtensionService.js:1037:24)
+    at NativeExtensionService._doHandleExtensionPoints (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/abstractExtensionService.js:985:44)
+    at NativeExtensionService._resolveAndProcessExtensions (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/abstractExtensionService.js:483:14)
+    at async NativeExtensionService._initialize (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/abstractExtensionService.js:394:13)
+error @ log.ts:460
+error @ log.ts:565
+error @ logService.ts:51
+_handleExtensionPointMessage @ abstractExtensionService.ts:1190
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+error @ extensionsRegistry.ts:49
+(anonymous) @ chatParticipant.contribution.ts:304
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+notificationsAlerts.ts:42 [StackSpot.copilot-chat]: Failed to register participant github.copilot.editingSession: Agent already registered: "github.copilot.editingSession": Error: Agent already registered: "github.copilot.editingSession"     at ChatAgentService.registerAgent (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/contrib/chat/common/participants/chatAgents.js:53:19)     at ExtensionPoint._handler (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/contrib/chat/browser/chatParticipant.contribution.js:248:58)     at ExtensionPoint._handle (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/extensionsRegistry.js:97:18)     at ExtensionPoint.acceptUsers (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/extensionsRegistry.js:90:14)     at AbstractExtensionService._handleExtensionPoint (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/serv...
+onDidChangeNotification @ notificationsAlerts.ts:42
+(anonymous) @ notificationsAlerts.ts:28
+_deliver @ event.ts:1295
+_deliverQueue @ event.ts:1306
+fire @ event.ts:1330
+addNotification @ notifications.ts:228
+notify @ notificationService.ts:234
+_handleExtensionPointMessage @ abstractExtensionService.ts:1188
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+error @ extensionsRegistry.ts:49
+(anonymous) @ chatParticipant.contribution.ts:304
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+log.ts:460   ERR [StackSpot.copilot-chat]: Failed to register participant github.copilot.editingSession: Agent already registered: "github.copilot.editingSession": Error: Agent already registered: "github.copilot.editingSession"
+    at ChatAgentService.registerAgent (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/contrib/chat/common/participants/chatAgents.js:53:19)
+    at ExtensionPoint._handler (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/contrib/chat/browser/chatParticipant.contribution.js:248:58)
+    at ExtensionPoint._handle (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/extensionsRegistry.js:97:18)
+    at ExtensionPoint.acceptUsers (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/extensionsRegistry.js:90:14)
+    at AbstractExtensionService._handleExtensionPoint (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/abstractExtensionService.js:1037:24)
+    at NativeExtensionService._doHandleExtensionPoints (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/abstractExtensionService.js:985:44)
+    at NativeExtensionService._resolveAndProcessExtensions (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/abstractExtensionService.js:483:14)
+    at async NativeExtensionService._initialize (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/abstractExtensionService.js:394:13)
+error @ log.ts:460
+error @ log.ts:565
+error @ logService.ts:51
+_handleExtensionPointMessage @ abstractExtensionService.ts:1190
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+error @ extensionsRegistry.ts:49
+(anonymous) @ chatParticipant.contribution.ts:304
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+notificationsAlerts.ts:42 [StackSpot.copilot-chat]: Failed to register participant github.copilot.editingSessionEditor: Agent already registered: "github.copilot.editingSessionEditor": Error: Agent already registered: "github.copilot.editingSessionEditor"     at ChatAgentService.registerAgent (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/contrib/chat/common/participants/chatAgents.js:53:19)     at ExtensionPoint._handler (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/contrib/chat/browser/chatParticipant.contribution.js:248:58)     at ExtensionPoint._handle (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/extensionsRegistry.js:97:18)     at ExtensionPoint.acceptUsers (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/extensionsRegistry.js:90:14)     at AbstractExtensionService._handleExtensionPoint (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out...
+onDidChangeNotification @ notificationsAlerts.ts:42
+(anonymous) @ notificationsAlerts.ts:28
+_deliver @ event.ts:1295
+_deliverQueue @ event.ts:1306
+fire @ event.ts:1330
+addNotification @ notifications.ts:228
+notify @ notificationService.ts:234
+_handleExtensionPointMessage @ abstractExtensionService.ts:1188
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+error @ extensionsRegistry.ts:49
+(anonymous) @ chatParticipant.contribution.ts:304
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+log.ts:460   ERR [StackSpot.copilot-chat]: Failed to register participant github.copilot.editingSessionEditor: Agent already registered: "github.copilot.editingSessionEditor": Error: Agent already registered: "github.copilot.editingSessionEditor"
+    at ChatAgentService.registerAgent (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/contrib/chat/common/participants/chatAgents.js:53:19)
+    at ExtensionPoint._handler (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/contrib/chat/browser/chatParticipant.contribution.js:248:58)
+    at ExtensionPoint._handle (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/extensionsRegistry.js:97:18)
+    at ExtensionPoint.acceptUsers (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/extensionsRegistry.js:90:14)
+    at AbstractExtensionService._handleExtensionPoint (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/abstractExtensionService.js:1037:24)
+    at NativeExtensionService._doHandleExtensionPoints (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/abstractExtensionService.js:985:44)
+    at NativeExtensionService._resolveAndProcessExtensions (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/abstractExtensionService.js:483:14)
+    at async NativeExtensionService._initialize (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/abstractExtensionService.js:394:13)
+error @ log.ts:460
+error @ log.ts:565
+error @ logService.ts:51
+_handleExtensionPointMessage @ abstractExtensionService.ts:1190
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+error @ extensionsRegistry.ts:49
+(anonymous) @ chatParticipant.contribution.ts:304
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+notificationsAlerts.ts:42 [StackSpot.copilot-chat]: Failed to register participant github.copilot.editsAgent: Agent already registered: "github.copilot.editsAgent": Error: Agent already registered: "github.copilot.editsAgent"     at ChatAgentService.registerAgent (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/contrib/chat/common/participants/chatAgents.js:53:19)     at ExtensionPoint._handler (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/contrib/chat/browser/chatParticipant.contribution.js:248:58)     at ExtensionPoint._handle (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/extensionsRegistry.js:97:18)     at ExtensionPoint.acceptUsers (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/extensionsRegistry.js:90:14)     at AbstractExtensionService._handleExtensionPoint (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensi...
+onDidChangeNotification @ notificationsAlerts.ts:42
+(anonymous) @ notificationsAlerts.ts:28
+_deliver @ event.ts:1295
+_deliverQueue @ event.ts:1306
+fire @ event.ts:1330
+addNotification @ notifications.ts:228
+notify @ notificationService.ts:234
+_handleExtensionPointMessage @ abstractExtensionService.ts:1188
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+error @ extensionsRegistry.ts:49
+(anonymous) @ chatParticipant.contribution.ts:304
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+log.ts:460   ERR [StackSpot.copilot-chat]: Failed to register participant github.copilot.editsAgent: Agent already registered: "github.copilot.editsAgent": Error: Agent already registered: "github.copilot.editsAgent"
+    at ChatAgentService.registerAgent (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/contrib/chat/common/participants/chatAgents.js:53:19)
+    at ExtensionPoint._handler (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/contrib/chat/browser/chatParticipant.contribution.js:248:58)
+    at ExtensionPoint._handle (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/extensionsRegistry.js:97:18)
+    at ExtensionPoint.acceptUsers (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/extensionsRegistry.js:90:14)
+    at AbstractExtensionService._handleExtensionPoint (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/abstractExtensionService.js:1037:24)
+    at NativeExtensionService._doHandleExtensionPoints (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/abstractExtensionService.js:985:44)
+    at NativeExtensionService._resolveAndProcessExtensions (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/abstractExtensionService.js:483:14)
+    at async NativeExtensionService._initialize (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/abstractExtensionService.js:394:13)
+error @ log.ts:460
+error @ log.ts:565
+error @ logService.ts:51
+_handleExtensionPointMessage @ abstractExtensionService.ts:1190
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+error @ extensionsRegistry.ts:49
+(anonymous) @ chatParticipant.contribution.ts:304
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+notificationsAlerts.ts:42 [StackSpot.copilot-chat]: Failed to register participant github.copilot.notebook: Agent already registered: "github.copilot.notebook": Error: Agent already registered: "github.copilot.notebook"     at ChatAgentService.registerAgent (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/contrib/chat/common/participants/chatAgents.js:53:19)     at ExtensionPoint._handler (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/contrib/chat/browser/chatParticipant.contribution.js:248:58)     at ExtensionPoint._handle (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/extensionsRegistry.js:97:18)     at ExtensionPoint.acceptUsers (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/extensionsRegistry.js:90:14)     at AbstractExtensionService._handleExtensionPoint (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/co...
+onDidChangeNotification @ notificationsAlerts.ts:42
+(anonymous) @ notificationsAlerts.ts:28
+_deliver @ event.ts:1295
+_deliverQueue @ event.ts:1306
+fire @ event.ts:1330
+addNotification @ notifications.ts:228
+notify @ notificationService.ts:234
+_handleExtensionPointMessage @ abstractExtensionService.ts:1188
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+error @ extensionsRegistry.ts:49
+(anonymous) @ chatParticipant.contribution.ts:304
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+log.ts:460   ERR [StackSpot.copilot-chat]: Failed to register participant github.copilot.notebook: Agent already registered: "github.copilot.notebook": Error: Agent already registered: "github.copilot.notebook"
+    at ChatAgentService.registerAgent (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/contrib/chat/common/participants/chatAgents.js:53:19)
+    at ExtensionPoint._handler (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/contrib/chat/browser/chatParticipant.contribution.js:248:58)
+    at ExtensionPoint._handle (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/extensionsRegistry.js:97:18)
+    at ExtensionPoint.acceptUsers (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/extensionsRegistry.js:90:14)
+    at AbstractExtensionService._handleExtensionPoint (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/abstractExtensionService.js:1037:24)
+    at NativeExtensionService._doHandleExtensionPoints (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/abstractExtensionService.js:985:44)
+    at NativeExtensionService._resolveAndProcessExtensions (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/abstractExtensionService.js:483:14)
+    at async NativeExtensionService._initialize (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/abstractExtensionService.js:394:13)
+error @ log.ts:460
+error @ log.ts:565
+error @ logService.ts:51
+_handleExtensionPointMessage @ abstractExtensionService.ts:1190
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+error @ extensionsRegistry.ts:49
+(anonymous) @ chatParticipant.contribution.ts:304
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+notificationsAlerts.ts:42 [StackSpot.copilot-chat]: Failed to register participant github.copilot.vscode: Agent already registered: "github.copilot.vscode": Error: Agent already registered: "github.copilot.vscode"     at ChatAgentService.registerAgent (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/contrib/chat/common/participants/chatAgents.js:53:19)     at ExtensionPoint._handler (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/contrib/chat/browser/chatParticipant.contribution.js:248:58)     at ExtensionPoint._handle (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/extensionsRegistry.js:97:18)     at ExtensionPoint.acceptUsers (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/extensionsRegistry.js:90:14)     at AbstractExtensionService._handleExtensionPoint (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/a...
+onDidChangeNotification @ notificationsAlerts.ts:42
+(anonymous) @ notificationsAlerts.ts:28
+_deliver @ event.ts:1295
+_deliverQueue @ event.ts:1306
+fire @ event.ts:1330
+addNotification @ notifications.ts:228
+notify @ notificationService.ts:234
+_handleExtensionPointMessage @ abstractExtensionService.ts:1188
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+error @ extensionsRegistry.ts:49
+(anonymous) @ chatParticipant.contribution.ts:304
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+log.ts:460   ERR [StackSpot.copilot-chat]: Failed to register participant github.copilot.vscode: Agent already registered: "github.copilot.vscode": Error: Agent already registered: "github.copilot.vscode"
+    at ChatAgentService.registerAgent (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/contrib/chat/common/participants/chatAgents.js:53:19)
+    at ExtensionPoint._handler (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/contrib/chat/browser/chatParticipant.contribution.js:248:58)
+    at ExtensionPoint._handle (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/extensionsRegistry.js:97:18)
+    at ExtensionPoint.acceptUsers (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/extensionsRegistry.js:90:14)
+    at AbstractExtensionService._handleExtensionPoint (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/abstractExtensionService.js:1037:24)
+    at NativeExtensionService._doHandleExtensionPoints (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/abstractExtensionService.js:985:44)
+    at NativeExtensionService._resolveAndProcessExtensions (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/abstractExtensionService.js:483:14)
+    at async NativeExtensionService._initialize (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/abstractExtensionService.js:394:13)
+error @ log.ts:460
+error @ log.ts:565
+error @ logService.ts:51
+_handleExtensionPointMessage @ abstractExtensionService.ts:1190
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+error @ extensionsRegistry.ts:49
+(anonymous) @ chatParticipant.contribution.ts:304
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+notificationsAlerts.ts:42 [StackSpot.copilot-chat]: Failed to register participant github.copilot.terminal: Agent already registered: "github.copilot.terminal": Error: Agent already registered: "github.copilot.terminal"     at ChatAgentService.registerAgent (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/contrib/chat/common/participants/chatAgents.js:53:19)     at ExtensionPoint._handler (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/contrib/chat/browser/chatParticipant.contribution.js:248:58)     at ExtensionPoint._handle (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/extensionsRegistry.js:97:18)     at ExtensionPoint.acceptUsers (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/extensionsRegistry.js:90:14)     at AbstractExtensionService._handleExtensionPoint (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/co...
+onDidChangeNotification @ notificationsAlerts.ts:42
+(anonymous) @ notificationsAlerts.ts:28
+_deliver @ event.ts:1295
+_deliverQueue @ event.ts:1306
+fire @ event.ts:1330
+addNotification @ notifications.ts:228
+notify @ notificationService.ts:234
+_handleExtensionPointMessage @ abstractExtensionService.ts:1188
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+error @ extensionsRegistry.ts:49
+(anonymous) @ chatParticipant.contribution.ts:304
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+log.ts:460   ERR [StackSpot.copilot-chat]: Failed to register participant github.copilot.terminal: Agent already registered: "github.copilot.terminal": Error: Agent already registered: "github.copilot.terminal"
+    at ChatAgentService.registerAgent (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/contrib/chat/common/participants/chatAgents.js:53:19)
+    at ExtensionPoint._handler (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/contrib/chat/browser/chatParticipant.contribution.js:248:58)
+    at ExtensionPoint._handle (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/extensionsRegistry.js:97:18)
+    at ExtensionPoint.acceptUsers (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/extensionsRegistry.js:90:14)
+    at AbstractExtensionService._handleExtensionPoint (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/abstractExtensionService.js:1037:24)
+    at NativeExtensionService._doHandleExtensionPoints (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/abstractExtensionService.js:985:44)
+    at NativeExtensionService._resolveAndProcessExtensions (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/abstractExtensionService.js:483:14)
+    at async NativeExtensionService._initialize (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/abstractExtensionService.js:394:13)
+error @ log.ts:460
+error @ log.ts:565
+error @ logService.ts:51
+_handleExtensionPointMessage @ abstractExtensionService.ts:1190
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+error @ extensionsRegistry.ts:49
+(anonymous) @ chatParticipant.contribution.ts:304
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+notificationsAlerts.ts:42 [StackSpot.copilot-chat]: Failed to register participant github.copilot.terminalPanel: Agent already registered: "github.copilot.terminalPanel": Error: Agent already registered: "github.copilot.terminalPanel"     at ChatAgentService.registerAgent (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/contrib/chat/common/participants/chatAgents.js:53:19)     at ExtensionPoint._handler (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/contrib/chat/browser/chatParticipant.contribution.js:248:58)     at ExtensionPoint._handle (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/extensionsRegistry.js:97:18)     at ExtensionPoint.acceptUsers (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/extensionsRegistry.js:90:14)     at AbstractExtensionService._handleExtensionPoint (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/service...
+onDidChangeNotification @ notificationsAlerts.ts:42
+(anonymous) @ notificationsAlerts.ts:28
+_deliver @ event.ts:1295
+_deliverQueue @ event.ts:1306
+fire @ event.ts:1330
+addNotification @ notifications.ts:228
+notify @ notificationService.ts:234
+_handleExtensionPointMessage @ abstractExtensionService.ts:1188
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+error @ extensionsRegistry.ts:49
+(anonymous) @ chatParticipant.contribution.ts:304
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+log.ts:460   ERR [StackSpot.copilot-chat]: Failed to register participant github.copilot.terminalPanel: Agent already registered: "github.copilot.terminalPanel": Error: Agent already registered: "github.copilot.terminalPanel"
+    at ChatAgentService.registerAgent (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/contrib/chat/common/participants/chatAgents.js:53:19)
+    at ExtensionPoint._handler (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/contrib/chat/browser/chatParticipant.contribution.js:248:58)
+    at ExtensionPoint._handle (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/extensionsRegistry.js:97:18)
+    at ExtensionPoint.acceptUsers (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/extensionsRegistry.js:90:14)
+    at AbstractExtensionService._handleExtensionPoint (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/abstractExtensionService.js:1037:24)
+    at NativeExtensionService._doHandleExtensionPoints (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/abstractExtensionService.js:985:44)
+    at NativeExtensionService._resolveAndProcessExtensions (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/abstractExtensionService.js:483:14)
+    at async NativeExtensionService._initialize (vscode-file://vscode-app/Users/darwin/Desktop/stackcode/out/vs/workbench/services/extensions/common/abstractExtensionService.js:394:13)
+error @ log.ts:460
+error @ log.ts:565
+error @ logService.ts:51
+_handleExtensionPointMessage @ abstractExtensionService.ts:1190
+messageHandler @ abstractExtensionService.ts:1157
+_msg @ extensionsRegistry.ts:40
+error @ extensionsRegistry.ts:49
+(anonymous) @ chatParticipant.contribution.ts:304
+_handle @ extensionsRegistry.ts:154
+acceptUsers @ extensionsRegistry.ts:145
+_handleExtensionPoint @ abstractExtensionService.ts:1234
+_doHandleExtensionPoints @ abstractExtensionService.ts:1164
+_resolveAndProcessExtensions @ abstractExtensionService.ts:578
+console.ts:139 [Extension Host] [dotenv@17.2.0] injecting env (0) from extensions/stackcode-chat/.env (tip: 🔐 encrypt with dotenvx: https://dotenvx.com) (at console.<anonymous> (file:///Users/darwin/Desktop/stackcode/out/vs/workbench/api/common/file:/Users/darwin/Desktop/stackcode/src/vs/workbench/api/common/extHostConsoleForwarder.ts:50:10))
+console.ts:139 [Extension Host] [dotenv@17.2.0] injecting env (0) from ../stackcode-stackspot-extension/stackcode/extensions/stackcode-chat/.env (tip: ⚙️  enable debug logging with { debug: true }) (at console.<anonymous> (file:///Users/darwin/Desktop/stackcode/out/vs/workbench/api/common/file:/Users/darwin/Desktop/stackcode/src/vs/workbench/api/common/extHostConsoleForwarder.ts:50:10))
+mainThreadExtensionService.ts:79 [GitHub.copilot-chat]command 'github.copilot.chat.sendCompletionFeedback' already exists
+
+Error: command 'github.copilot.chat.sendCompletionFeedback' already exists
+    at ExtHostCommands.registerCommand (file:///Users/darwin/Desktop/stackcode/out/vs/workbench/api/common/file:/Users/darwin/Desktop/stackcode/src/vs/workbench/api/common/extHostCommands.ts:155:10)
+    at Object.registerCommand (file:///Users/darwin/Desktop/stackcode/out/vs/workbench/api/common/file:/Users/darwin/Desktop/stackcode/src/vs/workbench/api/common/extHost.api.impl.ts:350:28)
+    at new CopilotCompletionFeedbackTracker (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/extension/completions-core/vscode-node/extension/src/copilotCompletionFeedbackTracker.ts:24:27)
+    at _InstantiationService._createInstance (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/platform/instantiation/common/instantiationService.ts:164:18)
+    at _InstantiationService.createInstance (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/platform/instantiation/common/instantiationService.ts:130:18)
+    at new CopilotInlineCompletionItemProvider (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/extension/completions-core/vscode-node/extension/src/vscodeInlineCompletionItemProvider.ts:89:84)
+    at _InstantiationService._createInstance (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/platform/instantiation/common/instantiationService.ts:164:18)
+    at _InstantiationService.createInstance (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/platform/instantiation/common/instantiationService.ts:130:18)
+    at CopilotInlineCompletionItemProviderService.getOrCreateProvider (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/extension/completions/vscode-node/copilotInlineCompletionItemProviderService.ts:36:74)
+    at AutorunObserver._runFn (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/extension/completions/vscode-node/completionsCoreContribution.ts:37:66)
+    at AutorunObserver._run (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/base/common/observableInternal/reactions/autorunImpl.ts:112:11)
+    at new AutorunObserver (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/base/common/observableInternal/reactions/autorunImpl.ts:60:8)
+    at autorun (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/base/common/observableInternal/reactions/autorun.ts:20:9)
+    at new CompletionsCoreContribution (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/extension/completions/vscode-node/completionsCoreContribution.ts:30:18)
+    at _InstantiationService._createInstance (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/platform/instantiation/common/instantiationService.ts:164:18)
+    at _InstantiationService.createInstance (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/platform/instantiation/common/instantiationService.ts:130:18)
+    at AutorunObserver._runFn (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/extension/inlineEdits/vscode-node/jointInlineCompletionProvider.ts:108:44)
+    at AutorunObserver._run (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/base/common/observableInternal/reactions/autorunImpl.ts:112:11)
+    at new AutorunObserver (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/base/common/observableInternal/reactions/autorunImpl.ts:60:8)
+    at autorun (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/base/common/observableInternal/reactions/autorun.ts:20:9)
+    at new JointCompletionsProviderContribution (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/extension/inlineEdits/vscode-node/jointInlineCompletionProvider.ts:104:18)
+    at _InstantiationService._createInstance (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/platform/instantiation/common/instantiationService.ts:164:18)
+    at _InstantiationService.createInstance (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/platform/instantiation/common/instantiationService.ts:130:18)
+    at create (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/extension/common/contributions.ts:36:32)
+    at _InstantiationService.invokeFunction (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/platform/instantiation/common/instantiationService.ts:111:11)
+    at new ContributionCollection (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/extension/common/contributions.ts:54:29)
+    at _InstantiationService._createInstance (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/platform/instantiation/common/instantiationService.ts:164:18)
+    at _InstantiationService.createInstance (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/platform/instantiation/common/instantiationService.ts:130:18)
+    at /Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/extension/extension/vscode/extension.ts:79:46
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at baseActivate (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/extension/extension/vscode/extension.ts:63:2)
+    at ActivationOperation._activate (file:///Users/darwin/Desktop/stackcode/out/vs/workbench/api/common/file:/Users/darwin/Desktop/stackcode/src/vs/workbench/api/common/extHostExtensionActivator.ts:424:18)
+    at ActivationOperation._waitForDepsThenActivate (file:///Users/darwin/Desktop/stackcode/out/vs/workbench/api/common/file:/Users/darwin/Desktop/stackcode/src/vs/workbench/api/common/extHostExtensionActivator.ts:419:3)
+    at ActivationOperation._initialize (file:///Users/darwin/Desktop/stackcode/out/vs/workbench/api/common/file:/Users/darwin/Desktop/stackcode/src/vs/workbench/api/common/extHostExtensionActivator.ts:380:3)
+$onExtensionRuntimeError @ mainThreadExtensionService.ts:79
+_doInvokeHandler @ rpcProtocol.ts:458
+_invokeHandler @ rpcProtocol.ts:443
+_receiveRequest @ rpcProtocol.ts:373
+_receiveOneMessage @ rpcProtocol.ts:299
+(anonymous) @ rpcProtocol.ts:161
+_deliver @ event.ts:1295
+fire @ event.ts:1326
+fire @ ipc.net.ts:652
+(anonymous) @ localProcessExtensionHost.ts:385
+mainThreadExtensionService.ts:80 Error: command 'github.copilot.chat.sendCompletionFeedback' already exists
+
+Error: command 'github.copilot.chat.sendCompletionFeedback' already exists
+    at ExtHostCommands.registerCommand (file:///Users/darwin/Desktop/stackcode/out/vs/workbench/api/common/file:/Users/darwin/Desktop/stackcode/src/vs/workbench/api/common/extHostCommands.ts:155:10)
+    at Object.registerCommand (file:///Users/darwin/Desktop/stackcode/out/vs/workbench/api/common/file:/Users/darwin/Desktop/stackcode/src/vs/workbench/api/common/extHost.api.impl.ts:350:28)
+    at new CopilotCompletionFeedbackTracker (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/extension/completions-core/vscode-node/extension/src/copilotCompletionFeedbackTracker.ts:24:27)
+    at _InstantiationService._createInstance (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/platform/instantiation/common/instantiationService.ts:164:18)
+    at _InstantiationService.createInstance (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/platform/instantiation/common/instantiationService.ts:130:18)
+    at new CopilotInlineCompletionItemProvider (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/extension/completions-core/vscode-node/extension/src/vscodeInlineCompletionItemProvider.ts:89:84)
+    at _InstantiationService._createInstance (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/platform/instantiation/common/instantiationService.ts:164:18)
+    at _InstantiationService.createInstance (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/platform/instantiation/common/instantiationService.ts:130:18)
+    at CopilotInlineCompletionItemProviderService.getOrCreateProvider (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/extension/completions/vscode-node/copilotInlineCompletionItemProviderService.ts:36:74)
+    at AutorunObserver._runFn (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/extension/completions/vscode-node/completionsCoreContribution.ts:37:66)
+    at AutorunObserver._run (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/base/common/observableInternal/reactions/autorunImpl.ts:112:11)
+    at new AutorunObserver (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/base/common/observableInternal/reactions/autorunImpl.ts:60:8)
+    at autorun (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/base/common/observableInternal/reactions/autorun.ts:20:9)
+    at new CompletionsCoreContribution (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/extension/completions/vscode-node/completionsCoreContribution.ts:30:18)
+    at _InstantiationService._createInstance (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/platform/instantiation/common/instantiationService.ts:164:18)
+    at _InstantiationService.createInstance (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/platform/instantiation/common/instantiationService.ts:130:18)
+    at AutorunObserver._runFn (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/extension/inlineEdits/vscode-node/jointInlineCompletionProvider.ts:108:44)
+    at AutorunObserver._run (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/base/common/observableInternal/reactions/autorunImpl.ts:112:11)
+    at new AutorunObserver (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/base/common/observableInternal/reactions/autorunImpl.ts:60:8)
+    at autorun (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/base/common/observableInternal/reactions/autorun.ts:20:9)
+    at new JointCompletionsProviderContribution (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/extension/inlineEdits/vscode-node/jointInlineCompletionProvider.ts:104:18)
+    at _InstantiationService._createInstance (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/platform/instantiation/common/instantiationService.ts:164:18)
+    at _InstantiationService.createInstance (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/platform/instantiation/common/instantiationService.ts:130:18)
+    at create (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/extension/common/contributions.ts:36:32)
+    at _InstantiationService.invokeFunction (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/platform/instantiation/common/instantiationService.ts:111:11)
+    at new ContributionCollection (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/extension/common/contributions.ts:54:29)
+    at _InstantiationService._createInstance (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/platform/instantiation/common/instantiationService.ts:164:18)
+    at _InstantiationService.createInstance (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/platform/instantiation/common/instantiationService.ts:130:18)
+    at /Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/extension/extension/vscode/extension.ts:79:46
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at baseActivate (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/extension/extension/vscode/extension.ts:63:2)
+    at ActivationOperation._activate (file:///Users/darwin/Desktop/stackcode/out/vs/workbench/api/common/file:/Users/darwin/Desktop/stackcode/src/vs/workbench/api/common/extHostExtensionActivator.ts:424:18)
+    at ActivationOperation._waitForDepsThenActivate (file:///Users/darwin/Desktop/stackcode/out/vs/workbench/api/common/file:/Users/darwin/Desktop/stackcode/src/vs/workbench/api/common/extHostExtensionActivator.ts:419:3)
+    at ActivationOperation._initialize (file:///Users/darwin/Desktop/stackcode/out/vs/workbench/api/common/file:/Users/darwin/Desktop/stackcode/src/vs/workbench/api/common/extHostExtensionActivator.ts:380:3)
+    at Timeout._onTimeout (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/base/common/errors.ts:32:12)
+    at listOnTimeout (node:internal/timers:588:17)
+    at processTimers (node:internal/timers:523:7)
+$onExtensionRuntimeError @ mainThreadExtensionService.ts:80
+_doInvokeHandler @ rpcProtocol.ts:458
+_invokeHandler @ rpcProtocol.ts:443
+_receiveRequest @ rpcProtocol.ts:373
+_receiveOneMessage @ rpcProtocol.ts:299
+(anonymous) @ rpcProtocol.ts:161
+_deliver @ event.ts:1295
+fire @ event.ts:1326
+fire @ ipc.net.ts:652
+(anonymous) @ localProcessExtensionHost.ts:385
+log.ts:460   ERR An unknown error occurred. Please consult the log for more details.
+error @ log.ts:460
+error @ log.ts:565
+error @ logService.ts:51
+handleUnexpectedError @ workbench.ts:128
+(anonymous) @ workbench.ts:109
+onUnexpectedError @ errors.ts:65
+onUnexpectedError @ errors.ts:110
+$onUnexpectedError @ mainThreadErrors.ts:21
+_doInvokeHandler @ rpcProtocol.ts:458
+_invokeHandler @ rpcProtocol.ts:443
+_receiveRequest @ rpcProtocol.ts:373
+_receiveOneMessage @ rpcProtocol.ts:299
+(anonymous) @ rpcProtocol.ts:161
+_deliver @ event.ts:1295
+fire @ event.ts:1326
+fire @ ipc.net.ts:652
+(anonymous) @ localProcessExtensionHost.ts:385
+log.ts:460   ERR Agent already has implementation: "github.copilot.chatReplay"
+error @ log.ts:460
+error @ log.ts:565
+error @ logService.ts:51
+handleUnexpectedError @ workbench.ts:128
+(anonymous) @ workbench.ts:109
+onUnexpectedError @ errors.ts:65
+onUnexpectedError @ errors.ts:110
+$onUnexpectedError @ mainThreadErrors.ts:21
+_doInvokeHandler @ rpcProtocol.ts:458
+_invokeHandler @ rpcProtocol.ts:443
+_receiveRequest @ rpcProtocol.ts:373
+_receiveOneMessage @ rpcProtocol.ts:299
+(anonymous) @ rpcProtocol.ts:161
+_deliver @ event.ts:1295
+fire @ event.ts:1326
+fire @ ipc.net.ts:652
+(anonymous) @ localProcessExtensionHost.ts:385
+log.ts:460   ERR Content provider for chat-replay is already registered.
+error @ log.ts:460
+error @ log.ts:565
+error @ logService.ts:51
+handleUnexpectedError @ workbench.ts:128
+(anonymous) @ workbench.ts:109
+onUnexpectedError @ errors.ts:65
+onUnexpectedError @ errors.ts:110
+$onUnexpectedError @ mainThreadErrors.ts:21
+_doInvokeHandler @ rpcProtocol.ts:458
+_invokeHandler @ rpcProtocol.ts:443
+_receiveRequest @ rpcProtocol.ts:373
+_receiveOneMessage @ rpcProtocol.ts:299
+(anonymous) @ rpcProtocol.ts:161
+_deliver @ event.ts:1295
+fire @ event.ts:1326
+fire @ ipc.net.ts:652
+(anonymous) @ localProcessExtensionHost.ts:385
+log.ts:460   ERR notebook provider for viewtype 'copilot-chat-replay' already exists
+error @ log.ts:460
+error @ log.ts:565
+error @ logService.ts:51
+handleUnexpectedError @ workbench.ts:128
+(anonymous) @ workbench.ts:109
+onUnexpectedError @ errors.ts:65
+onUnexpectedError @ errors.ts:110
+$onUnexpectedError @ mainThreadErrors.ts:21
+_doInvokeHandler @ rpcProtocol.ts:458
+_invokeHandler @ rpcProtocol.ts:443
+_receiveRequest @ rpcProtocol.ts:373
+_receiveOneMessage @ rpcProtocol.ts:299
+(anonymous) @ rpcProtocol.ts:161
+_deliver @ event.ts:1295
+fire @ event.ts:1326
+fire @ ipc.net.ts:652
+(anonymous) @ localProcessExtensionHost.ts:385
+console.ts:139 [Extension Host] rejected promise not handled within 1 second: Error: command 'github.copilot.chat.triggerPermissiveSignIn' already exists (at console.<anonymous> (file:///Users/darwin/Desktop/stackcode/out/vs/workbench/api/common/file:/Users/darwin/Desktop/stackcode/src/vs/workbench/api/common/extHostConsoleForwarder.ts:50:10))
+log @ console.ts:139
+$logExtensionHostMessage @ mainThreadConsole.ts:39
+_doInvokeHandler @ rpcProtocol.ts:458
+_invokeHandler @ rpcProtocol.ts:443
+_receiveRequest @ rpcProtocol.ts:373
+_receiveOneMessage @ rpcProtocol.ts:299
+(anonymous) @ rpcProtocol.ts:161
+_deliver @ event.ts:1295
+fire @ event.ts:1326
+fire @ ipc.net.ts:652
+(anonymous) @ localProcessExtensionHost.ts:385
+console.ts:139 [Extension Host] stack trace: Error: command 'github.copilot.chat.triggerPermissiveSignIn' already exists
+    at ExtHostCommands.registerCommand (file:///Users/darwin/Desktop/stackcode/out/vs/workbench/api/common/file:/Users/darwin/Desktop/stackcode/src/vs/workbench/api/common/extHostCommands.ts:155:10)
+    at Object.registerCommand (file:///Users/darwin/Desktop/stackcode/out/vs/workbench/api/common/file:/Users/darwin/Desktop/stackcode/src/vs/workbench/api/common/extHost.api.impl.ts:350:28)
+    at new AuthUpgradeAsk (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/extension/authentication/vscode-node/authentication.contribution.ts:41:27)
+    at _InstantiationService._createInstance (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/platform/instantiation/common/instantiationService.ts:164:18)
+    at _InstantiationService.createInstance (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/platform/instantiation/common/instantiationService.ts:130:18)
+    at AuthenticationContrib.askToUpgradeAuthPermissions (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/extension/authentication/vscode-node/authentication.contribution.ts:23:67)
+    at new AuthenticationContrib (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/extension/authentication/vscode-node/authentication.contribution.ts:20:8)
+    at _InstantiationService._createInstance (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/platform/instantiation/common/instantiationService.ts:164:18)
+    at _InstantiationService.createInstance (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/platform/instantiation/common/instantiationService.ts:130:18)
+    at create (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/extension/common/contributions.ts:36:32)
+    at _InstantiationService.invokeFunction (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/platform/instantiation/common/instantiationService.ts:111:11)
+    at new ContributionCollection (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/extension/common/contributions.ts:54:29)
+    at _InstantiationService._createInstance (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/platform/instantiation/common/instantiationService.ts:164:18)
+    at _InstantiationService.createInstance (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/platform/instantiation/common/instantiationService.ts:130:18)
+    at /Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/extension/extension/vscode/extension.ts:79:46
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at baseActivate (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/extension/extension/vscode/extension.ts:63:2)
+    at ActivationOperation._activate (file:///Users/darwin/Desktop/stackcode/out/vs/workbench/api/common/file:/Users/darwin/Desktop/stackcode/src/vs/workbench/api/common/extHostExtensionActivator.ts:424:18)
+    at ActivationOperation._waitForDepsThenActivate (file:///Users/darwin/Desktop/stackcode/out/vs/workbench/api/common/file:/Users/darwin/Desktop/stackcode/src/vs/workbench/api/common/extHostExtensionActivator.ts:419:3)
+    at ActivationOperation._initialize (file:///Users/darwin/Desktop/stackcode/out/vs/workbench/api/common/file:/Users/darwin/Desktop/stackcode/src/vs/workbench/api/common/extHostExtensionActivator.ts:380:3) (at console.<anonymous> (file:///Users/darwin/Desktop/stackcode/out/vs/workbench/api/common/file:/Users/darwin/Desktop/stackcode/src/vs/workbench/api/common/extHostConsoleForwarder.ts:50:10))
+log @ console.ts:139
+$logExtensionHostMessage @ mainThreadConsole.ts:39
+_doInvokeHandler @ rpcProtocol.ts:458
+_invokeHandler @ rpcProtocol.ts:443
+_receiveRequest @ rpcProtocol.ts:373
+_receiveOneMessage @ rpcProtocol.ts:299
+(anonymous) @ rpcProtocol.ts:161
+_deliver @ event.ts:1295
+fire @ event.ts:1326
+fire @ ipc.net.ts:652
+(anonymous) @ localProcessExtensionHost.ts:385
+mainThreadExtensionService.ts:79 [GitHub.copilot-chat]command 'github.copilot.chat.triggerPermissiveSignIn' already exists
+$onExtensionRuntimeError @ mainThreadExtensionService.ts:79
+_doInvokeHandler @ rpcProtocol.ts:458
+_invokeHandler @ rpcProtocol.ts:443
+_receiveRequest @ rpcProtocol.ts:373
+_receiveOneMessage @ rpcProtocol.ts:299
+(anonymous) @ rpcProtocol.ts:161
+_deliver @ event.ts:1295
+fire @ event.ts:1326
+fire @ ipc.net.ts:652
+(anonymous) @ localProcessExtensionHost.ts:385
+mainThreadExtensionService.ts:80 Error: command 'github.copilot.chat.triggerPermissiveSignIn' already exists
+    at ExtHostCommands.registerCommand (file:///Users/darwin/Desktop/stackcode/out/vs/workbench/api/common/file:/Users/darwin/Desktop/stackcode/src/vs/workbench/api/common/extHostCommands.ts:155:10)
+    at Object.registerCommand (file:///Users/darwin/Desktop/stackcode/out/vs/workbench/api/common/file:/Users/darwin/Desktop/stackcode/src/vs/workbench/api/common/extHost.api.impl.ts:350:28)
+    at new AuthUpgradeAsk (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/extension/authentication/vscode-node/authentication.contribution.ts:41:27)
+    at _InstantiationService._createInstance (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/platform/instantiation/common/instantiationService.ts:164:18)
+    at _InstantiationService.createInstance (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/platform/instantiation/common/instantiationService.ts:130:18)
+    at AuthenticationContrib.askToUpgradeAuthPermissions (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/extension/authentication/vscode-node/authentication.contribution.ts:23:67)
+    at new AuthenticationContrib (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/extension/authentication/vscode-node/authentication.contribution.ts:20:8)
+    at _InstantiationService._createInstance (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/platform/instantiation/common/instantiationService.ts:164:18)
+    at _InstantiationService.createInstance (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/platform/instantiation/common/instantiationService.ts:130:18)
+    at create (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/extension/common/contributions.ts:36:32)
+    at _InstantiationService.invokeFunction (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/platform/instantiation/common/instantiationService.ts:111:11)
+    at new ContributionCollection (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/extension/common/contributions.ts:54:29)
+    at _InstantiationService._createInstance (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/platform/instantiation/common/instantiationService.ts:164:18)
+    at _InstantiationService.createInstance (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/util/vs/platform/instantiation/common/instantiationService.ts:130:18)
+    at /Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/extension/extension/vscode/extension.ts:79:46
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at baseActivate (/Users/darwin/Desktop/stackcode/extensions/stackcode-chat/src/extension/extension/vscode/extension.ts:63:2)
+    at ActivationOperation._activate (file:///Users/darwin/Desktop/stackcode/out/vs/workbench/api/common/file:/Users/darwin/Desktop/stackcode/src/vs/workbench/api/common/extHostExtensionActivator.ts:424:18)
+    at ActivationOperation._waitForDepsThenActivate (file:///Users/darwin/Desktop/stackcode/out/vs/workbench/api/common/file:/Users/darwin/Desktop/stackcode/src/vs/workbench/api/common/extHostExtensionActivator.ts:419:3)
+    at ActivationOperation._initialize (file:///Users/darwin/Desktop/stackcode/out/vs/workbench/api/common/file:/Users/darwin/Desktop/stackcode/src/vs/workbench/api/common/extHostExtensionActivator.ts:380:3)
+$onExtensionRuntimeError @ mainThreadExtensionService.ts:80
+_doInvokeHandler @ rpcProtocol.ts:458
+_invokeHandler @ rpcProtocol.ts:443
+_receiveRequest @ rpcProtocol.ts:373
+_receiveOneMessage @ rpcProtocol.ts:299
+(anonymous) @ rpcProtocol.ts:161
+_deliver @ event.ts:1295
+fire @ event.ts:1326
+fire @ ipc.net.ts:652
+(anonymous) @ localProcessExtensionHost.ts:385
+log.ts:460   ERR An unknown error occurred. Please consult the log for more details.
+error @ log.ts:460
+error @ log.ts:565
+error @ logService.ts:51
+handleUnexpectedError @ workbench.ts:128
+(anonymous) @ workbench.ts:109
+onUnexpectedError @ errors.ts:65
+onUnexpectedError @ errors.ts:110
+$onUnexpectedError @ mainThreadErrors.ts:21
+_doInvokeHandler @ rpcProtocol.ts:458
+_invokeHandler @ rpcProtocol.ts:443
+_receiveRequest @ rpcProtocol.ts:373
+_receiveOneMessage @ rpcProtocol.ts:299
+(anonymous) @ rpcProtocol.ts:161
+_deliver @ event.ts:1295
+fire @ event.ts:1326
+fire @ ipc.net.ts:652
+(anonymous) @ localProcessExtensionHost.ts:385

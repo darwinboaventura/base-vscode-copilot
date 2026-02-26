@@ -115,6 +115,24 @@ export class CreateFileTool implements ICopilotTool<ICreateFileParams> {
 			const content = removeLeadingFilepathComment(options.input.content, languageId, options.input.filePath);
 			await processFullRewrite(uri, doc as TextDocumentSnapshot | undefined, content, this._promptContext.stream, token, []);
 			this._promptContext.stream.textEdit(uri, true);
+
+			// Wait for VS Code to apply the queued edits before reporting success.
+			// stream.textEdit() is fire-and-forget — edits are processed asynchronously.
+			// Without this wait, the next tool call may start before this file is written,
+			// and the file can end up empty when many files are created in quick succession.
+			const maxRetries = 40; // 40 * 50ms = 2000ms max wait
+			for (let i = 0; i < maxRetries; i++) {
+				await new Promise(resolve => setTimeout(resolve, 50));
+				try {
+					const snapshot = await this.workspaceService.openTextDocumentAndSnapshot(uri);
+					if (snapshot && snapshot.getText().length > 0) {
+						break;
+					}
+				} catch {
+					// Document might not be available yet
+				}
+			}
+
 			this.sendTelemetry(options.chatRequestId, modelId, fileExtension);
 			return new LanguageModelToolResult([
 				new LanguageModelPromptTsxPart(

@@ -62,7 +62,6 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 	 * Stores the tools from the last createRequestBody() call so that
 	 * processResponseFromChatEndpoint() knows whether to parse for tool calls.
 	 */
-	private _lastRequestTools: OpenAiFunctionTool[] | undefined;
 
 	/**
 	 * Stores the debugName from the last createRequestBody() call so that
@@ -193,7 +192,6 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 
 		// When tool_choice is 'none', suppress all tools so the LLM won't attempt tool calls
 		const tools = isToolChoiceNone ? undefined : rawTools;
-		this._lastRequestTools = tools;
 		this._lastRequestDebugName = options.debugName;
 
 		const isPassthrough = StackspotChatEndpoint._passthroughDebugNames.has(options.debugName);
@@ -280,7 +278,6 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 		cancellationToken?: CancellationToken | undefined,
 	): Promise<AsyncIterableObject<ChatCompletion>> {
 		const self = this;
-		const hasTools = !!this._lastRequestTools && this._lastRequestTools.length > 0;
 		const debugName = this._lastRequestDebugName ?? 'unknown';
 
 		return new AsyncIterableObject<ChatCompletion>(async (emitter) => {
@@ -300,9 +297,10 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 			let emittedCompletion = false;
 			let truncated = false;
 
-			// Tool call parser — only active when tools are provided
-			const parser = hasTools ? new StreamingToolCallParser() : undefined;
+			// Tool call parser — always active to strip XML tags (e.g. <thinking>, <text>) even without tools
+			const parser = new StreamingToolCallParser();
 			const completedToolCalls: Array<{ name: string; arguments: string; id: string }> = [];
+			const toolCallArguments = new Map<string, string>();
 			const plainTextParts: string[] = [];
 			let thinkingText = '';
 
@@ -375,7 +373,7 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 								// Flush the parser to get any remaining events
 								const flushEvents = parser.flush();
 								for (const event of flushEvents) {
-									await self._handleParserEvent(event, finishCallback, allTokens, completedToolCalls, plainTextParts, (t) => { thinkingText += t; });
+									await self._handleParserEvent(event, finishCallback, allTokens, completedToolCalls, plainTextParts, (t) => { thinkingText += t; }, toolCallArguments);
 								}
 
 								// Determine finish reason based on whether tool calls were detected
@@ -426,7 +424,7 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 									for (const event of events) {
 										const shouldTruncate = await self._handleParserEvent(
 											event, finishCallback, allTokens, completedToolCalls, plainTextParts,
-											(t) => { thinkingText += t; },
+											(t) => { thinkingText += t; }, toolCallArguments,
 										);
 										if (shouldTruncate) {
 											truncated = true;
@@ -463,7 +461,7 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 										if (parser) {
 											const flushEvents = parser.flush();
 											for (const event of flushEvents) {
-												await self._handleParserEvent(event, finishCallback, allTokens, completedToolCalls, plainTextParts, (t) => { thinkingText += t; });
+												await self._handleParserEvent(event, finishCallback, allTokens, completedToolCalls, plainTextParts, (t) => { thinkingText += t; }, toolCallArguments);
 											}
 
 											const hasDetectedToolCalls = completedToolCalls.length > 0;
@@ -493,7 +491,7 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 									if (parser) {
 										const events = parser.feed(parsed.message);
 										for (const event of events) {
-											await self._handleParserEvent(event, finishCallback, allTokens, completedToolCalls, plainTextParts, (t) => { thinkingText += t; });
+											await self._handleParserEvent(event, finishCallback, allTokens, completedToolCalls, plainTextParts, (t) => { thinkingText += t; }, toolCallArguments);
 										}
 									} else {
 										const fullText = allTokens.join('');
@@ -512,7 +510,7 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 					if (parser) {
 						const flushEvents = parser.flush();
 						for (const event of flushEvents) {
-							await self._handleParserEvent(event, finishCallback, allTokens, completedToolCalls, plainTextParts, (t) => { thinkingText += t; });
+							await self._handleParserEvent(event, finishCallback, allTokens, completedToolCalls, plainTextParts, (t) => { thinkingText += t; }, toolCallArguments);
 						}
 
 						const hasDetectedToolCalls = completedToolCalls.length > 0;
@@ -577,12 +575,12 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 		completedToolCalls: Array<{ name: string; arguments: string; id: string }>,
 		plainTextParts: string[],
 		addThinking: (text: string) => void,
+		toolCallArguments: Map<string, string>,
 	): Promise<boolean> {
 		switch (event.kind) {
 			case ToolCallParserEventKind.Text: {
-				// Suppress text when tool calls have been detected — it's typically
-				// a redundant confirmation like "I'll create the file for you" that
-				// the working fork also suppresses.
+				// Suppress text after tool calls — it's typically redundant narration
+				// like "I'll create the file for you" that clutters the UI
 				if (completedToolCalls.length > 0) {
 					return false;
 				}
@@ -603,12 +601,14 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 			}
 
 			case ToolCallParserEventKind.ToolCallArgumentsDelta: {
-				// Tool call arguments streaming — emit copilotToolCallStreamUpdates delta
+				// Tool call arguments streaming — accumulate and emit full arguments so far
+				const accumulated = (toolCallArguments.get(event.id) ?? '') + event.argumentsDelta;
+				toolCallArguments.set(event.id, accumulated);
 				await finishCallback(plainTextParts.join(''), 0, {
 					text: '',
 					copilotToolCallStreamUpdates: [{
 						name: event.name,
-						arguments: event.argumentsDelta,
+						arguments: accumulated,
 						id: event.id,
 					}],
 				});
@@ -929,8 +929,7 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 		if (hasTools) {
 			promptSections.push(
 				'<workspace>\n' +
-				'CRITICAL: ALL file paths in tool calls MUST be absolute paths.\n' +
-				'NEVER use relative paths like "src/file.js" — ALWAYS use the full absolute path.\n' +
+				'When calling tools, use absolute file paths (not relative paths).\n' +
 				'</workspace>'
 			);
 		}
@@ -1003,8 +1002,13 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 								text.slice(-keepEnd);
 						}
 
-						// Tool results are not errors unless indicated in the content
-						const isError = text.toLowerCase().includes('error') || text.toLowerCase().includes('failed');
+						// Only mark as error if it looks like a short error message,
+						// not source code that happens to contain "error"/"failed"
+						const isError = text.trim().length < 500 && (
+							/^(Error:|ERROR:|Failed:|FAILED:)/i.test(text.trim()) ||
+							text.toLowerCase().includes('command failed') ||
+							text.toLowerCase().includes('errno')
+						);
 						historyParts.push(`<tool>\n<tool_result id="${toolCallId}" error="${isError}">\n${text.trim()}\n</tool_result>\n</tool>`);
 						break;
 					}

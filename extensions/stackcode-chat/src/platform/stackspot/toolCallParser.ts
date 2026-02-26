@@ -848,10 +848,9 @@ export function formatToolDefinitionsForPrompt(tools: Array<{ function: { name: 
  * - Text outside XML tags is silently discarded
  */
 export function getToolCallingSystemPrompt(toolDefinitions: string): string {
-	return `YOU HAVE ACCESS TO THE TOOLS LISTED BELOW. YOU MUST USE THEM.
-When the user asks you to perform an action, you MUST invoke tools via <tool_use> tags.
-NEVER describe steps in text — ALWAYS execute them via tool calls.
-Format: <tool_use>{"name": "toolName", "parameters": {...}}</tool_use>
+	return `You have access to the following tools. Use them when the user asks you to perform actions.
+To call a tool, use: <tool_use>{"name": "toolName", "parameters": {...}}</tool_use>
+You can call multiple tools in sequence.
 
 Available tools:
 ${toolDefinitions}`;
@@ -862,9 +861,7 @@ ${toolDefinitions}`;
  * Counteracts "lost in the middle" degradation in long conversations.
  */
 export const FORMAT_REMINDER_INSTRUCTION =
-	'[RESPONSE FORMAT REMINDER] Your ENTIRE response MUST use XML tags.\n' +
-	'Valid tags: <thinking>, <text>, <tool_use>, <code>, <progress>.\n' +
-	'Text outside XML tags is SILENTLY DISCARDED by the system.\n' +
-	'Tool calls MUST use: <tool_use>{"name":"...","parameters":{...}}</tool_use>\n' +
-	'If you have tools to call: respond with <thinking> + <tool_use> only (NO <text>).\n' +
-	'If no tools to call: respond with <thinking> + <text>.';
+	'[RESPONSE FORMAT] Wrap tool calls in <tool_use> tags:\n' +
+	'<tool_use>{"name":"toolName","parameters":{...}}</tool_use>\n' +
+	'Use <thinking> tags for reasoning. Use <text> tags for messages to the user.\n' +
+	'When calling tools, respond with tool calls only — do not narrate your actions.';
