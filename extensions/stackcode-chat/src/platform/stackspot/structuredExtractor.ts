@@ -124,6 +124,70 @@ export function extractToolCalls(rawText: string): ParsedToolCall[] {
 	return [];
 }
 
+/**
+ * Strips JSON objects from `text` that normalize to valid tool calls,
+ * preserving all other (narrative) content. Used after tool calls have
+ * been extracted to clean leftover JSON from the user-visible text.
+ *
+ * Works by scanning for every top-level `{…}` span, cleaning it,
+ * attempting normalization — and if it succeeds, replacing the span
+ * with whitespace. The remaining text is collapsed (excess blank lines
+ * reduced to a single newline).
+ */
+export function stripExtractedToolCallJson(text: string): string {
+	if (!text.includes('{')) {
+		return text;
+	}
+
+	// Collect spans (start, end) of JSON objects that are tool calls
+	const spans: Array<{ start: number; end: number }> = [];
+	let searchFrom = 0;
+	const MAX_SCAN = 50;
+
+	while (searchFrom < text.length && spans.length < MAX_SCAN) {
+		const braceIndex = text.indexOf('{', searchFrom);
+		if (braceIndex === -1) {
+			break;
+		}
+
+		const jsonStr = _extractJsonObject(text, braceIndex);
+		if (jsonStr) {
+			const cleaned = _cleanJson(jsonStr);
+			let isToolCall = false;
+			try {
+				const parsed = JSON.parse(cleaned);
+				if (_normalizeToolCall(parsed)) {
+					isToolCall = true;
+				}
+			} catch { /* not valid JSON — skip */ }
+
+			if (isToolCall) {
+				spans.push({ start: braceIndex, end: braceIndex + jsonStr.length });
+			}
+			searchFrom = braceIndex + jsonStr.length;
+		} else {
+			searchFrom = braceIndex + 1;
+		}
+	}
+
+	if (spans.length === 0) {
+		return text;
+	}
+
+	// Build result by copying non-span regions
+	let result = '';
+	let cursor = 0;
+	for (const span of spans) {
+		result += text.substring(cursor, span.start);
+		cursor = span.end;
+	}
+	result += text.substring(cursor);
+
+	// Collapse excessive blank lines (3+ newlines → 2)
+	result = result.replace(/\n{3,}/g, '\n\n').trim();
+	return result;
+}
+
 // =========================================================================
 // Layer 2: Code fence extraction
 // =========================================================================
@@ -425,9 +489,57 @@ function _normalizeToolCall(obj: unknown): ParsedToolCall | null {
 // =========================================================================
 
 /**
+ * Replaces literal control characters (newlines, CR, tabs) inside JSON string
+ * values with their JSON escape sequences. JSON spec forbids literal control
+ * characters in strings — LLMs often output actual newlines in file content
+ * fields, causing JSON.parse() to fail.
+ *
+ * This is safe because properly-escaped JSON already uses \n (two chars),
+ * not a literal newline, so replacing literal newlines in strings is always correct.
+ */
+function _fixControlCharsInStrings(text: string): string {
+	let result = '';
+	let inString = false;
+	let escaped = false;
+
+	for (let i = 0; i < text.length; i++) {
+		const ch = text[i];
+
+		if (escaped) {
+			result += ch;
+			escaped = false;
+			continue;
+		}
+
+		if (ch === '\\' && inString) {
+			result += ch;
+			escaped = true;
+			continue;
+		}
+
+		if (ch === '"') {
+			inString = !inString;
+			result += ch;
+			continue;
+		}
+
+		if (inString) {
+			if (ch === '\n') { result += '\\n'; continue; }
+			if (ch === '\r') { result += '\\r'; continue; }
+			if (ch === '\t') { result += '\\t'; continue; }
+		}
+
+		result += ch;
+	}
+
+	return result;
+}
+
+/**
  * Cleans up common JSON formatting issues that cause JSON.parse() to fail.
  *
  * Applied transforms (in order):
+ * 0. Fix unescaped control characters in JSON string values
  * 1. Remove zero-width characters and BOM
  * 2. Remove single-line comments (// ...)
  * 3. Remove multi-line comments
@@ -436,6 +548,10 @@ function _normalizeToolCall(obj: unknown): ParsedToolCall | null {
  */
 function _cleanJson(raw: string): string {
 	let result = raw;
+
+	// 0. Fix unescaped control characters in JSON string values
+	// LLMs often output literal newlines in file content/input fields — invalid JSON
+	result = _fixControlCharsInStrings(result);
 
 	// 1. Remove zero-width characters and BOM
 	result = result.replace(/[\u200B-\u200D\uFEFF\u00A0]/g, '');

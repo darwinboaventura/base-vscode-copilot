@@ -45,7 +45,8 @@ import {
 	FORMAT_REMINDER_INSTRUCTION,
 	INLINE_FORMAT_REMINDER,
 } from '../../stackspot/toolCallParser';
-import { extractToolCalls } from '../../stackspot/structuredExtractor';
+import type { ToolCallParserEvent } from '../../stackspot/toolCallParser';
+import { extractToolCalls, stripExtractedToolCallJson } from '../../stackspot/structuredExtractor';
 
 /**
  * Chat endpoint that routes all requests to Stackspot AI.
@@ -359,7 +360,12 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 			 * serialized as text inside the `<assistant>` tag alongside `<tool_call>` tags.
 			 */
 			function buildFullText(): string {
-				const plainText = plainTextParts.join('');
+				let plainText = plainTextParts.join('');
+				// When tool calls were extracted, strip any residual JSON tool call
+				// objects from the plain text to prevent raw JSON from appearing in chat
+				if (completedToolCalls.length > 0 && plainText.includes('{')) {
+					plainText = stripExtractedToolCallJson(plainText);
+				}
 				if (thinkingText && completedToolCalls.length > 0) {
 					return thinkingText + (plainText ? '\n' + plainText : '');
 				}
@@ -411,7 +417,8 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 							if (parser) {
 								// Flush the parser to get any remaining events
 								const flushEvents = parser.flush();
-								for (const event of flushEvents) {
+								const intercepted = self._interceptFlushTextEvents(flushEvents, completedToolCalls, debugName, logService);
+								for (const event of intercepted) {
 									await self._handleParserEvent(event, finishCallback, allTokens, completedToolCalls, plainTextParts, (t) => { thinkingText += t; }, toolCallArgsAccumulator);
 								}
 
@@ -425,21 +432,24 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 										completedToolCalls.push(...rescued);
 										// Clear accumulated text parts to prevent raw JSON from appearing in chat
 										plainTextParts.length = 0;
-									} else {
-										// No tool calls found — fall back to retry mechanism
+									} else if (self._looksLikeToolCallJson(rawText)) {
+										// Text looks like it has tool calls but extraction failed — retry
 										const fullText = buildFullText() || rawText;
 										self._emitMalformedCompletion(emitter, fullText, allTokens, inputTokens, outputTokens, requestId, telemetryData);
 										emittedCompletion = true;
 										continue;
+									} else {
+										// Narrative text (plan/explanation) — treat as normal response, no retry
+										logService.info(`[stackcode] Malformed response (${debugName}): text is narrative (${rawText.length} chars), treating as normal response instead of retry.`);
 									}
 								}
 
 								// STACKCODE FIX: Handle "partial XML compliance" — LLM used some XML tags
 								// (e.g. <thinking>) but wrote tool calls as raw JSON outside XML tags.
-								// _isMalformedResponse() returns false in this case (hasAnyXmlContent=true),
-								// so the rescue block above was skipped. Try structured extraction on the
-								// plain text parts (content outside XML tags) before falling back to display.
-								if (completedToolCalls.length === 0 && plainTextParts.length > 0) {
+								// Also handles mixed responses where the LLM wrote raw JSON PLUS a properly
+								// formatted <tool_use> — in that case completedToolCalls.length > 0 but
+								// plainTextParts still contains additional raw JSON tool calls to rescue.
+								if (plainTextParts.length > 0) {
 									const plainText = plainTextParts.join('');
 									if (plainText.includes('{')) {
 										const rescued = self._tryStructuredExtraction(plainText, debugName, logService);
@@ -545,7 +555,8 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 									if (!emittedCompletion) {
 										if (parser) {
 											const flushEvents = parser.flush();
-											for (const event of flushEvents) {
+											const intercepted = self._interceptFlushTextEvents(flushEvents, completedToolCalls, debugName, logService);
+											for (const event of intercepted) {
 												await self._handleParserEvent(event, finishCallback, allTokens, completedToolCalls, plainTextParts, (t) => { thinkingText += t; }, toolCallArgsAccumulator);
 											}
 
@@ -557,10 +568,25 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 												completedToolCalls.push(...rescued);
 												// Clear accumulated text parts to prevent raw JSON from appearing in chat
 												plainTextParts.length = 0;
-											} else {
+											} else if (self._looksLikeToolCallJson(rawText)) {
 												const fullText = buildFullText() || rawText;
 												self._emitMalformedCompletion(emitter, fullText, allTokens, inputTokens, outputTokens, requestId, telemetryData);
 												emittedCompletion = true;
+											} else {
+												logService.info(`[stackcode] Malformed response (${debugName}): text is narrative (${rawText.length} chars), treating as normal response instead of retry.`);
+											}
+										}
+
+										// STACKCODE FIX: Handle "partial XML compliance"
+										if (plainTextParts.length > 0) {
+											const plainText = plainTextParts.join('');
+											if (plainText.includes('{')) {
+												const rescued = self._tryStructuredExtraction(plainText, debugName, logService);
+												if (rescued && rescued.length > 0) {
+													logService.info(`[stackcode] Partial XML compliance rescue (${debugName}): ${rescued.length} tool call(s) extracted from text outside XML tags`);
+													completedToolCalls.push(...rescued);
+													plainTextParts.length = 0;
+												}
 											}
 										}
 
@@ -612,7 +638,8 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 				if (!emittedCompletion && allTokens.length > 0) {
 					if (parser) {
 						const flushEvents = parser.flush();
-						for (const event of flushEvents) {
+						const intercepted = self._interceptFlushTextEvents(flushEvents, completedToolCalls, debugName, logService);
+						for (const event of intercepted) {
 							await self._handleParserEvent(event, finishCallback, allTokens, completedToolCalls, plainTextParts, (t) => { thinkingText += t; }, toolCallArgsAccumulator);
 						}
 
@@ -624,10 +651,25 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 								completedToolCalls.push(...rescued);
 								// Clear accumulated text parts to prevent raw JSON from appearing in chat
 								plainTextParts.length = 0;
-							} else {
+							} else if (self._looksLikeToolCallJson(rawText)) {
 								const fullText = buildFullText() || rawText;
 								self._emitMalformedCompletion(emitter, fullText, allTokens, inputTokens, outputTokens, requestId, telemetryData);
 								emittedCompletion = true;
+							} else {
+								logService.info(`[stackcode] Malformed response (${debugName}): text is narrative (${rawText.length} chars), treating as normal response instead of retry.`);
+							}
+						}
+
+						// STACKCODE FIX: Handle "partial XML compliance"
+						if (plainTextParts.length > 0) {
+							const plainText = plainTextParts.join('');
+							if (plainText.includes('{')) {
+								const rescued = self._tryStructuredExtraction(plainText, debugName, logService);
+								if (rescued && rescued.length > 0) {
+									logService.info(`[stackcode] Partial XML compliance rescue (${debugName}): ${rescued.length} tool call(s) extracted from text outside XML tags`);
+									completedToolCalls.push(...rescued);
+									plainTextParts.length = 0;
+								}
 							}
 						}
 
@@ -755,7 +797,7 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 	 * Returns true if truncation was requested.
 	 */
 	private async _handleParserEvent(
-		event: import('../../stackspot/toolCallParser').ToolCallParserEvent,
+		event: ToolCallParserEvent,
 		finishCallback: FinishedCallback,
 		allTokens: string[],
 		completedToolCalls: Array<{ name: string; arguments: string; id: string }>,
@@ -839,6 +881,50 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 	}
 
 	/**
+	 * Intercepts flush Text events BEFORE they reach _handleParserEvent/finishCallback.
+	 * When the LLM responds with raw JSON tool calls (no XML), flush() emits them as
+	 * Text events. If we let _handleParserEvent process them, finishCallback sends the
+	 * raw JSON to the UI immediately — and post-flush rescue cannot undo that.
+	 * This interceptor extracts tool calls from Text events and strips the JSON,
+	 * so only narrative text reaches the UI.
+	 */
+	private _interceptFlushTextEvents(
+		flushEvents: ToolCallParserEvent[],
+		completedToolCalls: Array<{ name: string; arguments: string; id: string }>,
+		debugName: string,
+		logService: ILogService,
+	): ToolCallParserEvent[] {
+		const result: ToolCallParserEvent[] = [];
+		for (const event of flushEvents) {
+			if (event.kind !== ToolCallParserEventKind.Text) {
+				result.push(event);
+				continue;
+			}
+			// Quick check — no '{' or no '"name"' means pure narrative text
+			if (!event.text.includes('{') || !event.text.includes('"name"')) {
+				result.push(event);
+				continue;
+			}
+			// Try to extract tool calls from the text
+			const extracted = extractToolCalls(event.text);
+			if (extracted.length === 0) {
+				result.push(event);
+				continue;
+			}
+			// Tool calls found — add to completedToolCalls
+			logService.info(`[stackcode] Flush intercept (${debugName}): ${extracted.length} tool call(s) extracted before finishCallback`);
+			completedToolCalls.push(...extracted);
+			// Remove JSON from text, keep only narrative
+			const cleaned = stripExtractedToolCallJson(event.text);
+			if (cleaned.trim()) {
+				result.push({ kind: ToolCallParserEventKind.Text, text: cleaned });
+			}
+			// If cleaned is empty → event discarded, finishCallback never receives the JSON
+		}
+		return result;
+	}
+
+	/**
 	 * Emits a ChatCompletion to the AsyncIterableObject emitter.
 	 * Extracted to avoid duplication across stop_reason, fallback, and error paths.
 	 */
@@ -910,6 +996,20 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 	}
 
 	/**
+	 * Heuristic: does this text look like it contains tool call JSON?
+	 * Returns true when the text has JSON-like patterns with tool call field names.
+	 * Returns false for pure narrative text (plans, explanations, etc.).
+	 */
+	private _looksLikeToolCallJson(text: string): boolean {
+		if (!text.includes('{') || !text.includes('"name"')) {
+			return false;
+		}
+		// Must also have a parameters-like field
+		return text.includes('"parameters"') || text.includes('"input"') ||
+			text.includes('"args"') || text.includes('"arguments"');
+	}
+
+	/**
 	 * Emits a ChatCompletion with ContentFilter finish reason and MalformedFormat filter reason.
 	 * This triggers the upstream FilteredRetry mechanism in chatMLFetcher, which appends a
 	 * correction message and retries the request once.
@@ -963,7 +1063,14 @@ export class StackspotChatEndpoint extends ChatEndpoint {
 	): Array<{ name: string; arguments: string; id: string }> | null {
 		const rescued = extractToolCalls(rawText);
 		if (rescued.length === 0) {
-			logService.info(`[stackcode] Structured extraction (${debugName}): no tool calls found in raw text (${rawText.length} chars). Falling back to retry.`);
+			// Use WARN + sample when text looks like it should have tool calls
+			const looksLikeToolCalls = rawText.includes('{') && rawText.includes('"name"');
+			if (looksLikeToolCalls) {
+				const sample = rawText.substring(0, 300).replace(/\n/g, '\\n');
+				logService.warn(`[stackcode] Structured extraction FAILED (${debugName}): no tool calls found in raw text (${rawText.length} chars) but text contains JSON-like patterns. Sample: ${sample}`);
+			} else {
+				logService.info(`[stackcode] Structured extraction (${debugName}): no tool calls found in raw text (${rawText.length} chars). Falling back to retry.`);
+			}
 			return null;
 		}
 		logService.info(
